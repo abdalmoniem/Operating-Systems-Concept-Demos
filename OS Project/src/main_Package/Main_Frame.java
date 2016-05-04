@@ -2,24 +2,17 @@ package main_Package;
 
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.awt.image.ColorModel;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
@@ -28,14 +21,16 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.JFrame;
 
 /**
  *
  * @author mn3m
  */
-public class Main_Frame extends javax.swing.JFrame {
+public class Main_Frame extends JFrame{
 
     LinkedList<Process> ready_queue;
+    LinkedList<Process> ready_queue_backup;
     DefaultTableModel proc_table_model;
     DefaultTableModel editing_table_model;
     boolean client_connected = false;
@@ -67,6 +62,27 @@ public class Main_Frame extends javax.swing.JFrame {
             System.err.println(e.getMessage());
         }
     }
+    
+    private void send_message(String msg, boolean echo) {
+        String line = msg;
+        DataOutputStream dos = null;
+
+        for (int i = 0; i < clients.size(); i++) {
+            try {
+                dos = new DataOutputStream(clients.get(i).getOutputStream());
+                dos.writeUTF(line);
+            } catch (IOException ex) {
+                System.err.println("Server Error: " + ex.toString());
+                clients.remove(i);
+                send_message(msg, true);
+            }
+        }
+
+        if (!echo) {
+            appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
+        }
+        server_msg_field.setText(null);
+    }
 
     private String get_selected_button_text() {
         String button_text = null;
@@ -93,27 +109,6 @@ public class Main_Frame extends javax.swing.JFrame {
         }
     }
 
-    private void send_message(String msg, boolean echo) {
-        String line = msg;
-        DataOutputStream dos = null;
-
-        for (int i = 0; i < clients.size(); i++) {
-            try {
-                dos = new DataOutputStream(clients.get(i).getOutputStream());
-                dos.writeUTF(line);
-            } catch (IOException ex) {
-                System.err.println("Server Error: " + ex.toString());
-                clients.remove(i);
-                send_message(msg, true);
-            }
-        }
-
-        if (!echo) {
-            appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
-        }
-        server_msg_field.setText(null);
-    }
-
     private void appendToPane(JTextPane pane, String msg, Color color, boolean bold, boolean italic) {
         StyledDocument doc = pane.getStyledDocument();
         SimpleAttributeSet attr = new SimpleAttributeSet();
@@ -130,8 +125,8 @@ public class Main_Frame extends javax.swing.JFrame {
 
     public Main_Frame() {
         initComponents();
-        ready_queue = new LinkedList<Process>();
-        clients = new LinkedList<Socket>();
+        ready_queue = new LinkedList<>();
+        clients = new LinkedList<>();
         proc_table_model = (DefaultTableModel) processes_table.getModel();
         editing_table_model = (DefaultTableModel) editing_table.getModel();
 
@@ -268,11 +263,11 @@ public class Main_Frame extends javax.swing.JFrame {
                     .addComponent(sort_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(scheduling_frameLayout.createSequentialGroup()
                         .addComponent(fifo_chk_btn)
-                        .addGap(67, 67, 67)
+                        .addGap(18, 18, 18)
                         .addComponent(npsjf_chk_btn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(rr_chk_btn)
-                        .addGap(102, 102, 102)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(edit_scheduler_table_row)))
                 .addContainerGap())
         );
@@ -631,29 +626,22 @@ public class Main_Frame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sort_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sort_btnActionPerformed
-        try {
+        try {            
             clear_table(proc_table_model);
             String buttonText = get_selected_button_text();
-
+            LinkedList<Process> temp = new LinkedList<>();
             if (buttonText.toLowerCase().contains("fifo")) {
-                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.FIFO);
-                populate_scheduler_table(temp);
+                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.FIFO));
+            } else if (buttonText.toLowerCase().contains("sjf")) {
+                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.SJF));
+            } else if (buttonText.toLowerCase().contains("rr")) {
+                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.RR));
             }
-            if (buttonText.toLowerCase().contains("sjf")) {
-                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.SJF);
-                populate_scheduler_table(temp);
-            }
+            populate_scheduler_table(temp);
 //            if (buttonText.toLowerCase().contains("srjf")) {
 //                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.SRJF);
 //                populate_scheduler_table(temp);
 //            }
-            if (buttonText.toLowerCase().contains("rr")) {
-                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.RR);
-                populate_scheduler_table(temp);
-            }
-
-            ready_queue.forEach(i -> System.out.println(i.PID));
-            System.out.println();
         } catch (Exception ex) {
             System.err.println(ex.toString());
         }
@@ -736,10 +724,12 @@ public class Main_Frame extends javax.swing.JFrame {
                 server_frame.setVisible(true);
                 server_msg_field.setEnabled(false);
                 server_snd_btn.setEnabled(false);
-                ss = new ServerSocket(PORT_NUM);
                 server_chat_pane.setText(null);
                 server_started = true;
+                
+                ss = new ServerSocket(PORT_NUM);
                 print_server_address(server_chat_pane);
+                
                 Runnable read_runnable = () -> {
                     try {
                         DataInputStream dis = new DataInputStream(cs.getInputStream());
@@ -758,6 +748,7 @@ public class Main_Frame extends javax.swing.JFrame {
                         send_message("[" + cs.getInetAddress().toString() + "] Disconnected", true);
                     }
                 };
+                
                 Runnable connect_runnable = () -> {
                     while (true) {
                         try {
@@ -798,6 +789,7 @@ public class Main_Frame extends javax.swing.JFrame {
             if (!client_connected) {
                 String input = JOptionPane.showInputDialog(this, "Enter server ip address and port number separated by \":\": ", "Server IP:Port number", JOptionPane.PLAIN_MESSAGE);
                 if (input != null) {
+                    client_chat_pane.setText(null);
                     client_connected = true;
                     String[] ip_port = input.split(":");
                     client = new Client(new Socket(ip_port[0], Integer.parseInt(ip_port[1])), client_chat_pane);
@@ -851,6 +843,7 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void client_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_client_frameWindowClosing
         client.send("::client::quit::" + client.get_id());
+        client_connected = false;
     }//GEN-LAST:event_client_frameWindowClosing
 
     private void detect_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detect_itemActionPerformed
@@ -888,10 +881,8 @@ public class Main_Frame extends javax.swing.JFrame {
         try {
             javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
             javax.swing.UIManager.setLookAndFeel(info.getClassName());
-
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main_Frame.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            System.err.println(ex);
         }
         //</editor-fold>
 

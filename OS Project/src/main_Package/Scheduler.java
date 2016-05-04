@@ -8,16 +8,17 @@ import java.util.*;
  */
 public class Scheduler {
 
-    public static int FIFO = 0;
-    public static int SJF = 1;
-    public static int SRJF = 2;
-    public static int RR = 3;
-    private int time_quantum = 30;     //Defining the time quantum of the system
-
-    private LinkedList<Process> ready_queue;
+    public static final int FIFO = 0;
+    public static final int SJF = 1;
+    public static final int SRJF = 2;
+    public static final int RR = 3;
+    
+    private final int time_quantum = 30;
+    private final LinkedList<Process> ready_queue;
 
     public Scheduler(LinkedList<Process> ready_queue) {
-        this.ready_queue = ready_queue;
+        this.ready_queue = new LinkedList<>();
+        this.ready_queue.addAll(ready_queue);
     }
 
     public LinkedList<Process> sort(int sort_method) throws Exception {
@@ -29,41 +30,39 @@ public class Scheduler {
                 this.ready_queue.sort((p1, p2) -> Integer.compare(p1.Burst_Time, p2.Burst_Time));
                 return this.ready_queue;
             case 2:
-                
+                //Sort using SRJF
                 return this.ready_queue;
             case 3:
-                LinkedList<Process> out = new LinkedList<Process>();
-                LinkedList<Process> res = new LinkedList<Process>();
+                LinkedList<Process> out = new LinkedList<>();
+                LinkedList<Process> execution_order_list = new LinkedList<>();
                 Process temp = new Process();
                 Process temp1 = new Process();
-                while (ready_queue.isEmpty() == false) {
-                    if (ready_queue.getFirst().Burst_Time > time_quantum) {
-                        temp = ready_queue.getFirst();
-                        temp.Burst_Time = ready_queue.getFirst().Burst_Time - time_quantum;
-                        ready_queue.addLast(temp);
+                
+                while (!this.ready_queue.isEmpty()) {
+                    if (this.ready_queue.getFirst().Burst_Time > time_quantum) {
+                        temp = this.ready_queue.getFirst();
+                        temp.Burst_Time = this.ready_queue.getFirst().Burst_Time - time_quantum;
+                        this.ready_queue.addLast(temp);
                         out.addLast(temp);
 
-                        for (Process i : out) //Check if the process needs more than one time quantum to execute 
-                        {
-                            res.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority));
-                        }
+                        out.forEach(i -> {
+                            execution_order_list.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority));
+                        });
                         out.removeFirst();
-                        ready_queue.removeFirst();
-                    } else //Check if the process needs less than one time quantum to execute
-                    {
-                        temp1 = ready_queue.getFirst();
+                        this.ready_queue.removeFirst();
+                    } else { //Check if the process needs less than one time quantum to execute
+                        temp1 = this.ready_queue.getFirst();
                         temp1.Burst_Time = 0;
                         out.addLast(temp1);
-                        for (Process i : out) {
-                            res.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority));
-
-                        }
+                        out.forEach(i -> {
+                            execution_order_list.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority));
+                        });
                         out.removeFirst();
-                        ready_queue.removeFirst();
+                        this.ready_queue.removeFirst();
                     }
 
                 }
-                return res;
+                return execution_order_list;
             default:
                 throw new Exception("Unkown Sorting Method...");
         }

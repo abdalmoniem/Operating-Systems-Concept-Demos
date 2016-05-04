@@ -14,11 +14,11 @@
                       <Component id="sort_btn" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Component id="fifo_chk_btn" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="npsjf_chk_btn" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="rr_chk_btn" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="102" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="edit_scheduler_table_row" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
