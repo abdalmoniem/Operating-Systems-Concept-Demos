@@ -98,19 +98,18 @@ public class Main_Frame extends javax.swing.JFrame {
         DataOutputStream dos = null;
 
         for (int i = 0; i < clients.size(); i++) {
-            if (!clients.get(i).isClosed()) {
-                try {
-                    dos = new DataOutputStream(clients.get(i).getOutputStream());
-                    dos.writeUTF(line);
-                    if (!echo) {
-                        appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
-                    }
-                } catch (IOException ex) {
-                    System.err.println("Server Error: " + ex.toString());
-                    clients.remove(i);
-                    send_message(msg, true);
-                }
+            try {
+                dos = new DataOutputStream(clients.get(i).getOutputStream());
+                dos.writeUTF(line);
+            } catch (IOException ex) {
+                System.err.println("Server Error: " + ex.toString());
+                clients.remove(i);
+                send_message(msg, true);
             }
+        }
+
+        if (!echo) {
+            appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
         }
         server_msg_field.setText(null);
     }
@@ -169,10 +168,10 @@ public class Main_Frame extends javax.swing.JFrame {
         client_chat_pane = new javax.swing.JTextPane();
         client_msg_field = new javax.swing.JTextField();
         client_snd_btn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        mem_btn = new javax.swing.JButton();
+        net_btn = new javax.swing.JButton();
+        proc_btn = new javax.swing.JButton();
+        disk_btn = new javax.swing.JButton();
         main_menu_bar = new javax.swing.JMenuBar();
         file_menu = new javax.swing.JMenu();
         open_sym_item = new javax.swing.JMenuItem();
@@ -442,13 +441,18 @@ public class Main_Frame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        jButton1.setText("Memory");
+        mem_btn.setText("Memory");
 
-        jButton6.setText("Network");
+        net_btn.setText("Network");
+        net_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                net_btnActionPerformed(evt);
+            }
+        });
 
-        jButton7.setText("Processes");
+        proc_btn.setText("Processes");
 
-        jButton8.setText("Disk");
+        disk_btn.setText("Disk");
 
         file_menu.setText("File");
 
@@ -601,12 +605,12 @@ public class Main_Frame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(163, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(proc_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(disk_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(181, 181, 181))
         );
         layout.setVerticalGroup(
@@ -614,12 +618,12 @@ public class Main_Frame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(proc_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(disk_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
@@ -630,7 +634,7 @@ public class Main_Frame extends javax.swing.JFrame {
         try {
             clear_table(proc_table_model);
             String buttonText = get_selected_button_text();
-            
+
             if (buttonText.toLowerCase().contains("fifo")) {
                 LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.FIFO);
                 populate_scheduler_table(temp);
@@ -643,11 +647,11 @@ public class Main_Frame extends javax.swing.JFrame {
 //                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.SRJF);
 //                populate_scheduler_table(temp);
 //            }
-            if(buttonText.toLowerCase().contains("rr")) {
+            if (buttonText.toLowerCase().contains("rr")) {
                 LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.RR);
                 populate_scheduler_table(temp);
             }
-            
+
             ready_queue.forEach(i -> System.out.println(i.PID));
             System.out.println();
         } catch (Exception ex) {
@@ -851,17 +855,34 @@ public class Main_Frame extends javax.swing.JFrame {
 
     private void detect_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detect_itemActionPerformed
         LinkedList<Process> ready = new LinkedList<>();
-        for(int i=0; i<5; i++)
+        for (int i = 0; i < 5; i++) {
             ready.add(new Process());
-        
+        }
+
         ready.forEach(i -> {
             System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
-                                i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+                    i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
         });
-        
+
         System.out.println("\nChecking for Deadlock...");
         new Deadlock(ready, new Resource(10, 33, 19)).detect();
     }//GEN-LAST:event_detect_itemActionPerformed
+
+    private void net_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_net_btnActionPerformed
+        int choice = JOptionPane.showOptionDialog(this,
+                "Run Client or Server application ?",
+                "Choose a Program",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new String[]{"Server", "Client", "Cancel"},
+                "Server");
+        if (choice == JOptionPane.YES_OPTION) {
+            server_itemActionPerformed(evt);
+        } else if (choice == JOptionPane.NO_OPTION) {
+            client_itemActionPerformed(evt);
+        }
+    }//GEN-LAST:event_net_btnActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -895,6 +916,7 @@ public class Main_Frame extends javax.swing.JFrame {
     private javax.swing.JMenu deadlock_item;
     private javax.swing.JButton delete_row_btn;
     private javax.swing.JMenuItem detect_item;
+    private javax.swing.JButton disk_btn;
     private javax.swing.JMenu disk_menu;
     private javax.swing.JMenuItem doc_item;
     private javax.swing.JButton edit_scheduler_table_row;
@@ -919,18 +941,17 @@ public class Main_Frame extends javax.swing.JFrame {
     private javax.swing.JRadioButton fifo_chk_btn;
     private javax.swing.JMenu file_menu;
     private javax.swing.JMenu help_menu;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JMenuBar main_menu_bar;
+    private javax.swing.JButton mem_btn;
     private javax.swing.JMenu mem_menu;
+    private javax.swing.JButton net_btn;
     private javax.swing.JMenu net_menu;
     private javax.swing.JButton new_row_btn;
     private javax.swing.JRadioButton npsjf_chk_btn;
     private javax.swing.JButton ok_button;
     private javax.swing.JMenuItem open_sym_item;
     private javax.swing.JMenuItem prevent_item;
+    private javax.swing.JButton proc_btn;
     private javax.swing.JMenu proc_menu_item;
     private javax.swing.JTable processes_table;
     private javax.swing.JRadioButton rr_chk_btn;
