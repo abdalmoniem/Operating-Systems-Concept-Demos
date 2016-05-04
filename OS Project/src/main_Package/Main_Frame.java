@@ -188,7 +188,8 @@ public class Main_Frame extends JFrame{
         prevent_item = new javax.swing.JMenuItem();
         avoid_item = new javax.swing.JMenuItem();
         mem_menu = new javax.swing.JMenu();
-        disk_menu = new javax.swing.JMenu();
+        file_sys_menu = new javax.swing.JMenu();
+        io_menu = new javax.swing.JMenu();
         net_menu = new javax.swing.JMenu();
         chat_menu = new javax.swing.JMenu();
         server_item = new javax.swing.JMenuItem();
@@ -202,7 +203,8 @@ public class Main_Frame extends JFrame{
         ex_prevent_item = new javax.swing.JMenuItem();
         ex_avoid_item = new javax.swing.JMenuItem();
         ex_mem_menu = new javax.swing.JMenu();
-        ex_disk_menu = new javax.swing.JMenu();
+        ex_file_sys_menu = new javax.swing.JMenu();
+        ex_io_menu = new javax.swing.JMenu();
         ex_net_menu = new javax.swing.JMenu();
         ex_chat_menu = new javax.swing.JMenu();
         ex_server_item = new javax.swing.JMenuItem();
@@ -574,8 +576,11 @@ public class Main_Frame extends JFrame{
         mem_menu.setText("Memory");
         main_menu_bar.add(mem_menu);
 
-        disk_menu.setText("Disk");
-        main_menu_bar.add(disk_menu);
+        file_sys_menu.setText("File System");
+        main_menu_bar.add(file_sys_menu);
+
+        io_menu.setText("I/O");
+        main_menu_bar.add(io_menu);
 
         net_menu.setText("Network");
 
@@ -629,8 +634,11 @@ public class Main_Frame extends JFrame{
         ex_mem_menu.setText("Memory");
         examples_menu.add(ex_mem_menu);
 
-        ex_disk_menu.setText("Disk");
-        examples_menu.add(ex_disk_menu);
+        ex_file_sys_menu.setText("File System");
+        examples_menu.add(ex_file_sys_menu);
+
+        ex_io_menu.setText("I/O");
+        examples_menu.add(ex_io_menu);
 
         ex_net_menu.setText("Network");
 
@@ -992,7 +1000,6 @@ public class Main_Frame extends JFrame{
     private javax.swing.JButton delete_row_btn;
     private javax.swing.JMenuItem detect_item;
     private javax.swing.JButton disk_btn;
-    private javax.swing.JMenu disk_menu;
     private javax.swing.JMenuItem doc_item;
     private javax.swing.JButton edit_scheduler_table_row;
     private javax.swing.JTable editing_table;
@@ -1003,7 +1010,8 @@ public class Main_Frame extends JFrame{
     private javax.swing.JMenuItem ex_client_item;
     private javax.swing.JMenu ex_deadlock_item;
     private javax.swing.JMenuItem ex_detect_item;
-    private javax.swing.JMenu ex_disk_menu;
+    private javax.swing.JMenu ex_file_sys_menu;
+    private javax.swing.JMenu ex_io_menu;
     private javax.swing.JMenu ex_mem_menu;
     private javax.swing.JMenu ex_net_menu;
     private javax.swing.JMenuItem ex_prevent_item;
@@ -1015,7 +1023,9 @@ public class Main_Frame extends JFrame{
     private javax.swing.JMenuItem exit_item;
     private javax.swing.JRadioButton fifo_chk_btn;
     private javax.swing.JMenu file_menu;
+    private javax.swing.JMenu file_sys_menu;
     private javax.swing.JMenu help_menu;
+    private javax.swing.JMenu io_menu;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

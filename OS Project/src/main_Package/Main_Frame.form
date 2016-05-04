@@ -515,9 +515,14 @@
             <Property name="text" type="java.lang.String" value="Memory"/>
           </Properties>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="disk_menu">
+        <Menu class="javax.swing.JMenu" name="file_sys_menu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Disk"/>
+            <Property name="text" type="java.lang.String" value="File System"/>
+          </Properties>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="io_menu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="I/O"/>
           </Properties>
         </Menu>
         <Menu class="javax.swing.JMenu" name="net_menu">
@@ -599,9 +604,14 @@
                 <Property name="text" type="java.lang.String" value="Memory"/>
               </Properties>
             </Menu>
-            <Menu class="javax.swing.JMenu" name="ex_disk_menu">
+            <Menu class="javax.swing.JMenu" name="ex_file_sys_menu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Disk"/>
+                <Property name="text" type="java.lang.String" value="File System"/>
+              </Properties>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="ex_io_menu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="I/O"/>
               </Properties>
             </Menu>
             <Menu class="javax.swing.JMenu" name="ex_net_menu">
