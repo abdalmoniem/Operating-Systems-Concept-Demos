@@ -10,6 +10,8 @@ public class Process {
     public int PID;
     public int Burst_Time;
     public int Arrival_Time;
+    public int Waiting_Time;
+    public int TurnAround_Time;
     public int Priority;
     public Resource Need;
     
