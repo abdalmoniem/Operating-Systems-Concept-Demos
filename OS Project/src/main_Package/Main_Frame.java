@@ -22,12 +22,24 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.JFrame;
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+import gnu.io.UnsupportedCommOperationException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author mn3m
  */
-public class Main_Frame extends JFrame{
+public class Main_Frame extends JFrame {
 
     LinkedList<Process> ready_queue;
     LinkedList<Process> ready_queue_backup;
@@ -41,6 +53,18 @@ public class Main_Frame extends JFrame{
     Client client = null;
     LinkedList<Socket> clients;
     String client_last_sent_msg = null;
+
+    private BufferedReader input;
+    private OutputStream output;
+    private static final int TIME_OUT = 2000;
+    private static final int DATA_RATE = 115200;
+    private CommPortIdentifier portId = null;
+    private LinkedList<CommPortIdentifier> portsList;
+    private SerialPort serialPort = null;
+    boolean op_connected = false;
+    boolean ip_connected = false;
+
+    java.lang.Process python_process;
 
     private void print_server_address(JTextPane chat) {
         String ip = null;
@@ -62,7 +86,7 @@ public class Main_Frame extends JFrame{
             System.err.println(e.getMessage());
         }
     }
-    
+
     private void send_message(String msg, boolean echo) {
         String line = msg;
         DataOutputStream dos = null;
@@ -123,10 +147,18 @@ public class Main_Frame extends JFrame{
         }
     }
 
+    public synchronized void close() {
+        if (serialPort != null) {
+            serialPort.removeEventListener();
+            serialPort.close();
+        }
+    }
+
     public Main_Frame() {
         initComponents();
         ready_queue = new LinkedList<>();
         clients = new LinkedList<>();
+        portsList = new LinkedList<>();
         proc_table_model = (DefaultTableModel) processes_table.getModel();
         editing_table_model = (DefaultTableModel) editing_table.getModel();
 
@@ -164,13 +196,26 @@ public class Main_Frame extends JFrame{
         client_msg_field = new javax.swing.JTextField();
         client_snd_btn = new javax.swing.JButton();
         about_frame = new javax.swing.JFrame();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        name2 = new javax.swing.JLabel();
+        name3 = new javax.swing.JLabel();
+        name1 = new javax.swing.JLabel();
+        name4 = new javax.swing.JLabel();
+        name5 = new javax.swing.JLabel();
+        logo_label = new javax.swing.JLabel();
+        development_team_title_label = new javax.swing.JLabel();
+        output_frame = new javax.swing.JFrame();
+        output_search_btn = new javax.swing.JButton();
+        output_portsListComoBox = new javax.swing.JComboBox<>();
+        output_cnct_discnctBtn = new javax.swing.JButton();
+        statusLabel = new javax.swing.JLabel();
+        brightness_slider = new javax.swing.JSlider();
+        brightness_label = new javax.swing.JLabel();
+        min_label = new javax.swing.JLabel();
+        max_label = new javax.swing.JLabel();
+        input_frame = new javax.swing.JFrame();
+        input_search_btn = new javax.swing.JButton();
+        input_portsListComoBox = new javax.swing.JComboBox<>();
+        input_cnct_discnctBtn = new javax.swing.JButton();
         mem_btn = new javax.swing.JButton();
         net_btn = new javax.swing.JButton();
         proc_btn = new javax.swing.JButton();
@@ -190,6 +235,8 @@ public class Main_Frame extends JFrame{
         mem_menu = new javax.swing.JMenu();
         file_sys_menu = new javax.swing.JMenu();
         io_menu = new javax.swing.JMenu();
+        input_item = new javax.swing.JMenuItem();
+        output_item = new javax.swing.JMenuItem();
         net_menu = new javax.swing.JMenu();
         chat_menu = new javax.swing.JMenu();
         server_item = new javax.swing.JMenuItem();
@@ -446,62 +493,199 @@ public class Main_Frame extends JFrame{
         about_frame.setTitle("About");
         about_frame.setResizable(false);
 
-        jLabel2.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Khalid Taha Ahmed");
+        name2.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        name2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        name2.setText("Khalid Taha Ahmed");
 
-        jLabel3.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Eslam Khalid Tawfik");
+        name3.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        name3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        name3.setText("Eslam Khalid Tawfik");
 
-        jLabel4.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Ahmed Samir Demerdash");
+        name1.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        name1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        name1.setText("Ahmed Samir Demerdash");
 
-        jLabel5.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Rana Tarek Qunswa");
+        name4.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        name4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        name4.setText("Rana Tarek Qunswa");
 
-        jLabel6.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("AbdAlMoniem Osama AlHifnawy");
+        name5.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        name5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        name5.setText("AbdAlMoniem Osama AlHifnawy");
 
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main_Package/Pics/logo.png"))); // NOI18N
+        logo_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        logo_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main_Package/Pics/logo.png"))); // NOI18N
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Development Team:");
+        development_team_title_label.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        development_team_title_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        development_team_title_label.setText("Development Team:");
 
         javax.swing.GroupLayout about_frameLayout = new javax.swing.GroupLayout(about_frame.getContentPane());
         about_frame.getContentPane().setLayout(about_frameLayout);
         about_frameLayout.setHorizontalGroup(
             about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(name2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(name3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(name4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(name5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(name1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(development_team_title_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(logo_label, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         about_frameLayout.setVerticalGroup(
             about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, about_frameLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logo_label, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addComponent(development_team_title_label)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
+                .addComponent(name1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(name2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(name3, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
+                .addComponent(name4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel6))
+                .addComponent(name5))
+        );
+
+        output_frame.setTitle("Output");
+        output_frame.setResizable(false);
+        output_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                output_frameWindowClosing(evt);
+            }
+        });
+
+        output_search_btn.setText("Search COM Ports");
+        output_search_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                output_search_btnActionPerformed(evt);
+            }
+        });
+
+        output_cnct_discnctBtn.setText("Connect");
+        output_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                output_cnct_discnctBtnActionPerformed(evt);
+            }
+        });
+
+        statusLabel.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+        statusLabel.setText("Status: Disconnected");
+
+        brightness_slider.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        brightness_slider.setMajorTickSpacing(5);
+        brightness_slider.setMaximum(255);
+        brightness_slider.setPaintTicks(true);
+        brightness_slider.setSnapToTicks(true);
+        brightness_slider.setValue(0);
+        brightness_slider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        brightness_slider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                brightness_sliderStateChanged(evt);
+            }
+        });
+
+        brightness_label.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        brightness_label.setText("Brightness:");
+
+        min_label.setText("min");
+
+        max_label.setText("max");
+
+        javax.swing.GroupLayout output_frameLayout = new javax.swing.GroupLayout(output_frame.getContentPane());
+        output_frame.getContentPane().setLayout(output_frameLayout);
+        output_frameLayout.setHorizontalGroup(
+            output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(output_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(output_frameLayout.createSequentialGroup()
+                        .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(output_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
+                    .addComponent(brightness_slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, output_frameLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(statusLabel))
+                    .addGroup(output_frameLayout.createSequentialGroup()
+                        .addComponent(brightness_label)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(output_frameLayout.createSequentialGroup()
+                        .addComponent(min_label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(max_label)))
+                .addContainerGap())
+        );
+        output_frameLayout.setVerticalGroup(
+            output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(output_frameLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(output_frameLayout.createSequentialGroup()
+                        .addComponent(output_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(brightness_label)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(min_label)
+                    .addComponent(max_label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(brightness_slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(statusLabel)
+                .addContainerGap())
+        );
+
+        input_frame.setTitle("Input");
+        input_frame.setResizable(false);
+
+        input_search_btn.setText("Search COM Ports");
+        input_search_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                input_search_btnActionPerformed(evt);
+            }
+        });
+
+        input_cnct_discnctBtn.setText("Connect");
+        input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                input_cnct_discnctBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout input_frameLayout = new javax.swing.GroupLayout(input_frame.getContentPane());
+        input_frame.getContentPane().setLayout(input_frameLayout);
+        input_frameLayout.setHorizontalGroup(
+            input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(input_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        input_frameLayout.setVerticalGroup(
+            input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(input_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(input_frameLayout.createSequentialGroup()
+                        .addComponent(input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -580,6 +764,23 @@ public class Main_Frame extends JFrame{
         main_menu_bar.add(file_sys_menu);
 
         io_menu.setText("I/O");
+
+        input_item.setText("Input");
+        input_item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                input_itemActionPerformed(evt);
+            }
+        });
+        io_menu.add(input_item);
+
+        output_item.setText("Output");
+        output_item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                output_itemActionPerformed(evt);
+            }
+        });
+        io_menu.add(output_item);
+
         main_menu_bar.add(io_menu);
 
         net_menu.setText("Network");
@@ -708,7 +909,7 @@ public class Main_Frame extends JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void sort_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sort_btnActionPerformed
-        try {            
+        try {
             clear_table(proc_table_model);
             String buttonText = get_selected_button_text();
             LinkedList<Process> temp = new LinkedList<>();
@@ -808,10 +1009,10 @@ public class Main_Frame extends JFrame{
                 server_snd_btn.setEnabled(false);
                 server_chat_pane.setText(null);
                 server_started = true;
-                
+
                 ss = new ServerSocket(PORT_NUM);
                 print_server_address(server_chat_pane);
-                
+
                 Runnable read_runnable = () -> {
                     try {
                         DataInputStream dis = new DataInputStream(cs.getInputStream());
@@ -830,7 +1031,7 @@ public class Main_Frame extends JFrame{
                         send_message("[" + cs.getInetAddress().toString() + "] Disconnected", true);
                     }
                 };
-                
+
                 Runnable connect_runnable = () -> {
                     while (true) {
                         try {
@@ -962,11 +1163,121 @@ public class Main_Frame extends JFrame{
     private void about_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_about_itemActionPerformed
         int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
         int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        
+
         about_frame.setLocation(screen_width / 3, screen_height / 8);
         about_frame.setSize(280, 650);
         about_frame.setVisible(true);
     }//GEN-LAST:event_about_itemActionPerformed
+
+    private void output_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_itemActionPerformed
+        output_frame.setSize(520, 220);
+        output_frame.setVisible(true);
+    }//GEN-LAST:event_output_itemActionPerformed
+
+    private void output_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_search_btnActionPerformed
+        output_portsListComoBox.removeAllItems();
+        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        portsList.clear();
+
+        while (portEnum.hasMoreElements()) {
+            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+            output_portsListComoBox.addItem(currPortId.getName());
+            portsList.add(currPortId);
+        }
+    }//GEN-LAST:event_output_search_btnActionPerformed
+
+    private void output_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_cnct_discnctBtnActionPerformed
+        if (!op_connected) {
+            try {
+                portId = portsList.get(output_portsListComoBox.getSelectedIndex());
+                serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
+                output_cnct_discnctBtn.setText("Disconnect From COM Port");
+                statusLabel.setText("Status: Connected");
+                op_connected = !op_connected;
+                serialPort.setSerialPortParams(DATA_RATE,
+                        SerialPort.DATABITS_8,
+                        SerialPort.STOPBITS_1,
+                        SerialPort.PARITY_NONE);
+                output = serialPort.getOutputStream();
+            } catch (NullPointerException e) {
+                System.err.println(e.toString());
+            } catch (UnsupportedCommOperationException | PortInUseException | IOException ex) {
+                System.err.println(ex.toString());
+            }
+        } else {
+            close();
+            output_cnct_discnctBtn.setText("Connect with COM Port");
+            statusLabel.setText("Status: Disonnected");
+            op_connected = !op_connected;
+        }
+    }//GEN-LAST:event_output_cnct_discnctBtnActionPerformed
+
+    private void brightness_sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightness_sliderStateChanged
+        try {
+            if (op_connected) {
+                if (!brightness_slider.getValueIsAdjusting()) {
+                    String value = brightness_slider.getValue() + "";
+                    System.out.println(value);
+                    output.write(value.getBytes());
+                    output.flush();
+                }
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.toString());
+        }
+    }//GEN-LAST:event_brightness_sliderStateChanged
+
+    private void output_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_output_frameWindowClosing
+        if (op_connected) {
+            close();
+        }
+    }//GEN-LAST:event_output_frameWindowClosing
+
+    private void input_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_itemActionPerformed
+        input_frame.setSize(520, 130);
+        input_frame.setVisible(true);
+    }//GEN-LAST:event_input_itemActionPerformed
+
+    private void input_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_search_btnActionPerformed
+        input_portsListComoBox.removeAllItems();
+        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        portsList.clear();
+
+        while (portEnum.hasMoreElements()) {
+            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+            input_portsListComoBox.addItem(currPortId.getName());
+            portsList.add(currPortId);
+        }
+    }//GEN-LAST:event_input_search_btnActionPerformed
+
+    private void input_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_cnct_discnctBtnActionPerformed
+        if (!ip_connected) {
+            String com_num = input_portsListComoBox.getSelectedItem().toString();
+            ip_connected = !ip_connected;
+            input_cnct_discnctBtn.setEnabled(false);
+            input_cnct_discnctBtn.setText("Connected");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String[] cmd = new String[]{"cmd", "/c", "python plotter.py " + com_num};
+                        System.out.println(cmd[2]);
+                        python_process = new ProcessBuilder(cmd).start();
+                        while (python_process.isAlive());
+                        input_cnct_discnctBtn.setEnabled(true);
+                        input_cnct_discnctBtn.setText("Connect to COM Port");
+                        ip_connected = !ip_connected;
+                    } catch (IOException ex) {
+                        System.err.println(ex.toString());
+                    }
+                }
+            }).start();
+        } else {
+            input_cnct_discnctBtn.setEnabled(true);
+            input_cnct_discnctBtn.setText("Connect to COM Port");
+            ip_connected = !ip_connected;
+        }
+    }//GEN-LAST:event_input_cnct_discnctBtnActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -989,6 +1300,8 @@ public class Main_Frame extends JFrame{
     private javax.swing.JFrame about_frame;
     private javax.swing.JMenuItem about_item;
     private javax.swing.JMenuItem avoid_item;
+    private javax.swing.JLabel brightness_label;
+    private javax.swing.JSlider brightness_slider;
     private javax.swing.JMenu chat_menu;
     private javax.swing.JTextPane client_chat_pane;
     private javax.swing.JScrollPane client_chat_panel;
@@ -999,6 +1312,7 @@ public class Main_Frame extends JFrame{
     private javax.swing.JMenu deadlock_item;
     private javax.swing.JButton delete_row_btn;
     private javax.swing.JMenuItem detect_item;
+    private javax.swing.JLabel development_team_title_label;
     private javax.swing.JButton disk_btn;
     private javax.swing.JMenuItem doc_item;
     private javax.swing.JButton edit_scheduler_table_row;
@@ -1025,23 +1339,34 @@ public class Main_Frame extends JFrame{
     private javax.swing.JMenu file_menu;
     private javax.swing.JMenu file_sys_menu;
     private javax.swing.JMenu help_menu;
+    private javax.swing.JButton input_cnct_discnctBtn;
+    private javax.swing.JFrame input_frame;
+    private javax.swing.JMenuItem input_item;
+    private javax.swing.JComboBox<String> input_portsListComoBox;
+    private javax.swing.JButton input_search_btn;
     private javax.swing.JMenu io_menu;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel logo_label;
     private javax.swing.JMenuBar main_menu_bar;
+    private javax.swing.JLabel max_label;
     private javax.swing.JButton mem_btn;
     private javax.swing.JMenu mem_menu;
+    private javax.swing.JLabel min_label;
+    private javax.swing.JLabel name1;
+    private javax.swing.JLabel name2;
+    private javax.swing.JLabel name3;
+    private javax.swing.JLabel name4;
+    private javax.swing.JLabel name5;
     private javax.swing.JButton net_btn;
     private javax.swing.JMenu net_menu;
     private javax.swing.JButton new_row_btn;
     private javax.swing.JRadioButton npsjf_chk_btn;
     private javax.swing.JButton ok_button;
     private javax.swing.JMenuItem open_sym_item;
+    private javax.swing.JButton output_cnct_discnctBtn;
+    private javax.swing.JFrame output_frame;
+    private javax.swing.JMenuItem output_item;
+    private javax.swing.JComboBox<String> output_portsListComoBox;
+    private javax.swing.JButton output_search_btn;
     private javax.swing.JMenuItem prevent_item;
     private javax.swing.JButton proc_btn;
     private javax.swing.JMenu proc_menu_item;
@@ -1059,6 +1384,7 @@ public class Main_Frame extends JFrame{
     private javax.swing.JTextField server_msg_field;
     private javax.swing.JButton server_snd_btn;
     private javax.swing.JButton sort_btn;
+    private javax.swing.JLabel statusLabel;
     private javax.swing.JMenuItem sync_item;
     // End of variables declaration//GEN-END:variables
 }
