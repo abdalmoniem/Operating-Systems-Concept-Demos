@@ -3,9 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mn3m/GitHub/OS-Project/OS%20Project/src/main_Package/Main_Frame.java</file>
-            <file>file:/home/mn3m/GitHub/OS-Project/OS%20Project/src/main_Package/Process.java</file>
-            <file>file:/home/mn3m/GitHub/OS-Project/OS%20Project/src/main_Package/Disk_SSTF.java</file>
+            <file>file:/C:/Users/mn3m/Documents/GitHub/OS-Project/OS%20Project/src/main_Package/Main_Frame.java</file>
+            <file>file:/C:/Users/mn3m/Documents/GitHub/OS-Project/OS%20Project/src/main_Package/Process.java</file>
+            <file>file:/C:/Users/mn3m/Documents/GitHub/OS-Project/OS%20Project/src/main_Package/Disk_Scheduler.java</file>
+            <file>file:/C:/Users/mn3m/Documents/GitHub/OS-Project/OS%20Project/src/main_Package/Scheduler.java</file>
         </group>
     </open-files>
 </project-private>
