@@ -118,811 +118,753 @@ public class Main_Frame extends JFrame {
             editing_table_model = (DefaultTableModel) editing_table.getModel();
       }
 
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+      // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+      private void initComponents() {
 
-        scheduling_frame = new javax.swing.JFrame();
-        scheduling_table_scroll_pane = new javax.swing.JScrollPane();
-        processes_table = new javax.swing.JTable();
-        fifo_chk_btn = new javax.swing.JRadioButton();
-        npsjf_chk_btn = new javax.swing.JRadioButton();
-        rr_chk_btn = new javax.swing.JRadioButton();
-        sort_btn = new javax.swing.JButton();
-        edit_scheduler_table_row = new javax.swing.JButton();
-        scheduler_button_group = new javax.swing.ButtonGroup();
-        editing_table_frame = new javax.swing.JFrame();
-        editing_table_frame_scroll_pane = new javax.swing.JScrollPane();
-        editing_table = new javax.swing.JTable();
-        ok_button = new javax.swing.JButton();
-        new_row_btn = new javax.swing.JButton();
-        delete_row_btn = new javax.swing.JButton();
-        server_frame = new javax.swing.JFrame();
-        server_chat_panel = new javax.swing.JScrollPane();
-        server_chat_pane = new javax.swing.JTextPane();
-        server_snd_btn = new javax.swing.JButton();
-        server_msg_field = new javax.swing.JTextField();
-        client_frame = new javax.swing.JFrame();
-        client_chat_panel = new javax.swing.JScrollPane();
-        client_chat_pane = new javax.swing.JTextPane();
-        client_msg_field = new javax.swing.JTextField();
-        client_snd_btn = new javax.swing.JButton();
-        about_frame = new javax.swing.JFrame();
-        name2 = new javax.swing.JLabel();
-        name3 = new javax.swing.JLabel();
-        name1 = new javax.swing.JLabel();
-        name4 = new javax.swing.JLabel();
-        name5 = new javax.swing.JLabel();
-        logo_label = new javax.swing.JLabel();
-        development_team_title_label = new javax.swing.JLabel();
-        output_frame = new javax.swing.JFrame();
-        output_search_btn = new javax.swing.JButton();
-        output_portsListComoBox = new javax.swing.JComboBox<>();
-        output_cnct_discnctBtn = new javax.swing.JButton();
-        statusLabel = new javax.swing.JLabel();
-        brightness_slider = new javax.swing.JSlider();
-        brightness_label = new javax.swing.JLabel();
-        min_label = new javax.swing.JLabel();
-        max_label = new javax.swing.JLabel();
-        slow_input_frame = new javax.swing.JFrame();
-        slow_input_search_btn = new javax.swing.JButton();
-        slow_input_portsListComoBox = new javax.swing.JComboBox<>();
-        slow_input_cnct_discnctBtn = new javax.swing.JButton();
-        fast_input_frame = new javax.swing.JFrame();
-        fast_input_search_btn = new javax.swing.JButton();
-        fast_input_portsListComoBox = new javax.swing.JComboBox<>();
-        fast_input_cnct_discnctBtn = new javax.swing.JButton();
-        mem_btn = new javax.swing.JButton();
-        net_btn = new javax.swing.JButton();
-        proc_btn = new javax.swing.JButton();
-        disk_btn = new javax.swing.JButton();
-        main_menu_bar = new javax.swing.JMenuBar();
-        file_menu = new javax.swing.JMenu();
-        open_sym_item = new javax.swing.JMenuItem();
-        save_sym_item = new javax.swing.JMenuItem();
-        exit_item = new javax.swing.JMenuItem();
-        proc_menu_item = new javax.swing.JMenu();
-        sched_item = new javax.swing.JMenuItem();
-        sync_item = new javax.swing.JMenuItem();
-        deadlock_item = new javax.swing.JMenu();
-        detect_item = new javax.swing.JMenuItem();
-        prevent_item = new javax.swing.JMenuItem();
-        avoid_item = new javax.swing.JMenuItem();
-        mem_menu = new javax.swing.JMenu();
-        file_sys_menu = new javax.swing.JMenu();
-        io_menu = new javax.swing.JMenu();
-        slow_input_item = new javax.swing.JMenuItem();
-        fast_input_item = new javax.swing.JMenuItem();
-        output_item = new javax.swing.JMenuItem();
-        net_menu = new javax.swing.JMenu();
-        chat_menu = new javax.swing.JMenu();
-        server_item = new javax.swing.JMenuItem();
-        client_item = new javax.swing.JMenuItem();
-        examples_menu = new javax.swing.JMenu();
-        ex_proc_menu = new javax.swing.JMenu();
-        ex_sched_item = new javax.swing.JMenuItem();
-        ex_sync_item = new javax.swing.JMenuItem();
-        ex_deadlock_item = new javax.swing.JMenu();
-        ex_detect_item = new javax.swing.JMenuItem();
-        ex_prevent_item = new javax.swing.JMenuItem();
-        ex_avoid_item = new javax.swing.JMenuItem();
-        ex_mem_menu = new javax.swing.JMenu();
-        ex_file_sys_menu = new javax.swing.JMenu();
-        ex_io_menu = new javax.swing.JMenu();
-        ex_net_menu = new javax.swing.JMenu();
-        ex_chat_menu = new javax.swing.JMenu();
-        ex_server_item = new javax.swing.JMenuItem();
-        ex_client_item = new javax.swing.JMenuItem();
-        help_menu = new javax.swing.JMenu();
-        doc_item = new javax.swing.JMenuItem();
-        about_item = new javax.swing.JMenuItem();
+            scheduling_frame = new javax.swing.JFrame();
+            scheduling_table_scroll_pane = new javax.swing.JScrollPane();
+            processes_table = new javax.swing.JTable();
+            fifo_chk_btn = new javax.swing.JRadioButton();
+            npsjf_chk_btn = new javax.swing.JRadioButton();
+            rr_chk_btn = new javax.swing.JRadioButton();
+            sort_btn = new javax.swing.JButton();
+            edit_scheduler_table_row = new javax.swing.JButton();
+            scheduler_button_group = new javax.swing.ButtonGroup();
+            editing_table_frame = new javax.swing.JFrame();
+            editing_table_frame_scroll_pane = new javax.swing.JScrollPane();
+            editing_table = new javax.swing.JTable();
+            ok_button = new javax.swing.JButton();
+            new_row_btn = new javax.swing.JButton();
+            delete_row_btn = new javax.swing.JButton();
+            server_frame = new javax.swing.JFrame();
+            server_chat_panel = new javax.swing.JScrollPane();
+            server_chat_pane = new javax.swing.JTextPane();
+            server_snd_btn = new javax.swing.JButton();
+            server_msg_field = new javax.swing.JTextField();
+            client_frame = new javax.swing.JFrame();
+            client_chat_panel = new javax.swing.JScrollPane();
+            client_chat_pane = new javax.swing.JTextPane();
+            client_msg_field = new javax.swing.JTextField();
+            client_snd_btn = new javax.swing.JButton();
+            about_frame = new javax.swing.JFrame();
+            name2 = new javax.swing.JLabel();
+            name3 = new javax.swing.JLabel();
+            name1 = new javax.swing.JLabel();
+            name4 = new javax.swing.JLabel();
+            name5 = new javax.swing.JLabel();
+            logo_label = new javax.swing.JLabel();
+            development_team_title_label = new javax.swing.JLabel();
+            output_frame = new javax.swing.JFrame();
+            output_search_btn = new javax.swing.JButton();
+            output_portsListComoBox = new javax.swing.JComboBox<String>();
+            output_cnct_discnctBtn = new javax.swing.JButton();
+            statusLabel = new javax.swing.JLabel();
+            brightness_slider = new javax.swing.JSlider();
+            brightness_label = new javax.swing.JLabel();
+            min_label = new javax.swing.JLabel();
+            max_label = new javax.swing.JLabel();
+            slow_input_frame = new javax.swing.JFrame();
+            slow_input_search_btn = new javax.swing.JButton();
+            slow_input_portsListComoBox = new javax.swing.JComboBox<String>();
+            slow_input_cnct_discnctBtn = new javax.swing.JButton();
+            fast_input_frame = new javax.swing.JFrame();
+            fast_input_search_btn = new javax.swing.JButton();
+            fast_input_portsListComoBox = new javax.swing.JComboBox<String>();
+            fast_input_cnct_discnctBtn = new javax.swing.JButton();
+            mem_btn = new javax.swing.JButton();
+            net_btn = new javax.swing.JButton();
+            proc_btn = new javax.swing.JButton();
+            io_btn = new javax.swing.JButton();
+            file_sys_btn = new javax.swing.JButton();
+            main_menu_bar = new javax.swing.JMenuBar();
+            file_menu = new javax.swing.JMenu();
+            open_sym_item = new javax.swing.JMenuItem();
+            save_sym_item = new javax.swing.JMenuItem();
+            exit_item = new javax.swing.JMenuItem();
+            proc_menu_item = new javax.swing.JMenu();
+            sched_item = new javax.swing.JMenuItem();
+            sync_item = new javax.swing.JMenuItem();
+            deadlock_item = new javax.swing.JMenu();
+            detect_item = new javax.swing.JMenuItem();
+            prevent_item = new javax.swing.JMenuItem();
+            avoid_item = new javax.swing.JMenuItem();
+            mem_menu = new javax.swing.JMenu();
+            file_sys_menu = new javax.swing.JMenu();
+            io_menu = new javax.swing.JMenu();
+            slow_input_item = new javax.swing.JMenuItem();
+            fast_input_item = new javax.swing.JMenuItem();
+            output_item = new javax.swing.JMenuItem();
+            net_menu = new javax.swing.JMenu();
+            chat_menu = new javax.swing.JMenu();
+            server_item = new javax.swing.JMenuItem();
+            client_item = new javax.swing.JMenuItem();
+            help_menu = new javax.swing.JMenu();
+            doc_item = new javax.swing.JMenuItem();
+            about_item = new javax.swing.JMenuItem();
 
-        processes_table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            processes_table.setModel(new javax.swing.table.DefaultTableModel(
+                  new Object [][] {
 
-            },
-            new String [] {
-                "PID", "Arrival Time", "Burst Time", "Priority"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
+                  },
+                  new String [] {
+                        "PID", "Arrival Time", "Burst Time", "Priority"
+                  }
+            ) {
+                  Class[] types = new Class [] {
+                        java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                  };
+                  boolean[] canEdit = new boolean [] {
+                        false, false, false, false
+                  };
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
+                  public Class getColumnClass(int columnIndex) {
+                        return types [columnIndex];
+                  }
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        scheduling_table_scroll_pane.setViewportView(processes_table);
+                  public boolean isCellEditable(int rowIndex, int columnIndex) {
+                        return canEdit [columnIndex];
+                  }
+            });
+            scheduling_table_scroll_pane.setViewportView(processes_table);
 
-        scheduler_button_group.add(fifo_chk_btn);
-        fifo_chk_btn.setSelected(true);
-        fifo_chk_btn.setText("FIFO");
+            scheduler_button_group.add(fifo_chk_btn);
+            fifo_chk_btn.setSelected(true);
+            fifo_chk_btn.setText("FIFO");
 
-        scheduler_button_group.add(npsjf_chk_btn);
-        npsjf_chk_btn.setText("SJF");
+            scheduler_button_group.add(npsjf_chk_btn);
+            npsjf_chk_btn.setText("SJF");
 
-        scheduler_button_group.add(rr_chk_btn);
-        rr_chk_btn.setText("RR");
+            scheduler_button_group.add(rr_chk_btn);
+            rr_chk_btn.setText("RR");
 
-        sort_btn.setText("Schedule");
-        sort_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sort_btnActionPerformed(evt);
-            }
-        });
+            sort_btn.setText("Schedule");
+            sort_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        sort_btnActionPerformed(evt);
+                  }
+            });
 
-        edit_scheduler_table_row.setText("Edit Table");
-        edit_scheduler_table_row.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                edit_scheduler_table_rowActionPerformed(evt);
-            }
-        });
+            edit_scheduler_table_row.setText("Edit Table");
+            edit_scheduler_table_row.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        edit_scheduler_table_rowActionPerformed(evt);
+                  }
+            });
 
-        javax.swing.GroupLayout scheduling_frameLayout = new javax.swing.GroupLayout(scheduling_frame.getContentPane());
-        scheduling_frame.getContentPane().setLayout(scheduling_frameLayout);
-        scheduling_frameLayout.setHorizontalGroup(
-            scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-            .addGroup(scheduling_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sort_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(scheduling_frameLayout.createSequentialGroup()
-                        .addComponent(fifo_chk_btn)
-                        .addGap(18, 18, 18)
-                        .addComponent(npsjf_chk_btn)
-                        .addGap(18, 18, 18)
-                        .addComponent(rr_chk_btn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(edit_scheduler_table_row)))
-                .addContainerGap())
-        );
-        scheduling_frameLayout.setVerticalGroup(
-            scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(scheduling_frameLayout.createSequentialGroup()
-                .addComponent(scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(edit_scheduler_table_row)
-                    .addComponent(fifo_chk_btn)
-                    .addComponent(npsjf_chk_btn)
-                    .addComponent(rr_chk_btn))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sort_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        editing_table_frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                editing_table_frameWindowClosing(evt);
-            }
-        });
-
-        editing_table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "PID", "Arrival Time", "Burst Time", "Priority"
-            }
-        ));
-        editing_table_frame_scroll_pane.setViewportView(editing_table);
-
-        ok_button.setText("OK");
-        ok_button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ok_buttonActionPerformed(evt);
-            }
-        });
-
-        new_row_btn.setText("New Row");
-        new_row_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new_row_btnActionPerformed(evt);
-            }
-        });
-
-        delete_row_btn.setText("Delete Row");
-        delete_row_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delete_row_btnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout editing_table_frameLayout = new javax.swing.GroupLayout(editing_table_frame.getContentPane());
-        editing_table_frame.getContentPane().setLayout(editing_table_frameLayout);
-        editing_table_frameLayout.setHorizontalGroup(
-            editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(editing_table_frame_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addGroup(editing_table_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(delete_row_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(new_row_btn, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ok_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        editing_table_frameLayout.setVerticalGroup(
-            editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(editing_table_frameLayout.createSequentialGroup()
-                .addComponent(editing_table_frame_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(editing_table_frameLayout.createSequentialGroup()
-                        .addComponent(new_row_btn)
+            javax.swing.GroupLayout scheduling_frameLayout = new javax.swing.GroupLayout(scheduling_frame.getContentPane());
+            scheduling_frame.getContentPane().setLayout(scheduling_frameLayout);
+            scheduling_frameLayout.setHorizontalGroup(
+                  scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                  .addGroup(scheduling_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addComponent(sort_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                              .addGroup(scheduling_frameLayout.createSequentialGroup()
+                                    .addComponent(fifo_chk_btn)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(npsjf_chk_btn)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(rr_chk_btn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(edit_scheduler_table_row)))
+                        .addContainerGap())
+            );
+            scheduling_frameLayout.setVerticalGroup(
+                  scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(scheduling_frameLayout.createSequentialGroup()
+                        .addComponent(scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(delete_row_btn))
-                    .addComponent(ok_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                        .addGroup(scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(edit_scheduler_table_row)
+                              .addComponent(fifo_chk_btn)
+                              .addComponent(npsjf_chk_btn)
+                              .addComponent(rr_chk_btn))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sort_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+            );
 
-        server_frame.setTitle("Server");
-        server_frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                server_frameWindowClosing(evt);
-            }
-        });
+            editing_table_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                  public void windowClosing(java.awt.event.WindowEvent evt) {
+                        editing_table_frameWindowClosing(evt);
+                  }
+            });
 
-        server_chat_pane.setEditable(false);
-        server_chat_pane.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
-        server_chat_pane.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        server_chat_panel.setViewportView(server_chat_pane);
+            editing_table.setModel(new javax.swing.table.DefaultTableModel(
+                  new Object [][] {
 
-        server_snd_btn.setText("Send");
-        server_snd_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                server_snd_btnActionPerformed(evt);
-            }
-        });
+                  },
+                  new String [] {
+                        "PID", "Arrival Time", "Burst Time", "Priority"
+                  }
+            ));
+            editing_table_frame_scroll_pane.setViewportView(editing_table);
 
-        server_msg_field.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                server_msg_fieldKeyPressed(evt);
-            }
-        });
+            ok_button.setText("OK");
+            ok_button.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        ok_buttonActionPerformed(evt);
+                  }
+            });
 
-        javax.swing.GroupLayout server_frameLayout = new javax.swing.GroupLayout(server_frame.getContentPane());
-        server_frame.getContentPane().setLayout(server_frameLayout);
-        server_frameLayout.setHorizontalGroup(
-            server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(server_chat_panel)
-            .addGroup(server_frameLayout.createSequentialGroup()
-                .addComponent(server_msg_field, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(server_snd_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        server_frameLayout.setVerticalGroup(
-            server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(server_frameLayout.createSequentialGroup()
-                .addComponent(server_chat_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(server_snd_btn)
-                    .addComponent(server_msg_field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+            new_row_btn.setText("New Row");
+            new_row_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        new_row_btnActionPerformed(evt);
+                  }
+            });
 
-        client_frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                client_frameWindowClosing(evt);
-            }
-        });
+            delete_row_btn.setText("Delete Row");
+            delete_row_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        delete_row_btnActionPerformed(evt);
+                  }
+            });
 
-        client_chat_pane.setEditable(false);
-        client_chat_pane.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
-        client_chat_pane.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        client_chat_panel.setViewportView(client_chat_pane);
+            javax.swing.GroupLayout editing_table_frameLayout = new javax.swing.GroupLayout(editing_table_frame.getContentPane());
+            editing_table_frame.getContentPane().setLayout(editing_table_frameLayout);
+            editing_table_frameLayout.setHorizontalGroup(
+                  editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(editing_table_frame_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                  .addGroup(editing_table_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                              .addComponent(delete_row_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                              .addComponent(new_row_btn, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ok_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+            );
+            editing_table_frameLayout.setVerticalGroup(
+                  editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(editing_table_frameLayout.createSequentialGroup()
+                        .addComponent(editing_table_frame_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(editing_table_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                              .addGroup(editing_table_frameLayout.createSequentialGroup()
+                                    .addComponent(new_row_btn)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(delete_row_btn))
+                              .addComponent(ok_button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
+            );
 
-        client_msg_field.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                client_msg_fieldKeyPressed(evt);
-            }
-        });
+            server_frame.setTitle("Server");
+            server_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                  public void windowClosing(java.awt.event.WindowEvent evt) {
+                        server_frameWindowClosing(evt);
+                  }
+            });
 
-        client_snd_btn.setText("Send");
-        client_snd_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                client_snd_btnActionPerformed(evt);
-            }
-        });
+            server_chat_pane.setEditable(false);
+            server_chat_pane.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
+            server_chat_pane.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+            server_chat_panel.setViewportView(server_chat_pane);
 
-        javax.swing.GroupLayout client_frameLayout = new javax.swing.GroupLayout(client_frame.getContentPane());
-        client_frame.getContentPane().setLayout(client_frameLayout);
-        client_frameLayout.setHorizontalGroup(
-            client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(client_chat_panel)
-            .addGroup(client_frameLayout.createSequentialGroup()
-                .addComponent(client_msg_field, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(client_snd_btn)
-                .addContainerGap())
-        );
-        client_frameLayout.setVerticalGroup(
-            client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(client_frameLayout.createSequentialGroup()
-                .addComponent(client_chat_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(client_msg_field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(client_snd_btn))
-                .addContainerGap())
-        );
+            server_snd_btn.setText("Send");
+            server_snd_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        server_snd_btnActionPerformed(evt);
+                  }
+            });
 
-        about_frame.setTitle("About");
-        about_frame.setResizable(false);
+            server_msg_field.addKeyListener(new java.awt.event.KeyAdapter() {
+                  public void keyPressed(java.awt.event.KeyEvent evt) {
+                        server_msg_fieldKeyPressed(evt);
+                  }
+            });
 
-        name2.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        name2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        name2.setText("Khalid Taha Ahmed");
+            javax.swing.GroupLayout server_frameLayout = new javax.swing.GroupLayout(server_frame.getContentPane());
+            server_frame.getContentPane().setLayout(server_frameLayout);
+            server_frameLayout.setHorizontalGroup(
+                  server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(server_chat_panel)
+                  .addGroup(server_frameLayout.createSequentialGroup()
+                        .addComponent(server_msg_field, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(server_snd_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+            );
+            server_frameLayout.setVerticalGroup(
+                  server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(server_frameLayout.createSequentialGroup()
+                        .addComponent(server_chat_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(server_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(server_snd_btn)
+                              .addComponent(server_msg_field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())
+            );
 
-        name3.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        name3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        name3.setText("Eslam Khalid Tawfik");
+            client_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                  public void windowClosing(java.awt.event.WindowEvent evt) {
+                        client_frameWindowClosing(evt);
+                  }
+            });
 
-        name1.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        name1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        name1.setText("Ahmed Samir Demerdash");
+            client_chat_pane.setEditable(false);
+            client_chat_pane.setFont(new java.awt.Font("Consolas", 0, 12)); // NOI18N
+            client_chat_pane.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+            client_chat_panel.setViewportView(client_chat_pane);
 
-        name4.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        name4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        name4.setText("Rana Tarek Qunswa");
+            client_msg_field.addKeyListener(new java.awt.event.KeyAdapter() {
+                  public void keyPressed(java.awt.event.KeyEvent evt) {
+                        client_msg_fieldKeyPressed(evt);
+                  }
+            });
 
-        name5.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
-        name5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        name5.setText("AbdAlMoniem Osama AlHifnawy");
+            client_snd_btn.setText("Send");
+            client_snd_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        client_snd_btnActionPerformed(evt);
+                  }
+            });
 
-        logo_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        logo_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main_Package/Pics/logo.png"))); // NOI18N
+            javax.swing.GroupLayout client_frameLayout = new javax.swing.GroupLayout(client_frame.getContentPane());
+            client_frame.getContentPane().setLayout(client_frameLayout);
+            client_frameLayout.setHorizontalGroup(
+                  client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(client_chat_panel)
+                  .addGroup(client_frameLayout.createSequentialGroup()
+                        .addComponent(client_msg_field, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(client_snd_btn)
+                        .addContainerGap())
+            );
+            client_frameLayout.setVerticalGroup(
+                  client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(client_frameLayout.createSequentialGroup()
+                        .addComponent(client_chat_panel, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(client_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(client_msg_field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addComponent(client_snd_btn))
+                        .addContainerGap())
+            );
 
-        development_team_title_label.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        development_team_title_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        development_team_title_label.setText("Development Team:");
+            about_frame.setTitle("About");
+            about_frame.setResizable(false);
 
-        javax.swing.GroupLayout about_frameLayout = new javax.swing.GroupLayout(about_frame.getContentPane());
-        about_frame.getContentPane().setLayout(about_frameLayout);
-        about_frameLayout.setHorizontalGroup(
-            about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(name2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(name3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(name4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(name5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(name1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(development_team_title_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(logo_label, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        about_frameLayout.setVerticalGroup(
-            about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, about_frameLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(logo_label, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(development_team_title_label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name3, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(name5))
-        );
+            name2.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+            name2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            name2.setText("Khalid Taha Ahmed");
 
-        output_frame.setTitle("Output");
-        output_frame.setResizable(false);
-        output_frame.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                output_frameWindowClosing(evt);
-            }
-        });
+            name3.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+            name3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            name3.setText("Eslam Khalid Tawfik");
 
-        output_search_btn.setText("Search COM Ports");
-        output_search_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                output_search_btnActionPerformed(evt);
-            }
-        });
+            name1.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+            name1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            name1.setText("Ahmed Samir Demerdash");
 
-        output_cnct_discnctBtn.setText("Connect to Port");
-        output_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                output_cnct_discnctBtnActionPerformed(evt);
-            }
-        });
+            name4.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+            name4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            name4.setText("Rana Tarek Qunswa");
 
-        statusLabel.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
-        statusLabel.setText("Status: Disconnected");
+            name5.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+            name5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            name5.setText("AbdAlMoniem Osama AlHifnawy");
 
-        brightness_slider.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        brightness_slider.setMajorTickSpacing(5);
-        brightness_slider.setMaximum(255);
-        brightness_slider.setPaintTicks(true);
-        brightness_slider.setValue(0);
-        brightness_slider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        brightness_slider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                brightness_sliderStateChanged(evt);
-            }
-        });
+            logo_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            logo_label.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main_Package/Pics/logo.png"))); // NOI18N
 
-        brightness_label.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
-        brightness_label.setText("Brightness:");
+            development_team_title_label.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+            development_team_title_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            development_team_title_label.setText("Development Team:");
 
-        min_label.setText("min");
-
-        max_label.setText("max");
-
-        javax.swing.GroupLayout output_frameLayout = new javax.swing.GroupLayout(output_frame.getContentPane());
-        output_frame.getContentPane().setLayout(output_frameLayout);
-        output_frameLayout.setHorizontalGroup(
-            output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(output_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(output_frameLayout.createSequentialGroup()
-                        .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(output_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
-                    .addComponent(brightness_slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, output_frameLayout.createSequentialGroup()
+            javax.swing.GroupLayout about_frameLayout = new javax.swing.GroupLayout(about_frame.getContentPane());
+            about_frame.getContentPane().setLayout(about_frameLayout);
+            about_frameLayout.setHorizontalGroup(
+                  about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addComponent(name2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(name3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(name4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(name5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(name1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(development_team_title_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                  .addComponent(logo_label, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
+            about_frameLayout.setVerticalGroup(
+                  about_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, about_frameLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(statusLabel))
-                    .addGroup(output_frameLayout.createSequentialGroup()
+                        .addComponent(logo_label, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(development_team_title_label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(name1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(name2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(name3, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(name4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(name5))
+            );
+
+            output_frame.setTitle("Output");
+            output_frame.setResizable(false);
+            output_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+                  public void windowClosing(java.awt.event.WindowEvent evt) {
+                        output_frameWindowClosing(evt);
+                  }
+            });
+
+            output_search_btn.setText("Search COM Ports");
+            output_search_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        output_search_btnActionPerformed(evt);
+                  }
+            });
+
+            output_cnct_discnctBtn.setText("Connect to Port");
+            output_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        output_cnct_discnctBtnActionPerformed(evt);
+                  }
+            });
+
+            statusLabel.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
+            statusLabel.setText("Status: Disconnected");
+
+            brightness_slider.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+            brightness_slider.setMajorTickSpacing(5);
+            brightness_slider.setMaximum(255);
+            brightness_slider.setPaintTicks(true);
+            brightness_slider.setValue(0);
+            brightness_slider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            brightness_slider.addChangeListener(new javax.swing.event.ChangeListener() {
+                  public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                        brightness_sliderStateChanged(evt);
+                  }
+            });
+
+            brightness_label.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+            brightness_label.setText("Brightness:");
+
+            min_label.setText("min");
+
+            max_label.setText("max");
+
+            javax.swing.GroupLayout output_frameLayout = new javax.swing.GroupLayout(output_frame.getContentPane());
+            output_frame.getContentPane().setLayout(output_frameLayout);
+            output_frameLayout.setHorizontalGroup(
+                  output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(output_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGroup(output_frameLayout.createSequentialGroup()
+                                    .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                          .addComponent(output_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                          .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)))
+                              .addComponent(brightness_slider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, output_frameLayout.createSequentialGroup()
+                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addComponent(statusLabel))
+                              .addGroup(output_frameLayout.createSequentialGroup()
+                                    .addComponent(brightness_label)
+                                    .addGap(0, 0, Short.MAX_VALUE))
+                              .addGroup(output_frameLayout.createSequentialGroup()
+                                    .addComponent(min_label)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(max_label)))
+                        .addContainerGap())
+            );
+            output_frameLayout.setVerticalGroup(
+                  output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(output_frameLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGroup(output_frameLayout.createSequentialGroup()
+                                    .addComponent(output_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                              .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(brightness_label)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(output_frameLayout.createSequentialGroup()
-                        .addComponent(min_label)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(max_label)))
-                .addContainerGap())
-        );
-        output_frameLayout.setVerticalGroup(
-            output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(output_frameLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(output_frameLayout.createSequentialGroup()
-                        .addComponent(output_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(output_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(output_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(brightness_label)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(min_label)
-                    .addComponent(max_label))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(brightness_slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusLabel)
-                .addContainerGap())
-        );
-
-        slow_input_frame.setTitle("Slow Input");
-        slow_input_frame.setResizable(false);
-
-        slow_input_search_btn.setText("Search COM Ports");
-        slow_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                slow_input_search_btnActionPerformed(evt);
-            }
-        });
-
-        slow_input_cnct_discnctBtn.setText("Connect to Port");
-        slow_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                slow_input_cnct_discnctBtnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout slow_input_frameLayout = new javax.swing.GroupLayout(slow_input_frame.getContentPane());
-        slow_input_frame.getContentPane().setLayout(slow_input_frameLayout);
-        slow_input_frameLayout.setHorizontalGroup(
-            slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(slow_input_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(slow_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        slow_input_frameLayout.setVerticalGroup(
-            slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(slow_input_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(slow_input_frameLayout.createSequentialGroup()
-                        .addComponent(slow_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(output_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(min_label)
+                              .addComponent(max_label))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        fast_input_frame.setTitle("Fast Input");
-        fast_input_frame.setResizable(false);
-
-        fast_input_search_btn.setText("Search COM Ports");
-        fast_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fast_input_search_btnActionPerformed(evt);
-            }
-        });
-
-        fast_input_cnct_discnctBtn.setText("Connect to Port");
-        fast_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fast_input_cnct_discnctBtnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout fast_input_frameLayout = new javax.swing.GroupLayout(fast_input_frame.getContentPane());
-        fast_input_frame.getContentPane().setLayout(fast_input_frameLayout);
-        fast_input_frameLayout.setHorizontalGroup(
-            fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fast_input_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fast_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        fast_input_frameLayout.setVerticalGroup(
-            fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fast_input_frameLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(fast_input_frameLayout.createSequentialGroup()
-                        .addComponent(fast_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(brightness_slider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                        .addComponent(statusLabel)
+                        .addContainerGap())
+            );
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+            slow_input_frame.setTitle("Slow Input");
+            slow_input_frame.setResizable(false);
 
-        mem_btn.setText("Memory");
+            slow_input_search_btn.setText("Search COM Ports");
+            slow_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        slow_input_search_btnActionPerformed(evt);
+                  }
+            });
 
-        net_btn.setText("Network");
-        net_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                net_btnActionPerformed(evt);
-            }
-        });
+            slow_input_cnct_discnctBtn.setText("Connect to Port");
+            slow_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        slow_input_cnct_discnctBtnActionPerformed(evt);
+                  }
+            });
 
-        proc_btn.setText("Processes");
+            javax.swing.GroupLayout slow_input_frameLayout = new javax.swing.GroupLayout(slow_input_frame.getContentPane());
+            slow_input_frame.getContentPane().setLayout(slow_input_frameLayout);
+            slow_input_frameLayout.setHorizontalGroup(
+                  slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(slow_input_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addComponent(slow_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                              .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                        .addContainerGap())
+            );
+            slow_input_frameLayout.setVerticalGroup(
+                  slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(slow_input_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGroup(slow_input_frameLayout.createSequentialGroup()
+                                    .addComponent(slow_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                              .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        disk_btn.setText("Disk");
+            fast_input_frame.setTitle("Fast Input");
+            fast_input_frame.setResizable(false);
 
-        file_menu.setText("File");
+            fast_input_search_btn.setText("Search COM Ports");
+            fast_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        fast_input_search_btnActionPerformed(evt);
+                  }
+            });
 
-        open_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        open_sym_item.setText("Open Simulation");
-        file_menu.add(open_sym_item);
+            fast_input_cnct_discnctBtn.setText("Connect to Port");
+            fast_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        fast_input_cnct_discnctBtnActionPerformed(evt);
+                  }
+            });
 
-        save_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        save_sym_item.setText("Save Simulation");
-        file_menu.add(save_sym_item);
+            javax.swing.GroupLayout fast_input_frameLayout = new javax.swing.GroupLayout(fast_input_frame.getContentPane());
+            fast_input_frame.getContentPane().setLayout(fast_input_frameLayout);
+            fast_input_frameLayout.setHorizontalGroup(
+                  fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(fast_input_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addComponent(fast_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                              .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                        .addContainerGap())
+            );
+            fast_input_frameLayout.setVerticalGroup(
+                  fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(fast_input_frameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addGroup(fast_input_frameLayout.createSequentialGroup()
+                                    .addComponent(fast_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                              .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        exit_item.setText("Exit");
-        exit_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exit_itemActionPerformed(evt);
-            }
-        });
-        file_menu.add(exit_item);
+            setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            setResizable(false);
 
-        main_menu_bar.add(file_menu);
+            mem_btn.setText("Memory");
 
-        proc_menu_item.setText("Processes");
+            net_btn.setText("Network");
+            net_btn.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        net_btnActionPerformed(evt);
+                  }
+            });
 
-        sched_item.setText("Scheduling");
-        sched_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sched_itemActionPerformed(evt);
-            }
-        });
-        proc_menu_item.add(sched_item);
+            proc_btn.setText("Processes");
 
-        sync_item.setText("Synchronization");
-        proc_menu_item.add(sync_item);
+            io_btn.setText("Input/Output");
 
-        deadlock_item.setText("Deadlock");
+            file_sys_btn.setText("File System");
 
-        detect_item.setText("Detection");
-        detect_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                detect_itemActionPerformed(evt);
-            }
-        });
-        deadlock_item.add(detect_item);
+            file_menu.setText("File");
 
-        prevent_item.setText("Prevention");
-        deadlock_item.add(prevent_item);
+            open_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+            open_sym_item.setText("Open Simulation");
+            file_menu.add(open_sym_item);
 
-        avoid_item.setText("Avoidance");
-        deadlock_item.add(avoid_item);
+            save_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+            save_sym_item.setText("Save Simulation");
+            file_menu.add(save_sym_item);
 
-        proc_menu_item.add(deadlock_item);
+            exit_item.setText("Exit");
+            exit_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        exit_itemActionPerformed(evt);
+                  }
+            });
+            file_menu.add(exit_item);
 
-        main_menu_bar.add(proc_menu_item);
+            main_menu_bar.add(file_menu);
 
-        mem_menu.setText("Memory");
-        main_menu_bar.add(mem_menu);
+            proc_menu_item.setText("Processes");
 
-        file_sys_menu.setText("File System");
-        main_menu_bar.add(file_sys_menu);
+            sched_item.setText("Scheduling");
+            sched_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        sched_itemActionPerformed(evt);
+                  }
+            });
+            proc_menu_item.add(sched_item);
 
-        io_menu.setText("I/O");
+            sync_item.setText("Synchronization");
+            proc_menu_item.add(sync_item);
 
-        slow_input_item.setText("Slow Input");
-        slow_input_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                slow_input_itemActionPerformed(evt);
-            }
-        });
-        io_menu.add(slow_input_item);
+            deadlock_item.setText("Deadlock");
 
-        fast_input_item.setText("Fast Input");
-        fast_input_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fast_input_itemActionPerformed(evt);
-            }
-        });
-        io_menu.add(fast_input_item);
+            detect_item.setText("Detection");
+            detect_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        detect_itemActionPerformed(evt);
+                  }
+            });
+            deadlock_item.add(detect_item);
 
-        output_item.setText("Output");
-        output_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                output_itemActionPerformed(evt);
-            }
-        });
-        io_menu.add(output_item);
+            prevent_item.setText("Prevention");
+            deadlock_item.add(prevent_item);
 
-        main_menu_bar.add(io_menu);
+            avoid_item.setText("Avoidance");
+            deadlock_item.add(avoid_item);
 
-        net_menu.setText("Network");
+            proc_menu_item.add(deadlock_item);
 
-        chat_menu.setText("Simple Chat");
+            main_menu_bar.add(proc_menu_item);
 
-        server_item.setText("Server");
-        server_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                server_itemActionPerformed(evt);
-            }
-        });
-        chat_menu.add(server_item);
+            mem_menu.setText("Memory");
+            main_menu_bar.add(mem_menu);
 
-        client_item.setText("Client");
-        client_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                client_itemActionPerformed(evt);
-            }
-        });
-        chat_menu.add(client_item);
+            file_sys_menu.setText("File System");
+            main_menu_bar.add(file_sys_menu);
 
-        net_menu.add(chat_menu);
+            io_menu.setText("I/O");
 
-        main_menu_bar.add(net_menu);
+            slow_input_item.setText("Slow Input");
+            slow_input_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        slow_input_itemActionPerformed(evt);
+                  }
+            });
+            io_menu.add(slow_input_item);
 
-        examples_menu.setText("Examples");
+            fast_input_item.setText("Fast Input");
+            fast_input_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        fast_input_itemActionPerformed(evt);
+                  }
+            });
+            io_menu.add(fast_input_item);
 
-        ex_proc_menu.setText("Processes");
+            output_item.setText("Output");
+            output_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        output_itemActionPerformed(evt);
+                  }
+            });
+            io_menu.add(output_item);
 
-        ex_sched_item.setText("Scheduling");
-        ex_proc_menu.add(ex_sched_item);
+            main_menu_bar.add(io_menu);
 
-        ex_sync_item.setText("Synchronization");
-        ex_proc_menu.add(ex_sync_item);
+            net_menu.setText("Network");
 
-        ex_deadlock_item.setText("Deadlock");
+            chat_menu.setText("Simple Chat");
 
-        ex_detect_item.setText("Detection");
-        ex_deadlock_item.add(ex_detect_item);
+            server_item.setText("Server");
+            server_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        server_itemActionPerformed(evt);
+                  }
+            });
+            chat_menu.add(server_item);
 
-        ex_prevent_item.setText("Prevention");
-        ex_deadlock_item.add(ex_prevent_item);
+            client_item.setText("Client");
+            client_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        client_itemActionPerformed(evt);
+                  }
+            });
+            chat_menu.add(client_item);
 
-        ex_avoid_item.setText("Avoidance");
-        ex_deadlock_item.add(ex_avoid_item);
+            net_menu.add(chat_menu);
 
-        ex_proc_menu.add(ex_deadlock_item);
+            main_menu_bar.add(net_menu);
 
-        examples_menu.add(ex_proc_menu);
+            help_menu.setText("Help");
 
-        ex_mem_menu.setText("Memory");
-        examples_menu.add(ex_mem_menu);
+            doc_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+            doc_item.setText("Documentation");
+            help_menu.add(doc_item);
 
-        ex_file_sys_menu.setText("File System");
-        examples_menu.add(ex_file_sys_menu);
+            about_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
+            about_item.setText("About");
+            about_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        about_itemActionPerformed(evt);
+                  }
+            });
+            help_menu.add(about_item);
 
-        ex_io_menu.setText("I/O");
-        examples_menu.add(ex_io_menu);
+            main_menu_bar.add(help_menu);
 
-        ex_net_menu.setText("Network");
+            setJMenuBar(main_menu_bar);
 
-        ex_chat_menu.setText("Simple Chat");
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                  layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addComponent(proc_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addComponent(io_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                              .addComponent(net_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(file_sys_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                  layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                  .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addComponent(proc_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addComponent(file_sys_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                              .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                              .addComponent(io_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
 
-        ex_server_item.setText("Server");
-        ex_chat_menu.add(ex_server_item);
-
-        ex_client_item.setText("Client");
-        ex_chat_menu.add(ex_client_item);
-
-        ex_net_menu.add(ex_chat_menu);
-
-        examples_menu.add(ex_net_menu);
-
-        main_menu_bar.add(examples_menu);
-
-        help_menu.setText("Help");
-
-        doc_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        doc_item.setText("Documentation");
-        help_menu.add(doc_item);
-
-        about_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
-        about_item.setText("About");
-        about_item.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                about_itemActionPerformed(evt);
-            }
-        });
-        help_menu.add(about_item);
-
-        main_menu_bar.add(help_menu);
-
-        setJMenuBar(main_menu_bar);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(163, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proc_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(disk_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(181, 181, 181))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(proc_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(disk_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            pack();
+      }// </editor-fold>//GEN-END:initComponents
 
     private void sort_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sort_btnActionPerformed
           try {
@@ -1325,100 +1267,86 @@ public class Main_Frame extends JFrame {
             });
       }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JFrame about_frame;
-    private javax.swing.JMenuItem about_item;
-    private javax.swing.JMenuItem avoid_item;
-    private javax.swing.JLabel brightness_label;
-    private javax.swing.JSlider brightness_slider;
-    private javax.swing.JMenu chat_menu;
-    private javax.swing.JTextPane client_chat_pane;
-    private javax.swing.JScrollPane client_chat_panel;
-    private javax.swing.JFrame client_frame;
-    private javax.swing.JMenuItem client_item;
-    private javax.swing.JTextField client_msg_field;
-    private javax.swing.JButton client_snd_btn;
-    private javax.swing.JMenu deadlock_item;
-    private javax.swing.JButton delete_row_btn;
-    private javax.swing.JMenuItem detect_item;
-    private javax.swing.JLabel development_team_title_label;
-    private javax.swing.JButton disk_btn;
-    private javax.swing.JMenuItem doc_item;
-    private javax.swing.JButton edit_scheduler_table_row;
-    private javax.swing.JTable editing_table;
-    private javax.swing.JFrame editing_table_frame;
-    private javax.swing.JScrollPane editing_table_frame_scroll_pane;
-    private javax.swing.JMenuItem ex_avoid_item;
-    private javax.swing.JMenu ex_chat_menu;
-    private javax.swing.JMenuItem ex_client_item;
-    private javax.swing.JMenu ex_deadlock_item;
-    private javax.swing.JMenuItem ex_detect_item;
-    private javax.swing.JMenu ex_file_sys_menu;
-    private javax.swing.JMenu ex_io_menu;
-    private javax.swing.JMenu ex_mem_menu;
-    private javax.swing.JMenu ex_net_menu;
-    private javax.swing.JMenuItem ex_prevent_item;
-    private javax.swing.JMenu ex_proc_menu;
-    private javax.swing.JMenuItem ex_sched_item;
-    private javax.swing.JMenuItem ex_server_item;
-    private javax.swing.JMenuItem ex_sync_item;
-    private javax.swing.JMenu examples_menu;
-    private javax.swing.JMenuItem exit_item;
-    private javax.swing.JButton fast_input_cnct_discnctBtn;
-    private javax.swing.JFrame fast_input_frame;
-    private javax.swing.JMenuItem fast_input_item;
-    private javax.swing.JComboBox<String> fast_input_portsListComoBox;
-    private javax.swing.JButton fast_input_search_btn;
-    private javax.swing.JRadioButton fifo_chk_btn;
-    private javax.swing.JMenu file_menu;
-    private javax.swing.JMenu file_sys_menu;
-    private javax.swing.JMenu help_menu;
-    private javax.swing.JMenu io_menu;
-    private javax.swing.JLabel logo_label;
-    private javax.swing.JMenuBar main_menu_bar;
-    private javax.swing.JLabel max_label;
-    private javax.swing.JButton mem_btn;
-    private javax.swing.JMenu mem_menu;
-    private javax.swing.JLabel min_label;
-    private javax.swing.JLabel name1;
-    private javax.swing.JLabel name2;
-    private javax.swing.JLabel name3;
-    private javax.swing.JLabel name4;
-    private javax.swing.JLabel name5;
-    private javax.swing.JButton net_btn;
-    private javax.swing.JMenu net_menu;
-    private javax.swing.JButton new_row_btn;
-    private javax.swing.JRadioButton npsjf_chk_btn;
-    private javax.swing.JButton ok_button;
-    private javax.swing.JMenuItem open_sym_item;
-    private javax.swing.JButton output_cnct_discnctBtn;
-    private javax.swing.JFrame output_frame;
-    private javax.swing.JMenuItem output_item;
-    private javax.swing.JComboBox<String> output_portsListComoBox;
-    private javax.swing.JButton output_search_btn;
-    private javax.swing.JMenuItem prevent_item;
-    private javax.swing.JButton proc_btn;
-    private javax.swing.JMenu proc_menu_item;
-    private javax.swing.JTable processes_table;
-    private javax.swing.JRadioButton rr_chk_btn;
-    private javax.swing.JMenuItem save_sym_item;
-    private javax.swing.JMenuItem sched_item;
-    private javax.swing.ButtonGroup scheduler_button_group;
-    private javax.swing.JFrame scheduling_frame;
-    private javax.swing.JScrollPane scheduling_table_scroll_pane;
-    private javax.swing.JTextPane server_chat_pane;
-    private javax.swing.JScrollPane server_chat_panel;
-    private javax.swing.JFrame server_frame;
-    private javax.swing.JMenuItem server_item;
-    private javax.swing.JTextField server_msg_field;
-    private javax.swing.JButton server_snd_btn;
-    private javax.swing.JButton slow_input_cnct_discnctBtn;
-    private javax.swing.JFrame slow_input_frame;
-    private javax.swing.JMenuItem slow_input_item;
-    private javax.swing.JComboBox<String> slow_input_portsListComoBox;
-    private javax.swing.JButton slow_input_search_btn;
-    private javax.swing.JButton sort_btn;
-    private javax.swing.JLabel statusLabel;
-    private javax.swing.JMenuItem sync_item;
-    // End of variables declaration//GEN-END:variables
+      // Variables declaration - do not modify//GEN-BEGIN:variables
+      private javax.swing.JFrame about_frame;
+      private javax.swing.JMenuItem about_item;
+      private javax.swing.JMenuItem avoid_item;
+      private javax.swing.JLabel brightness_label;
+      private javax.swing.JSlider brightness_slider;
+      private javax.swing.JMenu chat_menu;
+      private javax.swing.JTextPane client_chat_pane;
+      private javax.swing.JScrollPane client_chat_panel;
+      private javax.swing.JFrame client_frame;
+      private javax.swing.JMenuItem client_item;
+      private javax.swing.JTextField client_msg_field;
+      private javax.swing.JButton client_snd_btn;
+      private javax.swing.JMenu deadlock_item;
+      private javax.swing.JButton delete_row_btn;
+      private javax.swing.JMenuItem detect_item;
+      private javax.swing.JLabel development_team_title_label;
+      private javax.swing.JMenuItem doc_item;
+      private javax.swing.JButton edit_scheduler_table_row;
+      private javax.swing.JTable editing_table;
+      private javax.swing.JFrame editing_table_frame;
+      private javax.swing.JScrollPane editing_table_frame_scroll_pane;
+      private javax.swing.JMenuItem exit_item;
+      private javax.swing.JButton fast_input_cnct_discnctBtn;
+      private javax.swing.JFrame fast_input_frame;
+      private javax.swing.JMenuItem fast_input_item;
+      private javax.swing.JComboBox<String> fast_input_portsListComoBox;
+      private javax.swing.JButton fast_input_search_btn;
+      private javax.swing.JRadioButton fifo_chk_btn;
+      private javax.swing.JMenu file_menu;
+      private javax.swing.JButton file_sys_btn;
+      private javax.swing.JMenu file_sys_menu;
+      private javax.swing.JMenu help_menu;
+      private javax.swing.JButton io_btn;
+      private javax.swing.JMenu io_menu;
+      private javax.swing.JLabel logo_label;
+      private javax.swing.JMenuBar main_menu_bar;
+      private javax.swing.JLabel max_label;
+      private javax.swing.JButton mem_btn;
+      private javax.swing.JMenu mem_menu;
+      private javax.swing.JLabel min_label;
+      private javax.swing.JLabel name1;
+      private javax.swing.JLabel name2;
+      private javax.swing.JLabel name3;
+      private javax.swing.JLabel name4;
+      private javax.swing.JLabel name5;
+      private javax.swing.JButton net_btn;
+      private javax.swing.JMenu net_menu;
+      private javax.swing.JButton new_row_btn;
+      private javax.swing.JRadioButton npsjf_chk_btn;
+      private javax.swing.JButton ok_button;
+      private javax.swing.JMenuItem open_sym_item;
+      private javax.swing.JButton output_cnct_discnctBtn;
+      private javax.swing.JFrame output_frame;
+      private javax.swing.JMenuItem output_item;
+      private javax.swing.JComboBox<String> output_portsListComoBox;
+      private javax.swing.JButton output_search_btn;
+      private javax.swing.JMenuItem prevent_item;
+      private javax.swing.JButton proc_btn;
+      private javax.swing.JMenu proc_menu_item;
+      private javax.swing.JTable processes_table;
+      private javax.swing.JRadioButton rr_chk_btn;
+      private javax.swing.JMenuItem save_sym_item;
+      private javax.swing.JMenuItem sched_item;
+      private javax.swing.ButtonGroup scheduler_button_group;
+      private javax.swing.JFrame scheduling_frame;
+      private javax.swing.JScrollPane scheduling_table_scroll_pane;
+      private javax.swing.JTextPane server_chat_pane;
+      private javax.swing.JScrollPane server_chat_panel;
+      private javax.swing.JFrame server_frame;
+      private javax.swing.JMenuItem server_item;
+      private javax.swing.JTextField server_msg_field;
+      private javax.swing.JButton server_snd_btn;
+      private javax.swing.JButton slow_input_cnct_discnctBtn;
+      private javax.swing.JFrame slow_input_frame;
+      private javax.swing.JMenuItem slow_input_item;
+      private javax.swing.JComboBox<String> slow_input_portsListComoBox;
+      private javax.swing.JButton slow_input_search_btn;
+      private javax.swing.JButton sort_btn;
+      private javax.swing.JLabel statusLabel;
+      private javax.swing.JMenuItem sync_item;
+      // End of variables declaration//GEN-END:variables
 }

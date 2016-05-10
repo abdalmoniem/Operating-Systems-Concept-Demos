@@ -863,91 +863,6 @@
             </Menu>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="examples_menu">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Examples"/>
-          </Properties>
-          <SubComponents>
-            <Menu class="javax.swing.JMenu" name="ex_proc_menu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Processes"/>
-              </Properties>
-              <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="ex_sched_item">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Scheduling"/>
-                  </Properties>
-                </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="ex_sync_item">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Synchronization"/>
-                  </Properties>
-                </MenuItem>
-                <Menu class="javax.swing.JMenu" name="ex_deadlock_item">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Deadlock"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="ex_detect_item">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Detection"/>
-                      </Properties>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="ex_prevent_item">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Prevention"/>
-                      </Properties>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="ex_avoid_item">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Avoidance"/>
-                      </Properties>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-              </SubComponents>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="ex_mem_menu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Memory"/>
-              </Properties>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="ex_file_sys_menu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="File System"/>
-              </Properties>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="ex_io_menu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="I/O"/>
-              </Properties>
-            </Menu>
-            <Menu class="javax.swing.JMenu" name="ex_net_menu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Network"/>
-              </Properties>
-              <SubComponents>
-                <Menu class="javax.swing.JMenu" name="ex_chat_menu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Simple Chat"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="ex_server_item">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Server"/>
-                      </Properties>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="ex_client_item">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Client"/>
-                      </Properties>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-              </SubComponents>
-            </Menu>
-          </SubComponents>
-        </Menu>
         <Menu class="javax.swing.JMenu" name="help_menu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>
@@ -1001,35 +916,40 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="163" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="proc_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
-                  <Component id="disk_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
-              </Group>
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="net_btn" min="-2" pref="150" max="-2" attributes="0"/>
-                  <Component id="mem_btn" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="proc_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="io_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="181" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="net_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="mem_btn" min="-2" pref="150" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="file_sys_btn" min="-2" pref="150" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="mem_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
                   <Component id="proc_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="file_sys_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="net_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
-                  <Component id="disk_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="io_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="27" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -1053,9 +973,14 @@
         <Property name="text" type="java.lang.String" value="Processes"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="disk_btn">
+    <Component class="javax.swing.JButton" name="io_btn">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Disk"/>
+        <Property name="text" type="java.lang.String" value="Input/Output"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="file_sys_btn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="File System"/>
       </Properties>
     </Component>
   </SubComponents>
