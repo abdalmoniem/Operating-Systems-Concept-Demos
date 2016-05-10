@@ -4,14 +4,8 @@ import pylab as pl
 import sys
 
 plot_label = "label"
-temp = []
+x = []
 y = []
-#plt.xlabel('Time', fontsize=20)
-#plt.ylabel('Voltage', fontsize=20)
-#axes = plt.gca()
-#axes.set_ylim([0, max(temp) + 1])
-
-
 
 if len(sys.argv) < 2:
 	print "Usage python %s PORT" %sys.argv[0]
@@ -19,13 +13,14 @@ if len(sys.argv) < 2:
 
 y.append(0)
 for i in range(1, len(sys.argv)):
+	x.append(int(sys.argv[i]))
 	y.append(i)
-	temp.append(int(sys.argv[i]))
-y.pop(len(sys.argv) - 2)
+y.pop(len(sys.argv) - 1)
+
 fig = plt.figure() 
 fig.canvas.set_window_title("Disk Scheduling")
 plt.gca().invert_yaxis()
-plt.plot(temp, label="SSTF", marker='o', markersize=11, linewidth=3)
+plt.plot(x, y, label="SSTF", marker='o', markersize=11, linewidth=3)
 plt.grid(b=True, which='major', color='black', linestyle='-')
 plt.grid(b=True, which='minor', color='gray', linestyle='-')
 plt.minorticks_on()

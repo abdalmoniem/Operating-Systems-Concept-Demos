@@ -20,10 +20,10 @@ public class Disk_Scheduler {
       public static final int SSTF = 0;
       public static final int C_LOOK = 1;
       private Random rn = new Random();
-      private int Current_position = Math.abs((rn.nextInt()) % 150);
+      private int current_position = Math.abs((rn.nextInt()) % 150);
       private LinkedList<Process> IO = new LinkedList<>();
       private LinkedList<Process> temp = new LinkedList<>();
-      private LinkedList<Process> res = new LinkedList<>();
+      private LinkedList<Integer> res = new LinkedList<>();
 
       public Disk_Scheduler(LinkedList<Process> ready) {
             this.IO = ready;
@@ -31,14 +31,17 @@ public class Disk_Scheduler {
 
       public String Schedule(int mode) {
             String args = "";
+            res.clear();
+            res.add(current_position);
             switch (mode) {
                   case 0:
                         args = "";
+                        args += " " + current_position;
                         System.out.println("The Processes in I/O queue are: ");
                         IO.forEach(i -> System.out.println(i.PID + "\t" + i.Sector));
-                        System.out.println("The starting head position is: " + Current_position);
+                        System.out.println("The starting head position is: " + current_position);
                         while (IO.isEmpty() == false) {
-                              IO.forEach(o -> temp.add(new Process(o.PID, Math.abs(o.Sector - Current_position))));
+                              IO.forEach(o -> temp.add(new Process(o.PID, Math.abs(o.Sector - current_position))));
                               temp.sort((b1, b2) -> {
                                     return Integer.compare(b1.Sector, b2.Sector);
                               });
@@ -46,10 +49,10 @@ public class Disk_Scheduler {
                               for (int i = 0; i < IO.size(); i++) {
                                     Process granted = IO.get(i);
                                     if (granted.PID == temp1.PID) {
-                                          System.out.println("Current Head position is sector number: " + Current_position);
+                                          System.out.println("Current Head position is sector number: " + current_position);
                                           System.out.println("The Process ID is " + granted.PID + "\tThe Sector Number is: " + granted.Sector);
-                                          Current_position = granted.Sector;
-                                          res.add(granted);
+                                          current_position = granted.Sector;
+                                          res.add(granted.Sector);
                                           args += " " + granted.Sector;
                                           IO.remove(i);
                                           temp.clear();
@@ -58,7 +61,7 @@ public class Disk_Scheduler {
                               }
                         }
                         System.out.println("Seek Order:");
-                        res.forEach(i -> System.out.println(i.PID + "\t" + i.Sector));
+                        res.forEach(i -> System.out.println(i));
                         break;
                   case 1:
                         //clook

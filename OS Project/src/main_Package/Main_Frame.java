@@ -2,14 +2,8 @@ package main_Package;
 
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Random;
@@ -26,13 +20,9 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
-import java.awt.Font;
 import java.awt.HeadlessException;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -89,6 +79,18 @@ public class Main_Frame extends JFrame {
             });
       }
 
+      /**
+       *
+       * @param pane the JTextPane where you want to append text to
+       * @param text the text that you want to append to the JTextPane, Note:
+       * add an end line character in the end if you want new text to be
+       * appended in a new line
+       * @param color the color of the text
+       * @param bold if true the text will be appended in bold, else it will be
+       * appended PLAIN
+       * @param italic if true the text will be appended in italic, else it will
+       * be appended PLAIN or Bold as specified by the bold parameter
+       */
       private void appendToPane(JTextPane pane, String msg, Color color, boolean bold, boolean italic) {
             StyledDocument doc = pane.getStyledDocument();
             SimpleAttributeSet attr = new SimpleAttributeSet();
@@ -1270,15 +1272,18 @@ public class Main_Frame extends JFrame {
                         ready_queue.add(new Process());
                   }
                   String args = new Disk_Scheduler(ready_queue).Schedule(Disk_Scheduler.SSTF);
-                  String[] cmd = new String[] {};
-                  if(info.getName().toLowerCase().equals("windows"))
-                        cmd = new String[] {"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
-                  else
-                        cmd = new String[] {"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                  String[] cmd = new String[]{};
+                  if (info.getName().toLowerCase().equals("windows")) {
+                        cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                  } else {
+                        cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                  }
                   graphing_process = new ProcessBuilder(cmd).start();
-                  
-                  args = args.trim().replace(" ", " -> ");
-                  JOptionPane.showMessageDialog(this, args, "Seek Order", JOptionPane.INFORMATION_MESSAGE);
+
+                  args = args.replace(" ", " -> ");
+                  args = args.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
+                  String head_starting_position = args.substring(args.indexOf("[") + 1, args.indexOf("]"));
+                  JOptionPane.showMessageDialog(this, "Head Starting Position: " + head_starting_position + "\n" + args, "Seek Order", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
                   System.err.println(ex.toString());
             }
