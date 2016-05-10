@@ -44,7 +44,7 @@ public class Main_Frame extends JFrame {
       LinkedList<Process> ready_queue_backup;
       DefaultTableModel proc_table_model;
       DefaultTableModel editing_table_model;
-      
+
       boolean client_connected = false;
       boolean server_started = false;
       Client client;
@@ -190,6 +190,9 @@ public class Main_Frame extends JFrame {
             avoid_item = new javax.swing.JMenuItem();
             mem_menu = new javax.swing.JMenu();
             file_sys_menu = new javax.swing.JMenu();
+            disk_sched_menu = new javax.swing.JMenu();
+            sstf_item = new javax.swing.JMenuItem();
+            c_look_item = new javax.swing.JMenuItem();
             io_menu = new javax.swing.JMenu();
             slow_input_item = new javax.swing.JMenuItem();
             fast_input_item = new javax.swing.JMenuItem();
@@ -757,6 +760,22 @@ public class Main_Frame extends JFrame {
             main_menu_bar.add(mem_menu);
 
             file_sys_menu.setText("File System");
+
+            disk_sched_menu.setText("Disk Scheduling");
+
+            sstf_item.setText("SSTF");
+            sstf_item.addActionListener(new java.awt.event.ActionListener() {
+                  public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        sstf_itemActionPerformed(evt);
+                  }
+            });
+            disk_sched_menu.add(sstf_item);
+
+            c_look_item.setText("C Look");
+            disk_sched_menu.add(c_look_item);
+
+            file_sys_menu.add(disk_sched_menu);
+
             main_menu_bar.add(file_sys_menu);
 
             io_menu.setText("I/O");
@@ -1159,34 +1178,34 @@ public class Main_Frame extends JFrame {
 
       @SuppressWarnings("empty-statement")
     private void slow_input_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_slow_input_cnct_discnctBtnActionPerformed
-          if (!ip_connected) {
-                String com_num = slow_input_portsListComoBox.getSelectedItem().toString();
-                ip_connected = !ip_connected;
-                slow_input_cnct_discnctBtn.setEnabled(false);
-                slow_input_cnct_discnctBtn.setText("Connected");
-                new Thread(() -> {
-                      try {
-                            String[] cmd = new String[]{};
-                            if (info.getName().toLowerCase().equals("windows")) {
-                                  cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\graphing\\slow\\plotter.py " + com_num};
-                            } else {
-                                  cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/graphing/slow/plotter.py " + com_num};
-                            }
+            if (!ip_connected) {
+                  String com_num = slow_input_portsListComoBox.getSelectedItem().toString();
+                  ip_connected = !ip_connected;
+                  slow_input_cnct_discnctBtn.setEnabled(false);
+                  slow_input_cnct_discnctBtn.setText("Connected");
+                  new Thread(() -> {
+                        try {
+                              String[] cmd = new String[]{};
+                              if (info.getName().toLowerCase().equals("windows")) {
+                                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\io_graphing\\slow\\plotter.py " + com_num};
+                              } else {
+                                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/io_graphing/slow/plotter.py " + com_num};
+                              }
 
-                            graphing_process = new ProcessBuilder(cmd).start();
-                            while (graphing_process.isAlive());
-                            slow_input_cnct_discnctBtn.setEnabled(true);
-                            slow_input_cnct_discnctBtn.setText("Connect to Port");
-                            ip_connected = !ip_connected;
-                      } catch (IOException ex) {
-                            System.err.println(ex.toString());
-                      }
-                }).start();
-          } else {
-                slow_input_cnct_discnctBtn.setEnabled(true);
-                slow_input_cnct_discnctBtn.setText("Connect to Port");
-                ip_connected = !ip_connected;
-          }
+                              graphing_process = new ProcessBuilder(cmd).start();
+                              while (graphing_process.isAlive());
+                              slow_input_cnct_discnctBtn.setEnabled(true);
+                              slow_input_cnct_discnctBtn.setText("Connect to Port");
+                              ip_connected = !ip_connected;
+                        } catch (IOException ex) {
+                              System.err.println(ex.toString());
+                        }
+                  }).start();
+            } else {
+                  slow_input_cnct_discnctBtn.setEnabled(true);
+                  slow_input_cnct_discnctBtn.setText("Connect to Port");
+                  ip_connected = !ip_connected;
+            }
     }//GEN-LAST:event_slow_input_cnct_discnctBtnActionPerformed
 
     private void server_snd_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_server_snd_btnActionPerformed
@@ -1229,7 +1248,7 @@ public class Main_Frame extends JFrame {
                             if (info.getName().toLowerCase().equals("windows")) {
                                   cmd = new String[]{"cmd", "/c", "graphing.bat " + com_num};
                             } else {
-                                  cmd = new String[]{"/bin/sh", "-c", "scripts_and_helpers/graphing/fast/linux/p_oscilloscope " + com_num};
+                                  cmd = new String[]{"/bin/sh", "-c", "scripts_and_helpers/io_graphing/fast/linux/p_oscilloscope " + com_num};
                             }
                             graphing_process = new ProcessBuilder(cmd).start();
                             ip_connected = !ip_connected;
@@ -1244,6 +1263,27 @@ public class Main_Frame extends JFrame {
           }
     }//GEN-LAST:event_fast_input_cnct_discnctBtnActionPerformed
 
+      private void sstf_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sstf_itemActionPerformed
+            try {
+                  ready_queue.clear();
+                  for (int i = 0; i < 10; i++) {
+                        ready_queue.add(new Process());
+                  }
+                  String args = new Disk_Scheduler(ready_queue).Schedule(Disk_Scheduler.SSTF);
+                  String[] cmd = new String[] {};
+                  if(info.getName().toLowerCase().equals("windows"))
+                        cmd = new String[] {"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                  else
+                        cmd = new String[] {"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                  graphing_process = new ProcessBuilder(cmd).start();
+                  
+                  args = args.trim().replace(" ", " -> ");
+                  JOptionPane.showMessageDialog(this, args, "Seek Order", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                  System.err.println(ex.toString());
+            }
+      }//GEN-LAST:event_sstf_itemActionPerformed
+
       public static void main(String args[]) {
             try {
                   javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
@@ -1253,7 +1293,7 @@ public class Main_Frame extends JFrame {
             }
         //</editor-fold>
 
-        //</editor-fold>
+            //</editor-fold>
 
             /* Create and display the form */
             java.awt.EventQueue.invokeLater(() -> {
@@ -1273,6 +1313,7 @@ public class Main_Frame extends JFrame {
       private javax.swing.JMenuItem avoid_item;
       private javax.swing.JLabel brightness_label;
       private javax.swing.JSlider brightness_slider;
+      private javax.swing.JMenuItem c_look_item;
       private javax.swing.JMenu chat_menu;
       private javax.swing.JTextPane client_chat_pane;
       private javax.swing.JScrollPane client_chat_panel;
@@ -1284,6 +1325,7 @@ public class Main_Frame extends JFrame {
       private javax.swing.JButton delete_row_btn;
       private javax.swing.JMenuItem detect_item;
       private javax.swing.JLabel development_team_title_label;
+      private javax.swing.JMenu disk_sched_menu;
       private javax.swing.JMenuItem doc_item;
       private javax.swing.JButton edit_scheduler_table_row;
       private javax.swing.JTable editing_table;
@@ -1346,6 +1388,7 @@ public class Main_Frame extends JFrame {
       private javax.swing.JComboBox<String> slow_input_portsListComoBox;
       private javax.swing.JButton slow_input_search_btn;
       private javax.swing.JButton sort_btn;
+      private javax.swing.JMenuItem sstf_item;
       private javax.swing.JLabel statusLabel;
       private javax.swing.JMenuItem sync_item;
       // End of variables declaration//GEN-END:variables
