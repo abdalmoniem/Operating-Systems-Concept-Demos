@@ -147,10 +147,11 @@ public class Main_Frame extends JFrame {
     }
 
     private void show_disk_results_with_graph() {
+        int current_position_head = new Random().nextInt(200);
         String buttonText = get_selected_button_text(disk_scheduler_button_group);
         if (buttonText.toLowerCase().contains("sstf")) {
             try {
-                String args = new Disk_Scheduler(ready_queue).Schedule(Disk_Scheduler.SSTF);
+                String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.SSTF);
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
                     cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
@@ -162,29 +163,74 @@ public class Main_Frame extends JFrame {
                 args = args.replace(" ", " -> ");
                 args = args.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
                 String head_starting_position = args.substring(args.indexOf("[") + 1, args.indexOf("]"));
-                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args + "\n", Color.black, true, false);
+                appendToPane(disk_log_area, "[SSTF] ", Color.RED, true, false);
+                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args + "\n\n", Color.black, true, false);
+            } catch (IOException ex) {
+                System.err.println(ex.toString());
+            }
+        } else if (buttonText.toLowerCase().contains("look")) {
+            try {
+                String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.C_LOOK);
+                String[] cmd = new String[]{};
+                if (info.getName().toLowerCase().equals("windows")) {
+                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                } else {
+                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                }
+                graphing_process = new ProcessBuilder(cmd).start();
+
+                args = args.replace(" ", " -> ");
+                args = args.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
+                String head_starting_position = args.substring(args.indexOf("[") + 1, args.indexOf("]"));
+                appendToPane(disk_log_area, "[C LOOK] ", Color.RED, true, false);
+                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args + "\n\n", Color.black, true, false);
             } catch (IOException ex) {
                 System.err.println(ex.toString());
             }
         } else {
             try {
-                String args = new Disk_Scheduler(ready_queue).Schedule(Disk_Scheduler.C_LOOK);
+                ready_queue_map.clear();
+                ready_queue.forEach(i -> ready_queue_map.put(i.PID, i.Sector));
+                String args1 = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.SSTF);
+
+                ready_queue.clear();
+                Iterator it = ready_queue_map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    ready_queue.add(new Process((int) pair.getKey(), (int) pair.getValue()));
+                }
+                String args2 = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.C_LOOK);
+
+                ready_queue.clear();
+                it = ready_queue_map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    ready_queue.add(new Process((int) pair.getKey(), (int) pair.getValue()));
+                }
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args1 + " s" + args2};
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args1 + " s" + args2};
                 }
+                System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
 
-                args = args.replace(" ", " -> ");
-                args = args.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
-                String head_starting_position = args.substring(args.indexOf("[") + 1, args.indexOf("]"));
-                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args + "\n", Color.black, true, false);
+                args1 = args1.replace(" ", " -> ");
+                args1 = args1.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
+
+                args2 = args2.replace(" ", " -> ");
+                args2 = args2.replaceFirst(" -> ", "[").replaceFirst(" -> ", "] -> ");
+                String head_starting_position = args1.substring(args1.indexOf("[") + 1, args1.indexOf("]"));
+                appendToPane(disk_log_area, "[SSTF] ", Color.RED, true, false);
+                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args1 + "\n", Color.black, true, false);
+                appendToPane(disk_log_area, "[C LOOK] ", Color.RED, true, false);
+                appendToPane(disk_log_area, "Head Starting Position: " + head_starting_position + "\n" + args2 + "\n\n", Color.black, true, false);
             } catch (IOException ex) {
                 System.err.println(ex.toString());
             }
         }
+        disk_log_area.setCaretPosition(disk_log_area.getDocument().getLength());
     }
 
     private void show_disk_results_with_graph(int current_position_head) {
@@ -998,7 +1044,7 @@ public class Main_Frame extends JFrame {
         disk_scheduling_frameLayout.setVerticalGroup(
             disk_scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(disk_scheduling_frameLayout.createSequentialGroup()
-                .addComponent(disk_scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addComponent(disk_scheduling_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(disk_scheduling_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sstf_radio)
@@ -1595,10 +1641,34 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_scheduling_frameWindowClosing
 
     private void disk_sched_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disk_sched_btnActionPerformed
-        if (is_map_empty) {
+        String result = JOptionPane.showInputDialog(this, "What is the current head position ?\nLeave empty for randomising.",
+                "Head Position", JOptionPane.QUESTION_MESSAGE);
+
+        if (result.trim().length() > 0) {
+            try {
+                int head_position = Integer.parseInt(result);
+                if (is_map_empty) {
+                    is_map_empty = false;
+                    ready_queue.forEach(i -> ready_queue_map.put(i.PID, i.Sector));
+                    show_disk_results_with_graph(head_position);
+                } else {
+                    ready_queue.clear();
+                    Iterator it = ready_queue_map.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry pair = (Map.Entry) it.next();
+                        ready_queue.add(new Process((int) pair.getKey(), (int) pair.getValue()));
+                    }
+                    show_disk_results_with_graph(head_position);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Head position must be a positive integer !!!",
+                        "Position Error", JOptionPane.ERROR_MESSAGE);
+                System.err.println("Head position must be a positive integer !!!");
+            }
+        } else if (is_map_empty) {
             is_map_empty = false;
             ready_queue.forEach(i -> ready_queue_map.put(i.PID, i.Sector));
-            show_disk_results_with_graph(100);
+            show_disk_results_with_graph();
         } else {
             ready_queue.clear();
             Iterator it = ready_queue_map.entrySet().iterator();
@@ -1606,7 +1676,7 @@ public class Main_Frame extends JFrame {
                 Map.Entry pair = (Map.Entry) it.next();
                 ready_queue.add(new Process((int) pair.getKey(), (int) pair.getValue()));
             }
-            show_disk_results_with_graph(100);
+            show_disk_results_with_graph();
         }
     }//GEN-LAST:event_disk_sched_btnActionPerformed
 
