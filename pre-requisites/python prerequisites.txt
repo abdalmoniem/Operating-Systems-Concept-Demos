@@ -1,0 +1,21 @@
+Linux:
+======
+
+Open Terminal and type:
+-su [Enter]
+-pip install pyserial [Enter]
+-pip install matplotlib [Enter]
+-pip install drawnow [Enter]
+-pip install psutil [Enter]
+-pip install pylab [Enter]
+
+Windows:
+========
+
+-Add python path and python scripts path to environment variables
+-Open CMD as administrator and type:
+-pip install pyserial [Enter]
+-pip install matplotlib [Enter]
+-pip install drawnow [Enter]
+-pip install psutil [Enter]
+-pip install pylab [Enter]

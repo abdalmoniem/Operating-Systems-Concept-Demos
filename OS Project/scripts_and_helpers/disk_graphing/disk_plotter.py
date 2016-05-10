@@ -24,6 +24,7 @@ for i in range(1, len(sys.argv)):
 y.pop(len(sys.argv) - 2)
 fig = plt.figure() 
 fig.canvas.set_window_title("Disk Scheduling")
+plt.gca().invert_yaxis()
 plt.plot(temp, label="SSTF", marker='o', markersize=11, linewidth=3)
 plt.grid(b=True, which='major', color='black', linestyle='-')
 plt.grid(b=True, which='minor', color='gray', linestyle='-')
