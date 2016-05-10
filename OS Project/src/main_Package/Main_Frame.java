@@ -44,14 +44,11 @@ public class Main_Frame extends JFrame {
       LinkedList<Process> ready_queue_backup;
       DefaultTableModel proc_table_model;
       DefaultTableModel editing_table_model;
+      
       boolean client_connected = false;
       boolean server_started = false;
-      int PORT_NUM = 2000;
-      ServerSocket ss = null;
-      Socket cs = null;
-      Client client = null;
-      LinkedList<Socket> clients;
-      String client_last_sent_msg = null;
+      Client client;
+      Server server;
 
       private BufferedReader input;
       private OutputStream output;
@@ -66,48 +63,6 @@ public class Main_Frame extends JFrame {
       java.lang.Process graphing_process;
 
       javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
-
-      private void print_server_address(JTextPane chat) {
-            String ip;
-            Enumeration<NetworkInterface> n;
-            try {
-                  n = NetworkInterface.getNetworkInterfaces();
-                  while (n.hasMoreElements()) {
-                        NetworkInterface e = n.nextElement();
-                        Enumeration<InetAddress> a = e.getInetAddresses();
-                        while (a.hasMoreElements()) {
-                              InetAddress addr = a.nextElement();
-                              if (addr.isSiteLocalAddress()) {
-                                    ip = "Server IP : " + addr.getHostAddress() + ":" + PORT_NUM;
-                                    appendToPane(chat, ip + "\n", new Color(0x2372b2), true, false);
-                              }
-                        }
-                  }
-            } catch (SocketException e) {
-                  System.err.println(e.getMessage());
-            }
-      }
-
-      private void send_message(String msg, boolean echo) {
-            String line = msg;
-            DataOutputStream dos;
-
-            for (int i = 0; i < clients.size(); i++) {
-                  try {
-                        dos = new DataOutputStream(clients.get(i).getOutputStream());
-                        dos.writeUTF(line);
-                  } catch (IOException ex) {
-                        System.err.println("Server Error: " + ex.toString());
-                        clients.remove(i);
-                        send_message(msg, true);
-                  }
-            }
-
-            if (!echo) {
-                  appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
-            }
-            server_msg_field.setText(null);
-      }
 
       private String get_selected_button_text() {
             String button_text = null;
@@ -158,7 +113,6 @@ public class Main_Frame extends JFrame {
       public Main_Frame() {
             initComponents();
             ready_queue = new LinkedList<>();
-            clients = new LinkedList<>();
             portsList = new LinkedList<>();
             proc_table_model = (DefaultTableModel) processes_table.getModel();
             editing_table_model = (DefaultTableModel) editing_table.getModel();
@@ -1060,57 +1014,14 @@ public class Main_Frame extends JFrame {
 
     private void server_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_server_itemActionPerformed
           if (!server_started) {
-                try {
-                      server_frame.setSize(500, 400);
-                      server_frame.setVisible(true);
-                      server_msg_field.setEnabled(false);
-                      server_snd_btn.setEnabled(false);
-                      server_chat_pane.setText(null);
-                      server_started = true;
-
-                      ss = new ServerSocket(PORT_NUM);
-                      print_server_address(server_chat_pane);
-
-                      Runnable read_runnable = () -> {
-                            try {
-                                  DataInputStream dis = new DataInputStream(cs.getInputStream());
-                                  while (true) {
-                                        String line = dis.readUTF();
-                                        if (!line.contains("online::id::")) {
-                                              String[] line_id = line.split("::id::");
-                                              System.out.println(line_id[0]);
-                                              appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "]: " + line_id[0] + "\n", Color.BLACK, false, false);
-                                              send_message(line, true);
-                                        }
-                                  }
-                            } catch (IOException ex) {
-                                  System.err.println(ex.toString());
-                                  appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Disconnected\n", Color.RED, true, false);
-                                  send_message("[" + cs.getInetAddress().toString() + "] Disconnected", true);
-                            }
-                      };
-
-                      Runnable connect_runnable = () -> {
-                            while (true) {
-                                  try {
-                                        cs = ss.accept();
-                                        clients.add(cs);
-                                        server_msg_field.setEnabled(true);
-                                        server_snd_btn.setEnabled(true);
-                                        appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Connected\n", Color.RED, true, false);
-                                        send_message("[" + cs.getInetAddress().toString() + "] Connected", true);
-                                        new Thread(read_runnable).start();
-                                  } catch (IOException ex) {
-                                        System.err.println(ex.toString());
-                                        break;
-                                  }
-                            }
-                      };
-
-                      new Thread(connect_runnable).start();
-                } catch (IOException ex) {
-                      System.err.println(ex.toString());
-                }
+                server_frame.setSize(500, 400);
+                server_frame.setVisible(true);
+                server_msg_field.setEnabled(false);
+                server_snd_btn.setEnabled(false);
+                server_chat_pane.setText(null);
+                server_started = true;
+                server = new Server(2000, server_msg_field, server_chat_pane, server_snd_btn);
+                server.accept_connections();
           } else {
                 JOptionPane.showMessageDialog(this, "Server is already started", "Error", JOptionPane.ERROR_MESSAGE);
           }
@@ -1120,7 +1031,7 @@ public class Main_Frame extends JFrame {
           if (evt.getKeyCode() == 10) {   //enter key is pressed
                 String line = server_msg_field.getText();
                 if (line.length() != 0) {
-                      send_message(line, false);
+                      server.send_message(line, false);
                 }
           }
     }//GEN-LAST:event_server_msg_fieldKeyPressed
@@ -1130,14 +1041,14 @@ public class Main_Frame extends JFrame {
                 if (!client_connected) {
                       String user_input = JOptionPane.showInputDialog(this, "Enter server ip address and port number separated by \":\": ", "Server IP:Port number", JOptionPane.PLAIN_MESSAGE);
                       if (user_input != null) {
-                            client_chat_pane.setText(null);
-                            client_connected = true;
                             String[] ip_port = user_input.split(":");
                             client = new Client(new Socket(ip_port[0], Integer.parseInt(ip_port[1])), client_chat_pane);
-                            client.read();
                             client_frame.setSize(500, 400);
                             client_frame.setVisible(true);
                             client_frame.setTitle(client.get_socket().getInetAddress().toString() + "::" + client.get_id());
+                            client_chat_pane.setText(null);
+                            client_connected = true;
+                            client.read();
                       }
                 } else {
                       JOptionPane.showMessageDialog(this, "Client is already connected", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1171,15 +1082,8 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_exit_itemActionPerformed
 
     private void server_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_server_frameWindowClosing
-          try {
-                for (Socket i : clients) {
-                      i.close();
-                }
-                ss.close();
-                server_started = false;
-          } catch (IOException ex) {
-                System.err.println(ex.toString());
-          }
+          server.end_connections();
+          server_started = false;
     }//GEN-LAST:event_server_frameWindowClosing
 
     private void client_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_client_frameWindowClosing

@@ -18,7 +18,7 @@ public final class Client {
       private final Socket client;
       private String last_sent_msg;
       private JTextPane chat_pane;
-
+      
       public Client(Socket client, JTextPane chat_pane) {
             this.id = new Random().nextInt(1000);
             this.client = client;
@@ -83,14 +83,22 @@ public final class Client {
             }
       }
 
-      private void appendToPane(JTextPane pane, String msg, Color color, boolean bold, boolean italic) {
+      /**
+       * 
+       * @param pane    the JTextPane where you want to append text to
+       * @param text     the text that you want to append to the JTextPane, Note: add an end line character in the end if you want new text to be appended in a new line
+       * @param color   the color of the text
+       * @param bold    if true the text will be appended in bold, else it will be appended PLAIN
+       * @param italic  if true the text will be appended in italic, else it will be appended PLAIN or Bold as specified by the bold parameter
+       */
+      private void appendToPane(JTextPane pane, String text, Color color, boolean bold, boolean italic) {
             StyledDocument doc = pane.getStyledDocument();
             SimpleAttributeSet attr = new SimpleAttributeSet();
             try {
                   StyleConstants.setForeground(attr, color);
                   StyleConstants.setBold(attr, bold);
                   StyleConstants.setItalic(attr, italic);
-                  doc.insertString(doc.getLength(), msg, attr);
+                  doc.insertString(doc.getLength(), text, attr);
                   pane.setCaretPosition(pane.getDocument().getLength());
             } catch (BadLocationException ex) {
                   System.err.println(ex.toString());
