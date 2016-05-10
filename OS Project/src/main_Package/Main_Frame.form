@@ -256,6 +256,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Send"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="server_snd_btnActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="server_msg_field">
           <Events>
@@ -325,6 +328,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Send"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="client_snd_btnActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -523,7 +529,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="output_cnct_discnctBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Connect"/>
+            <Property name="text" type="java.lang.String" value="Connect to Port"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="output_cnct_discnctBtnActionPerformed"/>
@@ -545,7 +551,6 @@
             <Property name="majorTickSpacing" type="int" value="5"/>
             <Property name="maximum" type="int" value="255"/>
             <Property name="paintTicks" type="boolean" value="true"/>
-            <Property name="snapToTicks" type="boolean" value="true"/>
             <Property name="value" type="int" value="0"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
@@ -575,9 +580,9 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JFrame" name="input_frame">
+    <Container class="javax.swing.JFrame" name="slow_input_frame">
       <Properties>
-        <Property name="title" type="java.lang.String" value="Input"/>
+        <Property name="title" type="java.lang.String" value="Slow Input"/>
         <Property name="resizable" type="boolean" value="false"/>
       </Properties>
 
@@ -586,11 +591,11 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="input_search_btn" min="-2" pref="300" max="-2" attributes="0"/>
+                  <Component id="slow_input_search_btn" min="-2" pref="300" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="input_portsListComoBox" alignment="0" max="32767" attributes="0"/>
-                      <Component id="input_cnct_discnctBtn" alignment="0" pref="190" max="32767" attributes="0"/>
+                      <Component id="slow_input_portsListComoBox" alignment="0" max="32767" attributes="0"/>
+                      <Component id="slow_input_cnct_discnctBtn" alignment="0" pref="190" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -602,11 +607,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="input_portsListComoBox" min="-2" pref="34" max="-2" attributes="0"/>
+                          <Component id="slow_input_portsListComoBox" min="-2" pref="34" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="input_cnct_discnctBtn" min="-2" pref="35" max="-2" attributes="0"/>
+                          <Component id="slow_input_cnct_discnctBtn" min="-2" pref="35" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="input_search_btn" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="slow_input_search_btn" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -614,15 +619,15 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="input_search_btn">
+        <Component class="javax.swing.JButton" name="slow_input_search_btn">
           <Properties>
             <Property name="text" type="java.lang.String" value="Search COM Ports"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="input_search_btnActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="slow_input_search_btnActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JComboBox" name="input_portsListComoBox">
+        <Component class="javax.swing.JComboBox" name="slow_input_portsListComoBox">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
@@ -632,12 +637,79 @@
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JButton" name="input_cnct_discnctBtn">
+        <Component class="javax.swing.JButton" name="slow_input_cnct_discnctBtn">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Connect"/>
+            <Property name="text" type="java.lang.String" value="Connect to Port"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="input_cnct_discnctBtnActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="slow_input_cnct_discnctBtnActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JFrame" name="fast_input_frame">
+      <Properties>
+        <Property name="title" type="java.lang.String" value="Fast Input"/>
+        <Property name="resizable" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="fast_input_search_btn" min="-2" pref="300" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="fast_input_portsListComoBox" alignment="0" max="32767" attributes="0"/>
+                      <Component id="fast_input_cnct_discnctBtn" alignment="0" pref="190" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="fast_input_portsListComoBox" min="-2" pref="34" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="fast_input_cnct_discnctBtn" min="-2" pref="35" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="fast_input_search_btn" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="fast_input_search_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Search COM Ports"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fast_input_search_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="fast_input_portsListComoBox">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JButton" name="fast_input_cnct_discnctBtn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Connect to Port"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fast_input_cnct_discnctBtnActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -735,12 +807,20 @@
             <Property name="text" type="java.lang.String" value="I/O"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="input_item">
+            <MenuItem class="javax.swing.JMenuItem" name="slow_input_item">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Input"/>
+                <Property name="text" type="java.lang.String" value="Slow Input"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="input_itemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="slow_input_itemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="fast_input_item">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Fast Input"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fast_input_itemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="output_item">

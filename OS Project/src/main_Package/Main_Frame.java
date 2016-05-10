@@ -25,13 +25,12 @@ import javax.swing.JFrame;
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 import gnu.io.UnsupportedCommOperationException;
+import java.awt.Font;
+import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,131 +40,129 @@ import java.util.logging.Logger;
  */
 public class Main_Frame extends JFrame {
 
-    LinkedList<Process> ready_queue;
-    LinkedList<Process> ready_queue_backup;
-    DefaultTableModel proc_table_model;
-    DefaultTableModel editing_table_model;
-    boolean client_connected = false;
-    boolean server_started = false;
-    int PORT_NUM = 2000;
-    ServerSocket ss = null;
-    Socket cs = null;
-    Client client = null;
-    LinkedList<Socket> clients;
-    String client_last_sent_msg = null;
+      LinkedList<Process> ready_queue;
+      LinkedList<Process> ready_queue_backup;
+      DefaultTableModel proc_table_model;
+      DefaultTableModel editing_table_model;
+      boolean client_connected = false;
+      boolean server_started = false;
+      int PORT_NUM = 2000;
+      ServerSocket ss = null;
+      Socket cs = null;
+      Client client = null;
+      LinkedList<Socket> clients;
+      String client_last_sent_msg = null;
 
-    private BufferedReader input;
-    private OutputStream output;
-    private static final int TIME_OUT = 2000;
-    private static final int DATA_RATE = 115200;
-    private CommPortIdentifier portId = null;
-    private LinkedList<CommPortIdentifier> portsList;
-    private SerialPort serialPort = null;
-    boolean op_connected = false;
-    boolean ip_connected = false;
+      private BufferedReader input;
+      private OutputStream output;
+      private static final int TIME_OUT = 2000;
+      private static final int DATA_RATE = 115200;
+      private CommPortIdentifier portId = null;
+      private final LinkedList<CommPortIdentifier> portsList;
+      private SerialPort serialPort = null;
+      boolean op_connected = false;
+      boolean ip_connected = false;
 
-    java.lang.Process python_process;
+      java.lang.Process graphing_process;
 
-    private void print_server_address(JTextPane chat) {
-        String ip = null;
-        Enumeration<NetworkInterface> n;
-        try {
-            n = NetworkInterface.getNetworkInterfaces();
-            while (n.hasMoreElements()) {
-                NetworkInterface e = n.nextElement();
-                Enumeration<InetAddress> a = e.getInetAddresses();
-                while (a.hasMoreElements()) {
-                    InetAddress addr = a.nextElement();
-                    if (addr.isSiteLocalAddress()) {
-                        ip = "Server IP : " + addr.getHostAddress() + ":" + PORT_NUM;
-                        appendToPane(chat, ip + "\n", new Color(0x2372b2), true, false);
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            System.err.println(e.getMessage());
-        }
-    }
+      javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
 
-    private void send_message(String msg, boolean echo) {
-        String line = msg;
-        DataOutputStream dos = null;
-
-        for (int i = 0; i < clients.size(); i++) {
+      private void print_server_address(JTextPane chat) {
+            String ip;
+            Enumeration<NetworkInterface> n;
             try {
-                dos = new DataOutputStream(clients.get(i).getOutputStream());
-                dos.writeUTF(line);
-            } catch (IOException ex) {
-                System.err.println("Server Error: " + ex.toString());
-                clients.remove(i);
-                send_message(msg, true);
+                  n = NetworkInterface.getNetworkInterfaces();
+                  while (n.hasMoreElements()) {
+                        NetworkInterface e = n.nextElement();
+                        Enumeration<InetAddress> a = e.getInetAddresses();
+                        while (a.hasMoreElements()) {
+                              InetAddress addr = a.nextElement();
+                              if (addr.isSiteLocalAddress()) {
+                                    ip = "Server IP : " + addr.getHostAddress() + ":" + PORT_NUM;
+                                    appendToPane(chat, ip + "\n", new Color(0x2372b2), true, false);
+                              }
+                        }
+                  }
+            } catch (SocketException e) {
+                  System.err.println(e.getMessage());
             }
-        }
+      }
 
-        if (!echo) {
-            appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
-        }
-        server_msg_field.setText(null);
-    }
+      private void send_message(String msg, boolean echo) {
+            String line = msg;
+            DataOutputStream dos;
 
-    private String get_selected_button_text() {
-        String button_text = null;
-        for (Enumeration<AbstractButton> buttons = scheduler_button_group.getElements(); buttons.hasMoreElements();) {
-            AbstractButton button = buttons.nextElement();
-            if (button.isSelected()) {
-                button_text = button.getText();
+            for (int i = 0; i < clients.size(); i++) {
+                  try {
+                        dos = new DataOutputStream(clients.get(i).getOutputStream());
+                        dos.writeUTF(line);
+                  } catch (IOException ex) {
+                        System.err.println("Server Error: " + ex.toString());
+                        clients.remove(i);
+                        send_message(msg, true);
+                  }
             }
-        }
-        return button_text;
-    }
 
-    private void clear_table(DefaultTableModel tm) {
-        int table_length = tm.getRowCount();
-        for (int i = 0; i < table_length; i++) {
-            tm.removeRow(0);
-        }
-    }
+            if (!echo) {
+                  appendToPane(server_chat_pane, msg + "\n", Color.BLUE, true, false);
+            }
+            server_msg_field.setText(null);
+      }
 
-    private void populate_scheduler_table(LinkedList<Process> queue) {
-        for (Process item : queue) {
-            Object[] processes_data = {item.PID, item.Arrival_Time, item.Burst_Time, item.Priority};
-            proc_table_model.addRow(processes_data);
-        }
-    }
+      private String get_selected_button_text() {
+            String button_text = null;
+            for (Enumeration<AbstractButton> buttons = scheduler_button_group.getElements(); buttons.hasMoreElements();) {
+                  AbstractButton button = buttons.nextElement();
+                  if (button.isSelected()) {
+                        button_text = button.getText();
+                  }
+            }
+            return button_text;
+      }
 
-    private void appendToPane(JTextPane pane, String msg, Color color, boolean bold, boolean italic) {
-        StyledDocument doc = pane.getStyledDocument();
-        SimpleAttributeSet attr = new SimpleAttributeSet();
-        try {
-            StyleConstants.setForeground(attr, color);
-            StyleConstants.setBold(attr, bold);
-            StyleConstants.setItalic(attr, italic);
-            doc.insertString(doc.getLength(), msg, attr);
-            pane.setCaretPosition(pane.getDocument().getLength());
-        } catch (BadLocationException ex) {
-            System.err.println(ex.toString());
-        }
-    }
+      private void clear_table(DefaultTableModel tm) {
+            int table_length = tm.getRowCount();
+            for (int i = 0; i < table_length; i++) {
+                  tm.removeRow(0);
+            }
+      }
 
-    public synchronized void close() {
-        if (serialPort != null) {
-            serialPort.removeEventListener();
-            serialPort.close();
-        }
-    }
+      private void populate_scheduler_table(LinkedList<Process> queue) {
+            queue.forEach(p -> {
+                  Object[] processes_data = {p.PID, p.Arrival_Time, p.Burst_Time, p.Priority};
+                  proc_table_model.addRow(processes_data);
+            });
+      }
 
-    public Main_Frame() {
-        initComponents();
-        ready_queue = new LinkedList<>();
-        clients = new LinkedList<>();
-        portsList = new LinkedList<>();
-        proc_table_model = (DefaultTableModel) processes_table.getModel();
-        editing_table_model = (DefaultTableModel) editing_table.getModel();
+      private void appendToPane(JTextPane pane, String msg, Color color, boolean bold, boolean italic) {
+            StyledDocument doc = pane.getStyledDocument();
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            try {
+                  StyleConstants.setForeground(attr, color);
+                  StyleConstants.setBold(attr, bold);
+                  StyleConstants.setItalic(attr, italic);
+                  doc.insertString(doc.getLength(), msg, attr);
+                  pane.setCaretPosition(pane.getDocument().getLength());
+            } catch (BadLocationException ex) {
+                  System.err.println(ex.toString());
+            }
+      }
 
-        int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
-        this.setLocation(screen_width / 4, screen_height / 5);
-    }
+      public synchronized void close() {
+            if (serialPort != null) {
+                  serialPort.removeEventListener();
+                  serialPort.close();
+            }
+      }
+
+      public Main_Frame() {
+            initComponents();
+            ready_queue = new LinkedList<>();
+            clients = new LinkedList<>();
+            portsList = new LinkedList<>();
+            proc_table_model = (DefaultTableModel) processes_table.getModel();
+            editing_table_model = (DefaultTableModel) editing_table.getModel();
+      }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -212,10 +209,14 @@ public class Main_Frame extends JFrame {
         brightness_label = new javax.swing.JLabel();
         min_label = new javax.swing.JLabel();
         max_label = new javax.swing.JLabel();
-        input_frame = new javax.swing.JFrame();
-        input_search_btn = new javax.swing.JButton();
-        input_portsListComoBox = new javax.swing.JComboBox<>();
-        input_cnct_discnctBtn = new javax.swing.JButton();
+        slow_input_frame = new javax.swing.JFrame();
+        slow_input_search_btn = new javax.swing.JButton();
+        slow_input_portsListComoBox = new javax.swing.JComboBox<>();
+        slow_input_cnct_discnctBtn = new javax.swing.JButton();
+        fast_input_frame = new javax.swing.JFrame();
+        fast_input_search_btn = new javax.swing.JButton();
+        fast_input_portsListComoBox = new javax.swing.JComboBox<>();
+        fast_input_cnct_discnctBtn = new javax.swing.JButton();
         mem_btn = new javax.swing.JButton();
         net_btn = new javax.swing.JButton();
         proc_btn = new javax.swing.JButton();
@@ -235,7 +236,8 @@ public class Main_Frame extends JFrame {
         mem_menu = new javax.swing.JMenu();
         file_sys_menu = new javax.swing.JMenu();
         io_menu = new javax.swing.JMenu();
-        input_item = new javax.swing.JMenuItem();
+        slow_input_item = new javax.swing.JMenuItem();
+        fast_input_item = new javax.swing.JMenuItem();
         output_item = new javax.swing.JMenuItem();
         net_menu = new javax.swing.JMenu();
         chat_menu = new javax.swing.JMenu();
@@ -421,6 +423,11 @@ public class Main_Frame extends JFrame {
         server_chat_panel.setViewportView(server_chat_pane);
 
         server_snd_btn.setText("Send");
+        server_snd_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                server_snd_btnActionPerformed(evt);
+            }
+        });
 
         server_msg_field.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -467,6 +474,11 @@ public class Main_Frame extends JFrame {
         });
 
         client_snd_btn.setText("Send");
+        client_snd_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                client_snd_btnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout client_frameLayout = new javax.swing.GroupLayout(client_frame.getContentPane());
         client_frame.getContentPane().setLayout(client_frameLayout);
@@ -566,7 +578,7 @@ public class Main_Frame extends JFrame {
             }
         });
 
-        output_cnct_discnctBtn.setText("Connect");
+        output_cnct_discnctBtn.setText("Connect to Port");
         output_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 output_cnct_discnctBtnActionPerformed(evt);
@@ -580,7 +592,6 @@ public class Main_Frame extends JFrame {
         brightness_slider.setMajorTickSpacing(5);
         brightness_slider.setMaximum(255);
         brightness_slider.setPaintTicks(true);
-        brightness_slider.setSnapToTicks(true);
         brightness_slider.setValue(0);
         brightness_slider.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         brightness_slider.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -645,46 +656,89 @@ public class Main_Frame extends JFrame {
                 .addContainerGap())
         );
 
-        input_frame.setTitle("Input");
-        input_frame.setResizable(false);
+        slow_input_frame.setTitle("Slow Input");
+        slow_input_frame.setResizable(false);
 
-        input_search_btn.setText("Search COM Ports");
-        input_search_btn.addActionListener(new java.awt.event.ActionListener() {
+        slow_input_search_btn.setText("Search COM Ports");
+        slow_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                input_search_btnActionPerformed(evt);
+                slow_input_search_btnActionPerformed(evt);
             }
         });
 
-        input_cnct_discnctBtn.setText("Connect");
-        input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+        slow_input_cnct_discnctBtn.setText("Connect to Port");
+        slow_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                input_cnct_discnctBtnActionPerformed(evt);
+                slow_input_cnct_discnctBtnActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout input_frameLayout = new javax.swing.GroupLayout(input_frame.getContentPane());
-        input_frame.getContentPane().setLayout(input_frameLayout);
-        input_frameLayout.setHorizontalGroup(
-            input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(input_frameLayout.createSequentialGroup()
+        javax.swing.GroupLayout slow_input_frameLayout = new javax.swing.GroupLayout(slow_input_frame.getContentPane());
+        slow_input_frame.getContentPane().setLayout(slow_input_frameLayout);
+        slow_input_frameLayout.setHorizontalGroup(
+            slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(slow_input_frameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(slow_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        input_frameLayout.setVerticalGroup(
-            input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(input_frameLayout.createSequentialGroup()
+        slow_input_frameLayout.setVerticalGroup(
+            slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(slow_input_frameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(input_frameLayout.createSequentialGroup()
-                        .addComponent(input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(slow_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(slow_input_frameLayout.createSequentialGroup()
+                        .addComponent(slow_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(slow_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(slow_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        fast_input_frame.setTitle("Fast Input");
+        fast_input_frame.setResizable(false);
+
+        fast_input_search_btn.setText("Search COM Ports");
+        fast_input_search_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fast_input_search_btnActionPerformed(evt);
+            }
+        });
+
+        fast_input_cnct_discnctBtn.setText("Connect to Port");
+        fast_input_cnct_discnctBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fast_input_cnct_discnctBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout fast_input_frameLayout = new javax.swing.GroupLayout(fast_input_frame.getContentPane());
+        fast_input_frame.getContentPane().setLayout(fast_input_frameLayout);
+        fast_input_frameLayout.setHorizontalGroup(
+            fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fast_input_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fast_input_portsListComoBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        fast_input_frameLayout.setVerticalGroup(
+            fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fast_input_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(fast_input_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(fast_input_frameLayout.createSequentialGroup()
+                        .addComponent(fast_input_portsListComoBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fast_input_cnct_discnctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fast_input_search_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -765,13 +819,21 @@ public class Main_Frame extends JFrame {
 
         io_menu.setText("I/O");
 
-        input_item.setText("Input");
-        input_item.addActionListener(new java.awt.event.ActionListener() {
+        slow_input_item.setText("Slow Input");
+        slow_input_item.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                input_itemActionPerformed(evt);
+                slow_input_itemActionPerformed(evt);
             }
         });
-        io_menu.add(input_item);
+        io_menu.add(slow_input_item);
+
+        fast_input_item.setText("Fast Input");
+        fast_input_item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fast_input_itemActionPerformed(evt);
+            }
+        });
+        io_menu.add(fast_input_item);
 
         output_item.setText("Output");
         output_item.addActionListener(new java.awt.event.ActionListener() {
@@ -909,392 +971,455 @@ public class Main_Frame extends JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void sort_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sort_btnActionPerformed
-        try {
-            clear_table(proc_table_model);
-            String buttonText = get_selected_button_text();
-            LinkedList<Process> temp = new LinkedList<>();
-            if (buttonText.toLowerCase().contains("fifo")) {
-                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.FIFO));
-            } else if (buttonText.toLowerCase().contains("sjf")) {
-                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.SJF));
-            } else if (buttonText.toLowerCase().contains("rr")) {
-                temp.addAll(new Scheduler(ready_queue).sort(Scheduler.RR));
-            }
-            populate_scheduler_table(temp);
-//            if (buttonText.toLowerCase().contains("srjf")) {
-//                LinkedList<Process> temp = new Scheduler(ready_queue).sort(Scheduler.SRJF);
-//                populate_scheduler_table(temp);
-//            }
-        } catch (Exception ex) {
-            System.err.println(ex.toString());
-        }
+          try {
+                clear_table(proc_table_model);
+                String buttonText = get_selected_button_text();
+                LinkedList<Process> temp = new LinkedList<>();
+                if (buttonText.toLowerCase().contains("fifo")) {
+                      temp.addAll(new Scheduler(ready_queue).sort(Scheduler.FIFO));
+                } else if (buttonText.toLowerCase().contains("sjf")) {
+                      temp.addAll(new Scheduler(ready_queue).sort(Scheduler.SJF));
+                } else if (buttonText.toLowerCase().contains("rr")) {
+                      temp.addAll(new Scheduler(ready_queue).sort(Scheduler.RR, 40));
+                }
+                populate_scheduler_table(temp);
+          } catch (Exception ex) {
+                System.err.println(ex.toString());
+          }
     }//GEN-LAST:event_sort_btnActionPerformed
 
     private void edit_scheduler_table_rowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_scheduler_table_rowActionPerformed
-        scheduling_frame.setVisible(false);
-        clear_table(editing_table_model);
-        for (int i = 0; i < proc_table_model.getRowCount(); i++) {
-            Object[] data = new Object[4];
-            for (int j = 0; j < proc_table_model.getColumnCount(); j++) {
-                data[j] = proc_table_model.getValueAt(i, j);
-            }
-            editing_table_model.addRow(data);
-        }
-        editing_table_frame.setSize(500, 350);
-        editing_table_frame.setVisible(true);
+          scheduling_frame.setVisible(false);
+          clear_table(editing_table_model);
+          for (int i = 0; i < proc_table_model.getRowCount(); i++) {
+                Object[] data = new Object[4];
+                for (int j = 0; j < proc_table_model.getColumnCount(); j++) {
+                      data[j] = proc_table_model.getValueAt(i, j);
+                }
+                editing_table_model.addRow(data);
+          }
+          editing_table_frame.setSize(500, 350);
+          editing_table_frame.setVisible(true);
     }//GEN-LAST:event_edit_scheduler_table_rowActionPerformed
 
     private void new_row_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_new_row_btnActionPerformed
-        editing_table_model.addRow(new Object[4]);
+          editing_table_model.addRow(new Object[4]);
     }//GEN-LAST:event_new_row_btnActionPerformed
 
     private void ok_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ok_buttonActionPerformed
-        ready_queue.clear();
-        clear_table(proc_table_model);
-        for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-            Object[] data = new Object[4];
-            for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                data[j] = editing_table_model.getValueAt(i, j);
-            }
-            proc_table_model.addRow(data);
-        }
+          ready_queue.clear();
+          clear_table(proc_table_model);
+          for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                Object[] data = new Object[4];
+                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                      data[j] = editing_table_model.getValueAt(i, j);
+                }
+                proc_table_model.addRow(data);
+          }
 
-        for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-            Object[] data = new Object[4];
-            for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                data[j] = editing_table_model.getValueAt(i, j);
-            }
-            Process temp = new Process(Integer.parseInt(data[0].toString()),
-                    Integer.parseInt(data[1].toString()),
-                    Integer.parseInt(data[2].toString()),
-                    Integer.parseInt(data[3].toString()));
-            ready_queue.add(temp);
-        }
-        clear_table(editing_table_model);
-        editing_table_frame.setVisible(false);
-        scheduling_frame.setVisible(true);
+          for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                Object[] data = new Object[4];
+                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                      data[j] = editing_table_model.getValueAt(i, j);
+                }
+                Process temp = new Process(Integer.parseInt(data[0].toString()),
+                        Integer.parseInt(data[1].toString()),
+                        Integer.parseInt(data[2].toString()),
+                        Integer.parseInt(data[3].toString()));
+                ready_queue.add(temp);
+          }
+          clear_table(editing_table_model);
+          editing_table_frame.setVisible(false);
+          scheduling_frame.setVisible(true);
     }//GEN-LAST:event_ok_buttonActionPerformed
 
     private void editing_table_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_editing_table_frameWindowClosing
-        editing_table_frame.setVisible(false);
-        scheduling_frame.setVisible(true);
+          editing_table_frame.setVisible(false);
+          scheduling_frame.setVisible(true);
     }//GEN-LAST:event_editing_table_frameWindowClosing
 
     private void delete_row_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_row_btnActionPerformed
-        editing_table_model.removeRow(editing_table.getSelectedRow());
+          editing_table_model.removeRow(editing_table.getSelectedRow());
     }//GEN-LAST:event_delete_row_btnActionPerformed
 
     private void sched_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sched_itemActionPerformed
-        ready_queue.clear();
-        clear_table(proc_table_model);
-        clear_table(editing_table_model);
-        for (int i = 0; i < 15; i++) {
-            ready_queue.add(new Process(i,
-                    new Random().nextInt(100),
-                    new Random().nextInt(30),
-                    new Random().nextInt(6)));
-        }
+          ready_queue.clear();
+          clear_table(proc_table_model);
+          clear_table(editing_table_model);
+          for (int i = 0; i < 15; i++) {
+                ready_queue.add(new Process(i,
+                        new Random().nextInt(100),
+                        new Random().nextInt(30),
+                        new Random().nextInt(6)));
+          }
 
-        populate_scheduler_table(ready_queue);
-        scheduling_frame.setSize(500, 350);
-        scheduling_frame.setVisible(true);
+          populate_scheduler_table(ready_queue);
+          scheduling_frame.setSize(500, 350);
+          scheduling_frame.setVisible(true);
     }//GEN-LAST:event_sched_itemActionPerformed
 
     private void server_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_server_itemActionPerformed
-        if (!server_started) {
-            try {
-                server_frame.setSize(500, 400);
-                server_frame.setVisible(true);
-                server_msg_field.setEnabled(false);
-                server_snd_btn.setEnabled(false);
-                server_chat_pane.setText(null);
-                server_started = true;
+          if (!server_started) {
+                try {
+                      server_frame.setSize(500, 400);
+                      server_frame.setVisible(true);
+                      server_msg_field.setEnabled(false);
+                      server_snd_btn.setEnabled(false);
+                      server_chat_pane.setText(null);
+                      server_started = true;
 
-                ss = new ServerSocket(PORT_NUM);
-                print_server_address(server_chat_pane);
+                      ss = new ServerSocket(PORT_NUM);
+                      print_server_address(server_chat_pane);
 
-                Runnable read_runnable = () -> {
-                    try {
-                        DataInputStream dis = new DataInputStream(cs.getInputStream());
-                        while (true) {
-                            String line = dis.readUTF();
-                            if (!line.contains("online::id::")) {
-                                String[] line_id = line.split("::id::");
-                                System.out.println(line_id[0]);
-                                appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "]: " + line_id[0] + "\n", Color.BLACK, false, false);
-                                send_message(line, true);
+                      Runnable read_runnable = () -> {
+                            try {
+                                  DataInputStream dis = new DataInputStream(cs.getInputStream());
+                                  while (true) {
+                                        String line = dis.readUTF();
+                                        if (!line.contains("online::id::")) {
+                                              String[] line_id = line.split("::id::");
+                                              System.out.println(line_id[0]);
+                                              appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "]: " + line_id[0] + "\n", Color.BLACK, false, false);
+                                              send_message(line, true);
+                                        }
+                                  }
+                            } catch (IOException ex) {
+                                  System.err.println(ex.toString());
+                                  appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Disconnected\n", Color.RED, true, false);
+                                  send_message("[" + cs.getInetAddress().toString() + "] Disconnected", true);
                             }
-                        }
-                    } catch (IOException ex) {
-                        System.err.println(ex.toString());
-                        appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Disconnected\n", Color.RED, true, false);
-                        send_message("[" + cs.getInetAddress().toString() + "] Disconnected", true);
-                    }
-                };
+                      };
 
-                Runnable connect_runnable = () -> {
-                    while (true) {
-                        try {
-                            cs = ss.accept();
-                            clients.add(cs);
-                            server_msg_field.setEnabled(true);
-                            server_snd_btn.setEnabled(true);
-                            appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Connected\n", Color.RED, true, false);
-                            send_message("[" + cs.getInetAddress().toString() + "] Connected", true);
-                            new Thread(read_runnable).start();
-                        } catch (IOException ex) {
-                            System.err.println(ex.toString());
-                            break;
-                        }
-                    }
-                };
+                      Runnable connect_runnable = () -> {
+                            while (true) {
+                                  try {
+                                        cs = ss.accept();
+                                        clients.add(cs);
+                                        server_msg_field.setEnabled(true);
+                                        server_snd_btn.setEnabled(true);
+                                        appendToPane(server_chat_pane, "[" + cs.getInetAddress().toString() + "] Connected\n", Color.RED, true, false);
+                                        send_message("[" + cs.getInetAddress().toString() + "] Connected", true);
+                                        new Thread(read_runnable).start();
+                                  } catch (IOException ex) {
+                                        System.err.println(ex.toString());
+                                        break;
+                                  }
+                            }
+                      };
 
-                new Thread(connect_runnable).start();
-            } catch (IOException ex) {
-                System.err.println(ex.toString());
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Server is already started", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+                      new Thread(connect_runnable).start();
+                } catch (IOException ex) {
+                      System.err.println(ex.toString());
+                }
+          } else {
+                JOptionPane.showMessageDialog(this, "Server is already started", "Error", JOptionPane.ERROR_MESSAGE);
+          }
     }//GEN-LAST:event_server_itemActionPerformed
 
     private void server_msg_fieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_server_msg_fieldKeyPressed
-        if (evt.getKeyCode() == 10) {   //enter key is pressed
-            String line = server_msg_field.getText();
-            if (line.length() != 0) {
-                send_message(line, false);
-            }
-        }
+          if (evt.getKeyCode() == 10) {   //enter key is pressed
+                String line = server_msg_field.getText();
+                if (line.length() != 0) {
+                      send_message(line, false);
+                }
+          }
     }//GEN-LAST:event_server_msg_fieldKeyPressed
 
     private void client_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_client_itemActionPerformed
-        try {
-            if (!client_connected) {
-                String input = JOptionPane.showInputDialog(this, "Enter server ip address and port number separated by \":\": ", "Server IP:Port number", JOptionPane.PLAIN_MESSAGE);
-                if (input != null) {
-                    client_chat_pane.setText(null);
-                    client_connected = true;
-                    String[] ip_port = input.split(":");
-                    client = new Client(new Socket(ip_port[0], Integer.parseInt(ip_port[1])), client_chat_pane);
-                    client.read();
-                    client_frame.setSize(500, 400);
-                    client_frame.setVisible(true);
-                    client_frame.setTitle(client.get_socket().getInetAddress().toString() + "::" + client.get_id());
+          try {
+                if (!client_connected) {
+                      String user_input = JOptionPane.showInputDialog(this, "Enter server ip address and port number separated by \":\": ", "Server IP:Port number", JOptionPane.PLAIN_MESSAGE);
+                      if (user_input != null) {
+                            client_chat_pane.setText(null);
+                            client_connected = true;
+                            String[] ip_port = user_input.split(":");
+                            client = new Client(new Socket(ip_port[0], Integer.parseInt(ip_port[1])), client_chat_pane);
+                            client.read();
+                            client_frame.setSize(500, 400);
+                            client_frame.setVisible(true);
+                            client_frame.setTitle(client.get_socket().getInetAddress().toString() + "::" + client.get_id());
+                      }
+                } else {
+                      JOptionPane.showMessageDialog(this, "Client is already connected", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Client is already connected", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            System.err.println(ex.toString());
-            client_connected = false;
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            JOptionPane.showMessageDialog(this, "Invalid IP and Port address", "Error", JOptionPane.ERROR_MESSAGE);
-            System.err.println(ex.toString());
-            client_connected = false;
-        } catch (Exception ex) {
-            System.err.println(ex.toString());
-            client_connected = false;
-        }
+          } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                System.err.println(ex.toString());
+                client_connected = false;
+          } catch (ArrayIndexOutOfBoundsException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid IP and Port address", "Error", JOptionPane.ERROR_MESSAGE);
+                System.err.println(ex.toString());
+                client_connected = false;
+          } catch (HeadlessException | NumberFormatException ex) {
+                System.err.println(ex.toString());
+                client_connected = false;
+          }
     }//GEN-LAST:event_client_itemActionPerformed
 
     private void client_msg_fieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_client_msg_fieldKeyPressed
-        if (evt.getKeyCode() == 10) {   //enter key is pressed
-            String line = client_msg_field.getText();
-            if (line.length() != 0) {
-                client.send(line);
-                client_msg_field.setText(null);
-            }
-        }
+          if (evt.getKeyCode() == 10) {   //enter key is pressed
+                String line = client_msg_field.getText();
+                if (line.length() != 0) {
+                      client.send(line);
+                      client_msg_field.setText(null);
+                }
+          }
     }//GEN-LAST:event_client_msg_fieldKeyPressed
 
     private void exit_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exit_itemActionPerformed
-        System.exit(0);
+          System.exit(0);
     }//GEN-LAST:event_exit_itemActionPerformed
 
     private void server_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_server_frameWindowClosing
-        try {
-            for (Socket i : clients) {
-                i.close();
-            }
-            ss.close();
-            server_started = false;
-        } catch (IOException ex) {
-            System.err.println(ex.toString());
-        }
+          try {
+                for (Socket i : clients) {
+                      i.close();
+                }
+                ss.close();
+                server_started = false;
+          } catch (IOException ex) {
+                System.err.println(ex.toString());
+          }
     }//GEN-LAST:event_server_frameWindowClosing
 
     private void client_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_client_frameWindowClosing
-        client.send("::client::quit::" + client.get_id());
-        client_connected = false;
+          client.send("::client::quit::" + client.get_id());
+          client_connected = false;
     }//GEN-LAST:event_client_frameWindowClosing
 
     private void detect_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detect_itemActionPerformed
-        LinkedList<Process> ready = new LinkedList<>();
-        for (int i = 0; i < 5; i++) {
-            ready.add(new Process());
-        }
+          LinkedList<Process> ready = new LinkedList<>();
+          for (int i = 0; i < 5; i++) {
+                ready.add(new Process());
+          }
 
-        ready.forEach(i -> {
-            System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
-                    i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
-        });
+          ready.forEach(i -> {
+                System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
+                        i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+          });
 
-        System.out.println("\nChecking for Deadlock...");
-        new Deadlock(ready, new Resource(10, 33, 19)).detect();
+          System.out.println("\nChecking for Deadlock...");
+          new Deadlock(ready, new Resource(10, 33, 19)).detect();
     }//GEN-LAST:event_detect_itemActionPerformed
 
     private void net_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_net_btnActionPerformed
-        int choice = JOptionPane.showOptionDialog(this,
-                "Run Client or Server application ?",
-                "Choose a Program",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new String[]{"Server", "Client", "Cancel"},
-                "Server");
-        if (choice == JOptionPane.YES_OPTION) {
-            server_itemActionPerformed(evt);
-        } else if (choice == JOptionPane.NO_OPTION) {
-            client_itemActionPerformed(evt);
-        }
+          int choice = JOptionPane.showOptionDialog(this,
+                  "Run Client or Server application ?",
+                  "Choose a Program",
+                  JOptionPane.YES_NO_CANCEL_OPTION,
+                  JOptionPane.QUESTION_MESSAGE,
+                  null,
+                  new String[]{"Server", "Client", "Cancel"},
+                  "Server");
+          if (choice == JOptionPane.YES_OPTION) {
+                server_itemActionPerformed(evt);
+          } else if (choice == JOptionPane.NO_OPTION) {
+                client_itemActionPerformed(evt);
+          }
     }//GEN-LAST:event_net_btnActionPerformed
 
     private void about_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_about_itemActionPerformed
-        int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
-        int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
+          int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
+          int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
 
-        about_frame.setLocation(screen_width / 3, screen_height / 8);
-        about_frame.setSize(280, 650);
-        about_frame.setVisible(true);
+          about_frame.setLocation(screen_width / 3, screen_height / 8);
+          about_frame.setSize(280, 650);
+          about_frame.setVisible(true);
     }//GEN-LAST:event_about_itemActionPerformed
 
     private void output_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_itemActionPerformed
-        output_frame.setSize(520, 220);
-        output_frame.setVisible(true);
+          output_frame.setSize(520, 220);
+          output_frame.setVisible(true);
+          brightness_slider.setEnabled(false);
     }//GEN-LAST:event_output_itemActionPerformed
 
     private void output_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_search_btnActionPerformed
-        output_portsListComoBox.removeAllItems();
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-        portsList.clear();
+          output_portsListComoBox.removeAllItems();
+          Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+          portsList.clear();
 
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            output_portsListComoBox.addItem(currPortId.getName());
-            portsList.add(currPortId);
-        }
+          while (portEnum.hasMoreElements()) {
+                CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+                output_portsListComoBox.addItem(currPortId.getName());
+                portsList.add(currPortId);
+          }
     }//GEN-LAST:event_output_search_btnActionPerformed
 
     private void output_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_output_cnct_discnctBtnActionPerformed
-        if (!op_connected) {
-            try {
-                portId = portsList.get(output_portsListComoBox.getSelectedIndex());
-                serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-                output_cnct_discnctBtn.setText("Disconnect From COM Port");
-                statusLabel.setText("Status: Connected");
+          if (!op_connected) {
+                try {
+                      portId = portsList.get(output_portsListComoBox.getSelectedIndex());
+                      serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
+                      output_cnct_discnctBtn.setText("Disconnect from Port");
+                      statusLabel.setText("Status: Connected");
+                      brightness_slider.setEnabled(true);
+                      op_connected = !op_connected;
+                      serialPort.setSerialPortParams(DATA_RATE,
+                              SerialPort.DATABITS_8,
+                              SerialPort.STOPBITS_1,
+                              SerialPort.PARITY_NONE);
+                      output = serialPort.getOutputStream();
+                } catch (NullPointerException e) {
+                      System.err.println(e.toString());
+                } catch (UnsupportedCommOperationException | PortInUseException | IOException ex) {
+                      System.err.println(ex.toString());
+                }
+          } else {
+                close();
+                output_cnct_discnctBtn.setText("Connect to Port");
+                statusLabel.setText("Status: Disonnected");
+                brightness_slider.setEnabled(false);
                 op_connected = !op_connected;
-                serialPort.setSerialPortParams(DATA_RATE,
-                        SerialPort.DATABITS_8,
-                        SerialPort.STOPBITS_1,
-                        SerialPort.PARITY_NONE);
-                output = serialPort.getOutputStream();
-            } catch (NullPointerException e) {
-                System.err.println(e.toString());
-            } catch (UnsupportedCommOperationException | PortInUseException | IOException ex) {
-                System.err.println(ex.toString());
-            }
-        } else {
-            close();
-            output_cnct_discnctBtn.setText("Connect with COM Port");
-            statusLabel.setText("Status: Disonnected");
-            op_connected = !op_connected;
-        }
+          }
     }//GEN-LAST:event_output_cnct_discnctBtnActionPerformed
 
     private void brightness_sliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightness_sliderStateChanged
-        try {
-            if (op_connected) {
-                if (!brightness_slider.getValueIsAdjusting()) {
-                    String value = brightness_slider.getValue() + "";
-                    System.out.println(value);
-                    output.write(value.getBytes());
-                    output.flush();
+          try {
+                if (op_connected) {
+                      if (!brightness_slider.getValueIsAdjusting()) {
+                            String value = String.valueOf(brightness_slider.getValue());
+                            System.out.println(value);
+                            output.write(value.getBytes());
+                            output.flush();
+                      }
                 }
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.toString());
-        }
+          } catch (IOException ex) {
+                System.err.println(ex.toString());
+          }
     }//GEN-LAST:event_brightness_sliderStateChanged
 
     private void output_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_output_frameWindowClosing
-        if (op_connected) {
-            close();
-        }
+          if (op_connected) {
+                close();
+          }
     }//GEN-LAST:event_output_frameWindowClosing
 
-    private void input_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_itemActionPerformed
-        input_frame.setSize(520, 130);
-        input_frame.setVisible(true);
-    }//GEN-LAST:event_input_itemActionPerformed
+    private void slow_input_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_slow_input_itemActionPerformed
+          slow_input_frame.setSize(520, 130);
+          slow_input_frame.setVisible(true);
+    }//GEN-LAST:event_slow_input_itemActionPerformed
 
-    private void input_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_search_btnActionPerformed
-        input_portsListComoBox.removeAllItems();
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-        portsList.clear();
+    private void slow_input_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_slow_input_search_btnActionPerformed
+          slow_input_portsListComoBox.removeAllItems();
+          Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+          portsList.clear();
 
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-            input_portsListComoBox.addItem(currPortId.getName());
-            portsList.add(currPortId);
-        }
-    }//GEN-LAST:event_input_search_btnActionPerformed
+          while (portEnum.hasMoreElements()) {
+                CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+                slow_input_portsListComoBox.addItem(currPortId.getName());
+                portsList.add(currPortId);
+          }
+    }//GEN-LAST:event_slow_input_search_btnActionPerformed
 
-    private void input_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_input_cnct_discnctBtnActionPerformed
-        if (!ip_connected) {
-            String com_num = input_portsListComoBox.getSelectedItem().toString();
-            ip_connected = !ip_connected;
-            input_cnct_discnctBtn.setEnabled(false);
-            input_cnct_discnctBtn.setText("Connected");
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String[] cmd = new String[]{"cmd", "/c", "python plotter.py " + com_num};
-                        System.out.println(cmd[2]);
-                        python_process = new ProcessBuilder(cmd).start();
-                        while (python_process.isAlive());
-                        input_cnct_discnctBtn.setEnabled(true);
-                        input_cnct_discnctBtn.setText("Connect to COM Port");
-                        ip_connected = !ip_connected;
-                    } catch (IOException ex) {
-                        System.err.println(ex.toString());
-                    }
-                }
-            }).start();
-        } else {
-            input_cnct_discnctBtn.setEnabled(true);
-            input_cnct_discnctBtn.setText("Connect to COM Port");
-            ip_connected = !ip_connected;
-        }
-    }//GEN-LAST:event_input_cnct_discnctBtnActionPerformed
+      @SuppressWarnings("empty-statement")
+    private void slow_input_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_slow_input_cnct_discnctBtnActionPerformed
+          if (!ip_connected) {
+                String com_num = slow_input_portsListComoBox.getSelectedItem().toString();
+                ip_connected = !ip_connected;
+                slow_input_cnct_discnctBtn.setEnabled(false);
+                slow_input_cnct_discnctBtn.setText("Connected");
+                new Thread(() -> {
+                      try {
+                            String[] cmd = new String[]{};
+                            if (info.getName().toLowerCase().equals("windows")) {
+                                  cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\graphing\\slow\\plotter.py " + com_num};
+                            } else {
+                                  cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/graphing/slow/plotter.py " + com_num};
+                            }
 
-    public static void main(String args[]) {
-        try {
-            javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
-            javax.swing.UIManager.setLookAndFeel(info.getClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            System.err.println(ex);
-        }
+                            graphing_process = new ProcessBuilder(cmd).start();
+                            while (graphing_process.isAlive());
+                            slow_input_cnct_discnctBtn.setEnabled(true);
+                            slow_input_cnct_discnctBtn.setText("Connect to Port");
+                            ip_connected = !ip_connected;
+                      } catch (IOException ex) {
+                            System.err.println(ex.toString());
+                      }
+                }).start();
+          } else {
+                slow_input_cnct_discnctBtn.setEnabled(true);
+                slow_input_cnct_discnctBtn.setText("Connect to Port");
+                ip_connected = !ip_connected;
+          }
+    }//GEN-LAST:event_slow_input_cnct_discnctBtnActionPerformed
+
+    private void server_snd_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_server_snd_btnActionPerformed
+          server_msg_fieldKeyPressed(new java.awt.event.KeyEvent(this, 0, 0, 0, 10));
+    }//GEN-LAST:event_server_snd_btnActionPerformed
+
+    private void client_snd_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_client_snd_btnActionPerformed
+          client_msg_fieldKeyPressed(new java.awt.event.KeyEvent(this, 0, 0, 0, 10));
+    }//GEN-LAST:event_client_snd_btnActionPerformed
+
+    private void fast_input_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fast_input_itemActionPerformed
+          fast_input_frame.setSize(520, 130);
+          fast_input_frame.setVisible(true);
+          fast_input_portsListComoBox.removeAllItems();
+          fast_input_cnct_discnctBtn.setText("Connect to COM PORT");
+          fast_input_cnct_discnctBtn.setEnabled(true);
+    }//GEN-LAST:event_fast_input_itemActionPerformed
+
+    private void fast_input_search_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fast_input_search_btnActionPerformed
+          fast_input_portsListComoBox.removeAllItems();
+          Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+          portsList.clear();
+
+          while (portEnum.hasMoreElements()) {
+                CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+                fast_input_portsListComoBox.addItem(currPortId.getName());
+                portsList.add(currPortId);
+          }
+    }//GEN-LAST:event_fast_input_search_btnActionPerformed
+
+    private void fast_input_cnct_discnctBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fast_input_cnct_discnctBtnActionPerformed
+          if (!ip_connected) {
+                String com_num = fast_input_portsListComoBox.getSelectedItem().toString();
+                ip_connected = !ip_connected;
+                fast_input_cnct_discnctBtn.setEnabled(false);
+                fast_input_cnct_discnctBtn.setText("Connected");
+                new Thread(() -> {
+                      try {
+                            String[] cmd = new String[]{};
+                            if (info.getName().toLowerCase().equals("windows")) {
+                                  cmd = new String[]{"cmd", "/c", "graphing.bat " + com_num};
+                            } else {
+                                  cmd = new String[]{"/bin/sh", "-c", "scripts_and_helpers/graphing/fast/linux/p_oscilloscope " + com_num};
+                            }
+                            graphing_process = new ProcessBuilder(cmd).start();
+                            ip_connected = !ip_connected;
+                      } catch (IOException ex) {
+                            System.err.println(ex.toString());
+                      }
+                }).start();
+          } else {
+                fast_input_cnct_discnctBtn.setEnabled(true);
+                fast_input_cnct_discnctBtn.setText("Connect to Port");
+                ip_connected = !ip_connected;
+          }
+    }//GEN-LAST:event_fast_input_cnct_discnctBtnActionPerformed
+
+      public static void main(String args[]) {
+            try {
+                  javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
+                  javax.swing.UIManager.setLookAndFeel(info.getClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+                  System.err.println(ex);
+            }
         //</editor-fold>
 
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new Main_Frame().setVisible(true);
-        });
-    }
+            /* Create and display the form */
+            java.awt.EventQueue.invokeLater(() -> {
+                  Main_Frame main_frame = new Main_Frame();
+
+                  int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
+                  int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+                  main_frame.setLocation(screen_width / 4, screen_height / 5);
+                  main_frame.setVisible(true);
+            });
+      }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFrame about_frame;
@@ -1335,15 +1460,15 @@ public class Main_Frame extends JFrame {
     private javax.swing.JMenuItem ex_sync_item;
     private javax.swing.JMenu examples_menu;
     private javax.swing.JMenuItem exit_item;
+    private javax.swing.JButton fast_input_cnct_discnctBtn;
+    private javax.swing.JFrame fast_input_frame;
+    private javax.swing.JMenuItem fast_input_item;
+    private javax.swing.JComboBox<String> fast_input_portsListComoBox;
+    private javax.swing.JButton fast_input_search_btn;
     private javax.swing.JRadioButton fifo_chk_btn;
     private javax.swing.JMenu file_menu;
     private javax.swing.JMenu file_sys_menu;
     private javax.swing.JMenu help_menu;
-    private javax.swing.JButton input_cnct_discnctBtn;
-    private javax.swing.JFrame input_frame;
-    private javax.swing.JMenuItem input_item;
-    private javax.swing.JComboBox<String> input_portsListComoBox;
-    private javax.swing.JButton input_search_btn;
     private javax.swing.JMenu io_menu;
     private javax.swing.JLabel logo_label;
     private javax.swing.JMenuBar main_menu_bar;
@@ -1383,6 +1508,11 @@ public class Main_Frame extends JFrame {
     private javax.swing.JMenuItem server_item;
     private javax.swing.JTextField server_msg_field;
     private javax.swing.JButton server_snd_btn;
+    private javax.swing.JButton slow_input_cnct_discnctBtn;
+    private javax.swing.JFrame slow_input_frame;
+    private javax.swing.JMenuItem slow_input_item;
+    private javax.swing.JComboBox<String> slow_input_portsListComoBox;
+    private javax.swing.JButton slow_input_search_btn;
     private javax.swing.JButton sort_btn;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JMenuItem sync_item;
