@@ -33,14 +33,14 @@ for i in range(z+1, len(sys.argv)):
 print x1
 print x2
 fig = plt.figure() 
-fig.canvas.set_window_title("Disk Scheduling")
+fig.canvas.set_window_title("Graphical Representation")
 plt.gca().invert_yaxis()
-plt.plot(x1, y1, label="SSTF", marker='o', markersize=11, linewidth=3)
+plt.plot(x1, y1, label="SSTF", marker='o', markeredgewidth=2, markersize=11, linewidth=3)
 
 if len(x2) > 0:
 	plt.plot(x2, y2, label="C LOOK", marker='H', markeredgewidth=2, markersize=11, linewidth=3)
+	plt.legend(loc='best')
 plt.grid(b=True, which='major', color='black', linestyle='-')
 plt.grid(b=True, which='minor', color='gray', linestyle='-')
 plt.minorticks_on()
-plt.legend()
 plt.show()

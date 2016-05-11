@@ -1,0 +1,45 @@
+Java:
+=====
+make sure that your machine has Java 8 installed and running on it.
+
+Python:
+=======
+Linux:
+======
+
+Open Terminal and type:
+-su [Enter]
+-pip install pyserial [Enter]
+-pip install matplotlib [Enter]
+-pip install drawnow [Enter]
+-pip install psutil [Enter]
+-pip install pylab [Enter]
+
+Windows:
+========
+
+-Add python path and python scripts path to environment variables
+-Open CMD as administrator and type:
+-pip install pyserial [Enter]
+-pip install matplotlib [Enter]
+-pip install drawnow [Enter]
+-pip install psutil [Enter]
+-pip install pylab [Enter]
+
+or if a package from the above ones fails to install, download and install them manually from the following:
+
+-pyserial: http://www.lfd.uci.edu/~gohlke/pythonlibs/#pyserial
+-matplotlib: http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib
+-drawnow: https://pypi.python.org/pypi/drawnow
+-psutil: http://www.lfd.uci.edu/~gohlke/pythonlibs/#psutil
+-pylab: https://pypi.python.org/pypi/pylab
+
+to check if a the above modules have been installed, open a terminal or a cmd session and type:
+$python [Enter]
+>>import pyserial [Enter]
+>>import matplotlib [Enter]
+>>import drawnow [Enter]
+>>import psutil [Enter]
+>>import pylab [Enter]
+
+if nothing pops up or no error occurs then the modules are installed correctly
