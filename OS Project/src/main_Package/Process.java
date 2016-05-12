@@ -11,51 +11,70 @@ import java.util.Scanner;
  * @author mn3m
  */
 public class Process {
-   
-
     public int PID;
     public int Burst_Time;
     public int Arrival_Time;
     public int Waiting_Time;
     public int TurnAround_Time;
     public int Priority;
-    public int sector;
+    public int Sector;
     public Resource Need;
     HashMap<Integer, Integer> Page_Table = new HashMap<>();
-
+    
     public Process() {
         Random r = new Random();
         this.PID = Math.abs(r.nextInt() % 30);
         this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
         this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
         this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Math.abs(r.nextInt() % 200);
         this.Need = new Resource();
-        this.sector = Math.abs((r.nextInt()) % 150);
     }
-
+    
+    public Process(int PID) {
+        Random r = new Random();
+        this.PID = PID;
+        this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
+        this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
+        this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Math.abs(r.nextInt() % 200);
+        this.Need = new Resource();
+    }
+    
+    public Process(int PID, int Sector) {
+        Random r = new Random();
+        this.PID = PID;
+        this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
+        this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
+        this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Sector;
+        this.Need = new Resource();
+    }
+    
+    public Process(int PID, Resource Need) {
+        Random r = new Random();
+        this.PID = PID;
+        this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
+        this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
+        this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Math.abs(r.nextInt() % 150);
+        this.Need = Need;
+    }
+    
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;
         this.Arrival_Time = Arrival_Time;
         this.Priority = Priority;
     }
-
-    public Process(int PID, int Burst_Time, int Arrival_Time, int Priority,Resource Need,int sector) {
+    
+    public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, int Sector, Resource Need) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;
         this.Arrival_Time = Arrival_Time;
         this.Priority = Priority;
+        this.Sector = Sector;
         this.Need = Need;
-        this.sector=sector;
-    }
-    public Process(int PID, int sector) {
-        this.PID = PID;
-        this.sector = sector;
-    }
-
-    public Process(int PID) {
-        this.PID = PID;
-
     }
     public void LRU(int frame_numbers_to_remove,ArrayList<Memory_Location> Memory,LinkedList<Memory_Location> Back_Store)
     {
@@ -95,12 +114,10 @@ public class Process {
         }
 
     }
-    
-
-    public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory,int mode,LinkedList<Memory_Location> Back_Store)
+         public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory,int mode,LinkedList<Memory_Location> Back_Store)
     {
-
-        for (int i = 0; i < page_numbers; i++) {
+      if(page_numbers<Memory.size())
+      { for (int i = 0; i < page_numbers; i++) {
             Page_Table.put(i, -1);
         }
         int page_counter = 0;
@@ -114,6 +131,7 @@ public class Process {
         }
             
         while (remaining_pages > 0) {
+            
             if (counter >= Memory.size()) {
                 System.out.println("Memory is full, Running LRU");
                 System.out.println("Old Memory is:");
@@ -153,6 +171,15 @@ public class Process {
 //            Map.Entry pair = (Map.Entry) it.next();
 //            System.out.println(pair.getKey() + "\t" + pair.getValue());
 //        }
+      }
+      else{
+          int pages_to_backstore=page_numbers-Memory.size();
+          for(int i=0;i<pages_to_backstore;i++)
+          {
+            Back_Store.addLast(new Memory_Location(0, 0,this.PID ,0));
+          }
+          this.allocate_memory(Memory.size(), Memory, 1, Back_Store);
+      }
     }
     
     public void chk_pageTable( ArrayList<Memory_Location> Memory)            
@@ -184,7 +211,7 @@ public class Process {
             }
         
         catch(NullPointerException e)
-        {System.out.println("Page Fault");}
+        {System.out.println("Illegal Access");}
            
        
         
