@@ -22,17 +22,14 @@ import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
-import java.awt.Button;
 import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 
 /**
  * @author mn3m
@@ -44,9 +41,14 @@ public class Main_Frame extends JFrame {
     DefaultTableModel proc_table_model;
     DefaultTableModel disk_table_model;
     DefaultTableModel editing_table_model;
-    boolean editing_proc_table = false;
+    DefaultTableModel deadlock_table_model;
+    int editing_table_number = -1;
     Map<Integer, Integer> ready_queue_map = new HashMap<>();
     boolean is_map_empty = true;
+
+    final int PROC_TABLE = 0;
+    final int DISK_TABLE = 1;
+    final int DEADLOCK_TABLE = 2;
 
     boolean client_connected = false;
     boolean server_started = false;
@@ -85,61 +87,96 @@ public class Main_Frame extends JFrame {
         }
     }
 
-    private void populate_scheduler_table(DefaultTableModel tm, LinkedList<Process> queue, boolean for_disk_table) {
-        if (!for_disk_table) {
-            queue.forEach(p -> {
-                Object[] processes_data = {p.PID, p.Arrival_Time, p.Burst_Time, p.Priority};
-                tm.addRow(processes_data);
-            });
-        } else {
-            queue.forEach(p -> {
-                Object[] processes_data = {p.PID, p.Sector};
-                tm.addRow(processes_data);
-            });
+    private void populate_scheduler_table(DefaultTableModel tm, LinkedList<Process> queue, int table_number) {
+        switch (table_number) {
+            case 0:
+                queue.forEach(p -> {
+                    Object[] processes_data = {p.PID, p.Arrival_Time, p.Burst_Time, p.Priority};
+                    tm.addRow(processes_data);
+                });
+                break;
+            case 1:
+                queue.forEach(p -> {
+                    Object[] processes_data = {p.PID, p.Sector};
+                    tm.addRow(processes_data);
+                });
+                break;
+            case 2:
+                queue.forEach(p -> {
+                    Object[] processes_data = {p.PID, p.Need.get_A(), p.Need.get_B(), p.Need.get_C()};
+                    tm.addRow(processes_data);
+                });
+                break;
+            default:
+                break;
         }
     }
 
-    private void save_changed_table(boolean disk) {
+    private void save_changed_table(int table_to_save) {
         clear_table(proc_table_model);
         clear_table(disk_table_model);
-        if (!disk) {
-            for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-                Object[] data = new Object[4];
-                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                    data[j] = editing_table_model.getValueAt(i, j);
+        clear_table(deadlock_table_model);
+        switch (table_to_save) {
+            case 0:
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    proc_table_model.addRow(data);
                 }
-                proc_table_model.addRow(data);
-            }
-
-            for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-                Object[] data = new Object[4];
-                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                    data[j] = editing_table_model.getValueAt(i, j);
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    Process temp = new Process(Integer.parseInt(data[0].toString()),
+                            Integer.parseInt(data[1].toString()),
+                            Integer.parseInt(data[2].toString()),
+                            Integer.parseInt(data[3].toString()));
+                    ready_queue.add(temp);
                 }
-                Process temp = new Process(Integer.parseInt(data[0].toString()),
-                        Integer.parseInt(data[1].toString()),
-                        Integer.parseInt(data[2].toString()),
-                        Integer.parseInt(data[3].toString()));
-                ready_queue.add(temp);
-            }
-        } else {
-            for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-                Object[] data = new Object[4];
-                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                    data[j] = editing_table_model.getValueAt(i, j);
+                break;
+            case 1:
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    disk_table_model.addRow(data);
                 }
-                disk_table_model.addRow(data);
-            }
-
-            for (int i = 0; i < editing_table_model.getRowCount(); i++) {
-                Object[] data = new Object[4];
-                for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
-                    data[j] = editing_table_model.getValueAt(i, j);
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    Process temp = new Process(Integer.parseInt(data[0].toString()),
+                            Integer.parseInt(data[1].toString()));
+                    ready_queue.add(temp);
                 }
-                Process temp = new Process(Integer.parseInt(data[0].toString()),
-                        Integer.parseInt(data[1].toString()));
-                ready_queue.add(temp);
-            }
+                break;
+            case 2:
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    deadlock_table_model.addRow(data);
+                }
+                for (int i = 0; i < editing_table_model.getRowCount(); i++) {
+                    Object[] data = new Object[4];
+                    for (int j = 0; j < editing_table_model.getColumnCount(); j++) {
+                        data[j] = editing_table_model.getValueAt(i, j);
+                    }
+                    Process temp = new Process(Integer.parseInt(data[0].toString()),
+                            new Resource(Integer.parseInt(data[1].toString()),
+                                    Integer.parseInt(data[2].toString()),
+                                    Integer.parseInt(data[3].toString())));
+                    ready_queue.add(temp);
+                }
+                break;
+            default:
+                break;
         }
         ready_queue.forEach(i -> ready_queue_map.put(i.PID, i.Sector));
         clear_table(editing_table_model);
@@ -158,6 +195,7 @@ public class Main_Frame extends JFrame {
                 } else {
                     cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
                 }
+                System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
 
                 args = args.replace(" ", " -> ");
@@ -177,6 +215,7 @@ public class Main_Frame extends JFrame {
                 } else {
                     cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
                 }
+                System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
 
                 args = args.replace(" ", " -> ");
@@ -244,6 +283,7 @@ public class Main_Frame extends JFrame {
                 } else {
                     cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
                 }
+                System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
 
                 args = args.replace(" ", " -> ");
@@ -263,6 +303,7 @@ public class Main_Frame extends JFrame {
                 } else {
                     cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
                 }
+                System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
 
                 args = args.replace(" ", " -> ");
@@ -358,6 +399,7 @@ public class Main_Frame extends JFrame {
         proc_table_model = (DefaultTableModel) processes_table.getModel();
         disk_table_model = (DefaultTableModel) disk_table.getModel();
         editing_table_model = (DefaultTableModel) editing_table.getModel();
+        deadlock_table_model = (DefaultTableModel) deadlock_table.getModel();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -428,6 +470,17 @@ public class Main_Frame extends JFrame {
         cmp_radio = new javax.swing.JRadioButton();
         disk_sched_rand_btn = new javax.swing.JButton();
         disk_scheduler_button_group = new javax.swing.ButtonGroup();
+        deadlock_frame = new javax.swing.JFrame();
+        disk_scheduling_table_scroll_pane1 = new javax.swing.JScrollPane();
+        deadlock_table = new javax.swing.JTable();
+        prevention_radio = new javax.swing.JRadioButton();
+        avoidance_radio = new javax.swing.JRadioButton();
+        deadlock_edit_table = new javax.swing.JButton();
+        deadlock_chk_btn = new javax.swing.JButton();
+        disk_log_area_scroll_pane1 = new javax.swing.JScrollPane();
+        deadlock_log_area = new javax.swing.JTextPane();
+        deadlock_sched_rand_btn = new javax.swing.JButton();
+        deadlock_button_group = new javax.swing.ButtonGroup();
         mem_btn = new javax.swing.JButton();
         net_btn = new javax.swing.JButton();
         proc_btn = new javax.swing.JButton();
@@ -435,16 +488,11 @@ public class Main_Frame extends JFrame {
         file_sys_btn = new javax.swing.JButton();
         main_menu_bar = new javax.swing.JMenuBar();
         file_menu = new javax.swing.JMenu();
-        open_sym_item = new javax.swing.JMenuItem();
-        save_sym_item = new javax.swing.JMenuItem();
         exit_item = new javax.swing.JMenuItem();
         proc_menu_item = new javax.swing.JMenu();
         sched_item = new javax.swing.JMenuItem();
         sync_item = new javax.swing.JMenuItem();
-        deadlock_item = new javax.swing.JMenu();
-        detect_item = new javax.swing.JMenuItem();
-        prevent_item = new javax.swing.JMenuItem();
-        avoid_item = new javax.swing.JMenuItem();
+        deadlock_item = new javax.swing.JMenuItem();
         mem_menu = new javax.swing.JMenu();
         file_sys_menu = new javax.swing.JMenu();
         disk_sched_item = new javax.swing.JMenuItem();
@@ -1058,6 +1106,102 @@ public class Main_Frame extends JFrame {
                 .addComponent(disk_log_area_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        deadlock_frame.setTitle("Disk Scheduling");
+
+        deadlock_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "PID", "Need A", "Need B", "Need C"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        disk_scheduling_table_scroll_pane1.setViewportView(deadlock_table);
+
+        deadlock_button_group.add(prevention_radio);
+        prevention_radio.setSelected(true);
+        prevention_radio.setText("Detection");
+
+        deadlock_button_group.add(avoidance_radio);
+        avoidance_radio.setText("Avoidance");
+
+        deadlock_edit_table.setText("Edit Table");
+        deadlock_edit_table.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deadlock_edit_tableActionPerformed(evt);
+            }
+        });
+
+        deadlock_chk_btn.setText("Check");
+        deadlock_chk_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deadlock_chk_btnActionPerformed(evt);
+            }
+        });
+
+        deadlock_log_area.setEditable(false);
+        deadlock_log_area.setBorder(javax.swing.BorderFactory.createTitledBorder("Log"));
+        deadlock_log_area.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        disk_log_area_scroll_pane1.setViewportView(deadlock_log_area);
+
+        deadlock_sched_rand_btn.setText("Randomize");
+        deadlock_sched_rand_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deadlock_sched_rand_btnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout deadlock_frameLayout = new javax.swing.GroupLayout(deadlock_frame.getContentPane());
+        deadlock_frame.getContentPane().setLayout(deadlock_frameLayout);
+        deadlock_frameLayout.setHorizontalGroup(
+            deadlock_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(disk_log_area_scroll_pane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(disk_scheduling_table_scroll_pane1)
+            .addGroup(deadlock_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(deadlock_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(deadlock_chk_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(deadlock_frameLayout.createSequentialGroup()
+                        .addComponent(prevention_radio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(avoidance_radio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(deadlock_sched_rand_btn)
+                        .addGap(18, 18, 18)
+                        .addComponent(deadlock_edit_table)))
+                .addContainerGap())
+        );
+        deadlock_frameLayout.setVerticalGroup(
+            deadlock_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(deadlock_frameLayout.createSequentialGroup()
+                .addComponent(disk_scheduling_table_scroll_pane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(deadlock_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(prevention_radio)
+                    .addComponent(avoidance_radio)
+                    .addComponent(deadlock_edit_table)
+                    .addComponent(deadlock_sched_rand_btn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(deadlock_chk_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(disk_log_area_scroll_pane1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
@@ -1071,20 +1215,27 @@ public class Main_Frame extends JFrame {
         });
 
         proc_btn.setText("Processes");
+        proc_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proc_btnActionPerformed(evt);
+            }
+        });
 
         io_btn.setText("Input/Output");
+        io_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                io_btnActionPerformed(evt);
+            }
+        });
 
         file_sys_btn.setText("File System");
+        file_sys_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                file_sys_btnActionPerformed(evt);
+            }
+        });
 
         file_menu.setText("File");
-
-        open_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        open_sym_item.setText("Open Simulation");
-        file_menu.add(open_sym_item);
-
-        save_sym_item.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        save_sym_item.setText("Save Simulation");
-        file_menu.add(save_sym_item);
 
         exit_item.setText("Exit");
         exit_item.addActionListener(new java.awt.event.ActionListener() {
@@ -1107,24 +1258,19 @@ public class Main_Frame extends JFrame {
         proc_menu_item.add(sched_item);
 
         sync_item.setText("Synchronization");
+        sync_item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sync_itemActionPerformed(evt);
+            }
+        });
         proc_menu_item.add(sync_item);
 
         deadlock_item.setText("Deadlock");
-
-        detect_item.setText("Detection");
-        detect_item.addActionListener(new java.awt.event.ActionListener() {
+        deadlock_item.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                detect_itemActionPerformed(evt);
+                deadlock_itemActionPerformed(evt);
             }
         });
-        deadlock_item.add(detect_item);
-
-        prevent_item.setText("Prevention");
-        deadlock_item.add(prevent_item);
-
-        avoid_item.setText("Avoidance");
-        deadlock_item.add(avoid_item);
-
         proc_menu_item.add(deadlock_item);
 
         main_menu_bar.add(proc_menu_item);
@@ -1258,15 +1404,15 @@ public class Main_Frame extends JFrame {
             LinkedList<temp_process> temp = new LinkedList<>();
             if (buttonText.toLowerCase().contains("fifo")) {
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.FIFO);
-                populate_scheduler_table(proc_table_model, ready_queue, false);
+                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
             } else if (buttonText.toLowerCase().contains("sjf")) {
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.SJF);
-                populate_scheduler_table(proc_table_model, ready_queue, false);
+                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
             } else if (buttonText.toLowerCase().contains("rr")) {
                 temp.clear();
                 ready_queue.forEach(i -> temp.add(new temp_process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority)));
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.RR, 40);
-                populate_scheduler_table(proc_table_model, ready_queue, false);
+                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
                 ready_queue.clear();
                 temp.forEach(i -> ready_queue.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority)));
             }
@@ -1277,7 +1423,7 @@ public class Main_Frame extends JFrame {
 
     private void edit_scheduler_table_rowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_scheduler_table_rowActionPerformed
         scheduling_frame.setVisible(false);
-        editing_proc_table = true;
+        editing_table_number = this.PROC_TABLE;
         clear_table(editing_table_model);
         for (int i = 0; i < proc_table_model.getRowCount(); i++) {
             Object[] data = new Object[4];
@@ -1297,12 +1443,15 @@ public class Main_Frame extends JFrame {
     private void ok_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ok_buttonActionPerformed
         ready_queue.clear();
         ready_queue_map.clear();
-        if (editing_proc_table) {
-            save_changed_table(false);
+        if (editing_table_number == this.PROC_TABLE) {
+            save_changed_table(this.PROC_TABLE);
             scheduling_frame.setVisible(true);
-        } else {
-            save_changed_table(true);
+        } else if (editing_table_number == this.DISK_TABLE) {
+            save_changed_table(this.DISK_TABLE);
             disk_scheduling_frame.setVisible(true);
+        } else if (editing_table_number == this.DEADLOCK_TABLE) {
+            save_changed_table(this.DEADLOCK_TABLE);
+            deadlock_frame.setVisible(true);
         }
     }//GEN-LAST:event_ok_buttonActionPerformed
 
@@ -1326,7 +1475,7 @@ public class Main_Frame extends JFrame {
                     new Random().nextInt(6)));
         }
 
-        populate_scheduler_table(proc_table_model, ready_queue, false);
+        populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
         scheduling_frame.setSize(500, 550);
         scheduling_frame.setVisible(true);
     }//GEN-LAST:event_sched_itemActionPerformed
@@ -1410,20 +1559,16 @@ public class Main_Frame extends JFrame {
         client_connected = false;
     }//GEN-LAST:event_client_frameWindowClosing
 
-    private void detect_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detect_itemActionPerformed
-        LinkedList<Process> ready = new LinkedList<>();
-        for (int i = 0; i < 5; i++) {
-            ready.add(new Process());
+    private void deadlock_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deadlock_itemActionPerformed
+        ready_queue.clear();
+        for (int i = 0; i < 15; i++) {
+            ready_queue.add(new Process(i));
         }
 
-        ready.forEach(i -> {
-            System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
-                    i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
-        });
-
-        System.out.println("\nChecking for Deadlock...");
-        new Deadlock(ready, new Resource(10, 33, 19)).detect();
-    }//GEN-LAST:event_detect_itemActionPerformed
+        populate_scheduler_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
+        deadlock_frame.setSize(500, 550);
+        deadlock_frame.setVisible(true);
+    }//GEN-LAST:event_deadlock_itemActionPerformed
 
     private void net_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_net_btnActionPerformed
         int choice = JOptionPane.showOptionDialog(this,
@@ -1578,7 +1723,7 @@ public class Main_Frame extends JFrame {
         fast_input_frame.setSize(520, 130);
         fast_input_frame.setVisible(true);
         fast_input_portsListComoBox.removeAllItems();
-        fast_input_cnct_discnctBtn.setText("Connect to COM PORT");
+        fast_input_cnct_discnctBtn.setText("Connect to PORT");
         fast_input_cnct_discnctBtn.setEnabled(true);
     }//GEN-LAST:event_fast_input_itemActionPerformed
 
@@ -1623,7 +1768,7 @@ public class Main_Frame extends JFrame {
 
     private void disk_edit_tableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disk_edit_tableActionPerformed
         disk_scheduling_frame.setVisible(false);
-        editing_proc_table = false;
+        editing_table_number = this.DISK_TABLE;
         clear_table(editing_table_model);
         for (int i = 0; i < disk_table_model.getRowCount(); i++) {
             Object[] data = new Object[4];
@@ -1637,7 +1782,7 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_disk_edit_tableActionPerformed
 
     private void scheduling_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_scheduling_frameWindowClosing
-        editing_proc_table = false;
+
     }//GEN-LAST:event_scheduling_frameWindowClosing
 
     private void disk_sched_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disk_sched_btnActionPerformed
@@ -1647,6 +1792,9 @@ public class Main_Frame extends JFrame {
         if (result.trim().length() > 0) {
             try {
                 int head_position = Integer.parseInt(result);
+                if (head_position < 0) {
+                    throw new NumberFormatException();
+                }
                 if (is_map_empty) {
                     is_map_empty = false;
                     ready_queue.forEach(i -> ready_queue_map.put(i.PID, i.Sector));
@@ -1688,35 +1836,174 @@ public class Main_Frame extends JFrame {
             ready_queue.add(new Process(i, Math.abs(new Random().nextInt() % 200)));
         }
 
-        populate_scheduler_table(disk_table_model, ready_queue, true);
+        populate_scheduler_table(disk_table_model, ready_queue, this.DISK_TABLE);
         disk_scheduling_frame.setSize(500, 550);
         disk_scheduling_frame.setVisible(true);
     }//GEN-LAST:event_disk_sched_itemActionPerformed
 
     private void sched_rand_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sched_rand_btnActionPerformed
         ready_queue.clear();
+        int length = proc_table_model.getRowCount();
         clear_table(proc_table_model);
         clear_table(editing_table_model);
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < length; i++) {
             ready_queue.add(new Process(i,
                     new Random().nextInt(100),
                     new Random().nextInt(30),
                     new Random().nextInt(6)));
         }
 
-        populate_scheduler_table(proc_table_model, ready_queue, false);
+        populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
     }//GEN-LAST:event_sched_rand_btnActionPerformed
 
     private void disk_sched_rand_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disk_sched_rand_btnActionPerformed
         ready_queue.clear();
+        int length = disk_table_model.getRowCount();
         clear_table(disk_table_model);
         clear_table(editing_table_model);
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < length; i++) {
             ready_queue.add(new Process(i, Math.abs(new Random().nextInt() % 200)));
         }
 
-        populate_scheduler_table(disk_table_model, ready_queue, true);
+        populate_scheduler_table(disk_table_model, ready_queue, this.DISK_TABLE);
     }//GEN-LAST:event_disk_sched_rand_btnActionPerformed
+
+    private void file_sys_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_file_sys_btnActionPerformed
+        disk_sched_itemActionPerformed(evt);
+    }//GEN-LAST:event_file_sys_btnActionPerformed
+
+    private void io_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_io_btnActionPerformed
+        String choice = JOptionPane.showInputDialog(this,
+                "1. Slow Input\n2. Fast Input\n3. Output",
+                "Choose a Program",
+                JOptionPane.QUESTION_MESSAGE);
+        try {
+            int ch = Integer.MIN_VALUE;
+            if (choice != null) {
+                ch = Integer.parseInt(choice);
+            }
+            switch (ch) {
+                case Integer.MIN_VALUE:
+                    break;
+                case 1:
+                    slow_input_itemActionPerformed(evt);
+                    break;
+                case 2:
+                    fast_input_itemActionPerformed(evt);
+                    break;
+                case 3:
+                    output_itemActionPerformed(evt);
+                    break;
+                default:
+                    throw new NumberFormatException();
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Choose a valid program.\nEnter a positive integer.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Choose a valid program");
+        }
+    }//GEN-LAST:event_io_btnActionPerformed
+
+    private void proc_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proc_btnActionPerformed
+        String choice = JOptionPane.showInputDialog(this,
+                "1. Scheduling\n2. Synchronization\n3. Deadlock",
+                "Choose a Program",
+                JOptionPane.QUESTION_MESSAGE);
+        try {
+            int ch = Integer.MIN_VALUE;
+            if (choice != null) {
+                ch = Integer.parseInt(choice);
+            }
+            switch (ch) {
+                case Integer.MIN_VALUE:
+                    break;
+                case 1:
+                    sched_itemActionPerformed(evt);
+                    break;
+                case 2:
+                    sync_itemActionPerformed(evt);
+                    break;
+                case 3:
+                    deadlock_itemActionPerformed(evt);
+                    break;
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Choose a valid program.\nEnter a positive integer.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Choose a valid program");
+        }
+    }//GEN-LAST:event_proc_btnActionPerformed
+
+    private void sync_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sync_itemActionPerformed
+
+    }//GEN-LAST:event_sync_itemActionPerformed
+
+    private void deadlock_edit_tableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deadlock_edit_tableActionPerformed
+        deadlock_frame.setVisible(false);
+        editing_table_number = this.DEADLOCK_TABLE;
+        clear_table(editing_table_model);
+        for (int i = 0; i < deadlock_table_model.getRowCount(); i++) {
+            Object[] data = new Object[4];
+            for (int j = 0; j < deadlock_table_model.getColumnCount(); j++) {
+                data[j] = deadlock_table_model.getValueAt(i, j);
+            }
+            editing_table_model.addRow(data);
+        }
+        editing_table_frame.setSize(500, 350);
+        editing_table_frame.setVisible(true);
+    }//GEN-LAST:event_deadlock_edit_tableActionPerformed
+
+    private void deadlock_chk_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deadlock_chk_btnActionPerformed
+        String buttonText = get_selected_button_text(deadlock_button_group);
+        if (buttonText.toLowerCase().contains("detection")) {
+            String choice = JOptionPane.showInputDialog(this, "Enter the available resources separated by spaces");
+            ArrayList<Integer> resources = new ArrayList<>();
+            try {
+                if (choice != null) {
+                    String[] temp = choice.trim().split(" ");
+                    for (String i : temp) {
+                        resources.add(Integer.parseInt(i));
+                    }
+                    if (temp.length != 3) {
+                        throw new NumberFormatException();
+                    }
+                    ready_queue.forEach(i -> {
+                        System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
+                                i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+                    });
+
+                    System.out.println("\nChecking for Deadlock...");
+                    String result = new Deadlock(ready_queue, new Resource(resources.get(0), resources.get(1), resources.get(2))).detect();
+                    appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
+                } else {
+                    ready_queue.forEach(i -> {
+                        System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
+                                i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+                    });
+
+                    System.out.println("\nChecking for Deadlock...");
+                    String result = new Deadlock(ready_queue, new Resource(resources.get(0), resources.get(1), resources.get(2))).detect();
+                    appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Available resources must be 3 positive integers separated by spaces !!!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                System.err.println(ex.toString());
+            }
+        }
+    }//GEN-LAST:event_deadlock_chk_btnActionPerformed
+
+    private void deadlock_sched_rand_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deadlock_sched_rand_btnActionPerformed
+        ready_queue.clear();
+        int length = deadlock_table_model.getRowCount();
+        clear_table(deadlock_table_model);
+        clear_table(editing_table_model);
+        for (int i = 0; i < length; i++) {
+            ready_queue.add(new Process(i));
+        }
+
+        populate_scheduler_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
+    }//GEN-LAST:event_deadlock_sched_rand_btnActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -1744,7 +2031,7 @@ public class Main_Frame extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFrame about_frame;
     private javax.swing.JMenuItem about_item;
-    private javax.swing.JMenuItem avoid_item;
+    private javax.swing.JRadioButton avoidance_radio;
     private javax.swing.JLabel brightness_label;
     private javax.swing.JSlider brightness_slider;
     private javax.swing.JMenu chat_menu;
@@ -1756,19 +2043,27 @@ public class Main_Frame extends JFrame {
     private javax.swing.JButton client_snd_btn;
     private javax.swing.JRadioButton clook_radio;
     private javax.swing.JRadioButton cmp_radio;
-    private javax.swing.JMenu deadlock_item;
+    private javax.swing.ButtonGroup deadlock_button_group;
+    private javax.swing.JButton deadlock_chk_btn;
+    private javax.swing.JButton deadlock_edit_table;
+    private javax.swing.JFrame deadlock_frame;
+    private javax.swing.JMenuItem deadlock_item;
+    private javax.swing.JTextPane deadlock_log_area;
+    private javax.swing.JButton deadlock_sched_rand_btn;
+    private javax.swing.JTable deadlock_table;
     private javax.swing.JButton delete_row_btn;
-    private javax.swing.JMenuItem detect_item;
     private javax.swing.JLabel development_team_title_label;
     private javax.swing.JButton disk_edit_table;
     private javax.swing.JTextPane disk_log_area;
     private javax.swing.JScrollPane disk_log_area_scroll_pane;
+    private javax.swing.JScrollPane disk_log_area_scroll_pane1;
     private javax.swing.JButton disk_sched_btn;
     private javax.swing.JMenuItem disk_sched_item;
     private javax.swing.JButton disk_sched_rand_btn;
     private javax.swing.ButtonGroup disk_scheduler_button_group;
     private javax.swing.JFrame disk_scheduling_frame;
     private javax.swing.JScrollPane disk_scheduling_table_scroll_pane;
+    private javax.swing.JScrollPane disk_scheduling_table_scroll_pane1;
     private javax.swing.JTable disk_table;
     private javax.swing.JMenuItem doc_item;
     private javax.swing.JButton edit_scheduler_table_row;
@@ -1805,18 +2100,16 @@ public class Main_Frame extends JFrame {
     private javax.swing.JButton new_row_btn;
     private javax.swing.JRadioButton npsjf_radio;
     private javax.swing.JButton ok_button;
-    private javax.swing.JMenuItem open_sym_item;
     private javax.swing.JButton output_cnct_discnctBtn;
     private javax.swing.JFrame output_frame;
     private javax.swing.JMenuItem output_item;
     private javax.swing.JComboBox<String> output_portsListComoBox;
     private javax.swing.JButton output_search_btn;
-    private javax.swing.JMenuItem prevent_item;
+    private javax.swing.JRadioButton prevention_radio;
     private javax.swing.JButton proc_btn;
     private javax.swing.JMenu proc_menu_item;
     private javax.swing.JTable processes_table;
     private javax.swing.JRadioButton rr_radio;
-    private javax.swing.JMenuItem save_sym_item;
     private javax.swing.JButton sched_btn;
     private javax.swing.JMenuItem sched_item;
     private javax.swing.JTextPane sched_log_area;

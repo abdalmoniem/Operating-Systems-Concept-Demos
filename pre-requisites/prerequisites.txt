@@ -4,6 +4,8 @@ make sure that your machine has Java 8 installed and running on it.
 
 Python:
 =======
+make sure that your machine has Python 2.7 (Python27) installed and running on it.
+
 Linux:
 ======
 

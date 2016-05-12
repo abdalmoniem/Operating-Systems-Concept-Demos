@@ -1,7 +1,5 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import pylab as pl
 import sys
+import matplotlib.pyplot as plt
 
 plot_label = "label"
 x1 = []
@@ -10,7 +8,8 @@ y1 = []
 y2 = []
 
 if len(sys.argv) < 2:
-	print "Usage python %s PORT" %sys.argv[0]
+	print "Usage: python %s elem1 elem2 elem3 elem4 ..." %sys.argv[0]
+	print "Usage: python %s elem1 elem2 elem3 elem4 ... s elem1 elem2 elem3 elem4 ..." %sys.argv[0]
 	sys.exit(0)
 
 counter = 0
@@ -30,8 +29,6 @@ for i in range(z+1, len(sys.argv)):
 	y2.append(counter)
 	counter += 1
 
-print x1
-print x2
 fig = plt.figure() 
 fig.canvas.set_window_title("Graphical Representation")
 plt.gca().invert_yaxis()

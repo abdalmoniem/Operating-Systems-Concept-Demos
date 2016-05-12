@@ -1,11 +1,10 @@
-from matplotlib.font_manager import FontProperties
-import matplotlib.pyplot as plt
-from drawnow import *
-from pylab import *
-import serial
-import psutil
-import sys
 import os
+import sys
+import psutil
+import serial
+from drawnow import *
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
 
 voltage = 0
 plot_label = "label"
@@ -46,7 +45,7 @@ def plotter():
 	plt.grid()
 
 if not len(sys.argv) == 2:
-	print "Usage python %s PORT" %sys.argv[0];
+	print "Usage: python %s PORT" %sys.argv[0];
 	sys.exit(0);
 port = sys.argv[1]
 ser = serial.Serial(port, 115200)

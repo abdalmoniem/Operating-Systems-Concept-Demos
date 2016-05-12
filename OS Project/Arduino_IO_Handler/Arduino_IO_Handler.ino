@@ -30,7 +30,7 @@ void debounce_interrupt() {
 }
 
 void change_mode() {
-  mode = mode == 3 ? 0 : mode + 1;
+  mode = mode == 2 ? 0 : mode + 1;
   if (mode == 0) {
     digitalWrite(brightness_led, 0);        //turn off brightness led
     digitalWrite(graphing_mode_led, 0);     //turn off graphing mode led

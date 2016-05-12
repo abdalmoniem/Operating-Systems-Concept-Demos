@@ -2,7 +2,6 @@ package main_Package;
 
 import java.awt.Color;
 import java.util.*;
-import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -22,7 +21,7 @@ public class Scheduler {
 
     private int time_quantum;
     private final LinkedList<Process> ready_queue;
-    private JTextPane log_area;
+    private final JTextPane log_area;
 
     public Scheduler(LinkedList<Process> ready_queue, JTextPane log_area) {
         this.ready_queue = new LinkedList<>();
@@ -67,6 +66,12 @@ public class Scheduler {
             for (int j = i - 1; j >= 0; j--) {
                 ready.get(i).Waiting_Time += ready.get(j).Burst_Time;
             }
+            
+            if (ready.get(i).Arrival_Time > smallestIndex & smallestIndex > 0) {
+                ready.get(i).Waiting_Time = (ready.get(i).Waiting_Time - ready.get(i).Arrival_Time) + smallestIndex;
+            } else if (ready.get(i).Arrival_Time > smallestIndex & smallestIndex == 0) {
+                ready.get(i).Waiting_Time -= ready.get(i).Arrival_Time;
+            }
 
             ready.get(i).TurnAround_Time = ready.get(i).Burst_Time + ready.get(i).Waiting_Time;
         }
@@ -74,8 +79,8 @@ public class Scheduler {
         double averageWT = 0;
         double averageTAT = 0;
         for (int i = 0; i < 6; i++) {
-            averageWT += ready.get(i).Waiting_Time / 6.0;
-            averageTAT += ready.get(i).TurnAround_Time / 6.0;
+            averageWT += Math.abs(ready.get(i).Waiting_Time / 6.0);
+            averageTAT += Math.abs(ready.get(i).TurnAround_Time / 6.0);
         }
 
         string = String.format("Average Waiting Time = %.3f\nAverage TurnAround Time = %.3f", averageWT, averageTAT);

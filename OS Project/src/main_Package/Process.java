@@ -26,6 +26,16 @@ public class Process {
         this.Need = new Resource();
     }
     
+    public Process(int PID) {
+        Random r = new Random();
+        this.PID = PID;
+        this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
+        this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
+        this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Math.abs(r.nextInt() % 200);
+        this.Need = new Resource();
+    }
+    
     public Process(int PID, int Sector) {
         Random r = new Random();
         this.PID = PID;
@@ -34,6 +44,16 @@ public class Process {
         this.Priority = Math.abs(r.nextInt() % 30);
         this.Sector = Sector;
         this.Need = new Resource();
+    }
+    
+    public Process(int PID, Resource Need) {
+        Random r = new Random();
+        this.PID = PID;
+        this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
+        this.Arrival_Time = Math.abs(r.nextInt() % 10) + 1;
+        this.Priority = Math.abs(r.nextInt() % 30);
+        this.Sector = Math.abs(r.nextInt() % 150);
+        this.Need = Need;
     }
     
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority) {

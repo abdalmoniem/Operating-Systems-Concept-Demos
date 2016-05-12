@@ -17,17 +17,25 @@ public class Deadlock {
         this.available = available;
     }
 
-    public void detect() {
-        ready_queue.forEach(i -> {
+    public String detect() {
+        String result = "";
+
+        for (Process i : ready_queue) {
             if (!i.Need.Compare(available)) {
-                System.out.println(i.PID + " will cause deadlock");
+                System.out.println(i.PID + " may cause deadlock");
+                result += i.PID + " may cause deadlock\n";
                 deadlock = true;
             }
-        });
-        
-        if(deadlock)
+        }
+
+        if (deadlock) {
             System.out.println("The system is in an unsafe state.");
-        else
+            result += "The system is in an unsafe state.\n";
+        } else {
             System.out.println("The system is in a safe state.");
+            result = "The system is in a safe state.\n";
+        }
+        
+        return result;
     }
 }

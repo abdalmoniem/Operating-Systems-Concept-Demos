@@ -1,15 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main_Package;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,17 +13,17 @@ public class Disk_Scheduler {
     public static final int C_LOOK = 1;
     private int current_position;
     private LinkedList<Process> io_queue = new LinkedList<>();
-    private LinkedList<Process> temp = new LinkedList<>();
-    private LinkedList<Process> temp1 = new LinkedList<Process>();
-    private LinkedList<Process> temp2 = new LinkedList<Process>();
-    private LinkedList<Integer> res = new LinkedList<>();
+    private final LinkedList<Process> temp = new LinkedList<>();
+    private final LinkedList<Process> temp1 = new LinkedList<>();
+    private final LinkedList<Process> temp2 = new LinkedList<>();
+    private final LinkedList<Integer> res = new LinkedList<>();
 
     public Disk_Scheduler(LinkedList<Process> IO) {
         Random rn = new Random();
         this.current_position = Math.abs((rn.nextInt()) % 200);
         this.io_queue = IO;
     }
-    
+
     public Disk_Scheduler(LinkedList<Process> IO, int current_position) {
         this.current_position = current_position;
         this.io_queue = IO;
@@ -65,8 +57,6 @@ public class Disk_Scheduler {
                         }
                     }
                 }
-                System.out.println("Seek Order:");
-                res.forEach(i -> System.out.println(i));
                 break;
             case 1:
                 System.out.println("The Processes in I/O queue are: ");
@@ -92,7 +82,6 @@ public class Disk_Scheduler {
                 System.out.println("moving right : ");// the head moves right.
                 temp1.forEach(i -> {
                     System.out.println("The Process ID is " + i.PID + "\tThe Sector Number is: " + i.Sector);//printing the process after schedulung; but when the head moves at the right position 
-                    System.out.println();
                     current_position = i.Sector;//change the value of the head position to the current Sector
                     res.add(current_position);
                     System.out.println("Current Head position is sector number: " + current_position);//print the value of the head position at this moment
@@ -100,19 +89,19 @@ public class Disk_Scheduler {
                 System.out.println("moving left : ");//the head moves left
                 temp2.forEach(i -> {
                     System.out.println("The Process ID is " + i.PID + "\tThe Sector Number is: " + i.Sector);//print the process after scheduling , when the head moves left.
-                    System.out.println();
                     current_position = i.Sector;//change the value of the head position to the current Sector
                     res.add(current_position);
                     System.out.println("Current Head position is sector number: " + current_position);//print the value of the head position at this moment
-                    System.out.println();
                 });
-                System.out.println("Seek Order:");
-                res.forEach(i -> System.out.println(i));
                 break;
         }
-        
-        for(int i=0; i<res.size(); i++)
+        System.out.println("Seek Order:");
+        res.forEach(i -> System.out.print(i + " -> "));
+        System.out.println("\b \b\b \b\b \b");
+
+        for (int i = 0; i < res.size(); i++) {
             args += " " + res.get(i);
+        }
         return args;
     }
 }
