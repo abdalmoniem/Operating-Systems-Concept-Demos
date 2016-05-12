@@ -126,27 +126,11 @@ public class Process {
         }
 
     }
-<<<<<<< HEAD
-              public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory,int mode,LinkedList<Memory_Location> Back_Store)
-    {
-      if(page_numbers<=Memory.size())
-      { for (int i = 0; i < page_numbers; i++) {
-            Page_Table.put(i, -1);
-        }
-        int page_counter = 0;
-        int remaining_pages = page_numbers;
-        int counter = 0;
-        
-        for (int i = 0; i < Memory.size(); i++) {
-            if (Memory.get(i).PID != -1) {
-                counter++;
-=======
 
     public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory, int mode, LinkedList<Memory_Location> Back_Store) {
         if (page_numbers < Memory.size()) {
             for (int i = 0; i < page_numbers; i++) {
                 Page_Table.put(i, -1);
->>>>>>> origin/master
             }
             int page_counter = 0;
             int remaining_pages = page_numbers;
@@ -191,42 +175,22 @@ public class Process {
                         break;
                     }
 
-<<<<<<< HEAD
-        }
-      
-      }
-      else{
-          System.out.println("Insufficient Memmory");
-          System.out.println("Allocating "+Memory.size()+" Pages");
-          int pages_to_backstore=page_numbers-Memory.size();
-          for(int i=0;i<pages_to_backstore;i++)
-          {
-            Back_Store.addLast(new Memory_Location(0, 0,this.PID ,0));
-          }
-          this.allocate_memory(Memory.size(), Memory, 1, Back_Store);
-      }
-        System.out.println("The Page Table:");
-        Iterator it = Page_Table.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            System.out.println(pair.getKey() + "\t" + pair.getValue());
-=======
                 }
 
             }
-//        System.out.println("The Page Table:");
-//        Iterator it = Page_Table.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            System.out.println(pair.getKey() + "\t" + pair.getValue());
-//        }
+      
         } else {
             int pages_to_backstore = page_numbers - Memory.size();
             for (int i = 0; i < pages_to_backstore; i++) {
                 Back_Store.addLast(new Memory_Location(0, 0, this.PID, 0));
             }
             this.allocate_memory(Memory.size(), Memory, 1, Back_Store);
->>>>>>> origin/master
+        }
+          System.out.println("The Page Table:");
+        Iterator it = Page_Table.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(pair.getKey() + "\t" + pair.getValue());
         }
     }
 
