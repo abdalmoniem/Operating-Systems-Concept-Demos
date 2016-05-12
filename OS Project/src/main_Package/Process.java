@@ -7,6 +7,7 @@ import java.util.Random;
  * @author mn3m
  */
 public class Process {
+
     public int PID;
     public int Burst_Time;
     public int Arrival_Time;
@@ -15,7 +16,7 @@ public class Process {
     public int Priority;
     public int Sector;
     public Resource Need;
-    
+
     public Process() {
         Random r = new Random();
         this.PID = Math.abs(r.nextInt() % 30);
@@ -25,7 +26,7 @@ public class Process {
         this.Sector = Math.abs(r.nextInt() % 200);
         this.Need = new Resource();
     }
-    
+
     public Process(int PID) {
         Random r = new Random();
         this.PID = PID;
@@ -35,7 +36,7 @@ public class Process {
         this.Sector = Math.abs(r.nextInt() % 200);
         this.Need = new Resource();
     }
-    
+
     public Process(int PID, int Sector) {
         Random r = new Random();
         this.PID = PID;
@@ -45,7 +46,7 @@ public class Process {
         this.Sector = Sector;
         this.Need = new Resource();
     }
-    
+
     public Process(int PID, Resource Need) {
         Random r = new Random();
         this.PID = PID;
@@ -55,14 +56,24 @@ public class Process {
         this.Sector = Math.abs(r.nextInt() % 150);
         this.Need = Need;
     }
-    
+
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;
         this.Arrival_Time = Arrival_Time;
         this.Priority = Priority;
     }
-    
+
+    public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, Resource Need) {
+        Random rn = new Random();
+        this.PID = PID;
+        this.Burst_Time = Burst_Time;
+        this.Arrival_Time = Arrival_Time;
+        this.Priority = Priority;
+        this.Sector = Math.abs(rn.nextInt() % 200);
+        this.Need = Need;
+    }
+
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, int Sector, Resource Need) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;

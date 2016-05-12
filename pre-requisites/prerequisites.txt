@@ -15,7 +15,6 @@ Open Terminal and type:
 -pip install matplotlib [Enter]
 -pip install drawnow [Enter]
 -pip install psutil [Enter]
--pip install pylab [Enter]
 
 Windows:
 ========
