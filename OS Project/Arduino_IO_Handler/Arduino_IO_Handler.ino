@@ -5,7 +5,7 @@ const int brightness_mode_led = 5;
 char mode = 0;
 
 //Debouncing Time in Milliseconds
-long debouncing_time = 300;
+long debouncing_time = 200;
 volatile unsigned long last_millis;
 
 void setup() {
@@ -17,9 +17,9 @@ void setup() {
   pinMode(graphing_mode_led, OUTPUT);
   pinMode(brightness_mode_led, OUTPUT);
 
-digitalWrite(brightness_led, 0);        //turn off brightness led
-    digitalWrite(graphing_mode_led, 0);     //turn off graphing mode led
-    digitalWrite(brightness_mode_led, 1);   //turn on brightness mode led
+  digitalWrite(brightness_led, 0);        //turn off brightness led
+  digitalWrite(graphing_mode_led, 0);     //turn off graphing mode led
+  digitalWrite(brightness_mode_led, 1);   //turn on brightness mode led
 }
 
 void debounce_interrupt() {
@@ -55,7 +55,7 @@ void loop() {
   } else if (mode == 1) { //slow output mode activated
     int val = analogRead(A0);
     Serial.println(val);
-    
+
     delay(400);
   } else if (mode == 2) { //fast output mode activated
     int val = analogRead(A0);
