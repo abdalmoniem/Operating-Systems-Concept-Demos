@@ -2,7 +2,9 @@ package main_Package;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -114,9 +116,9 @@ public class Process {
         }
 
     }
-         public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory,int mode,LinkedList<Memory_Location> Back_Store)
+              public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory,int mode,LinkedList<Memory_Location> Back_Store)
     {
-      if(page_numbers<Memory.size())
+      if(page_numbers<=Memory.size())
       { for (int i = 0; i < page_numbers; i++) {
             Page_Table.put(i, -1);
         }
@@ -165,14 +167,11 @@ public class Process {
             }
 
         }
-//        System.out.println("The Page Table:");
-//        Iterator it = Page_Table.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            System.out.println(pair.getKey() + "\t" + pair.getValue());
-//        }
+      
       }
       else{
+          System.out.println("Insufficient Memmory");
+          System.out.println("Allocating "+Memory.size()+" Pages");
           int pages_to_backstore=page_numbers-Memory.size();
           for(int i=0;i<pages_to_backstore;i++)
           {
@@ -180,6 +179,12 @@ public class Process {
           }
           this.allocate_memory(Memory.size(), Memory, 1, Back_Store);
       }
+        System.out.println("The Page Table:");
+        Iterator it = Page_Table.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(pair.getKey() + "\t" + pair.getValue());
+        }
     }
     
     public void chk_pageTable( ArrayList<Memory_Location> Memory)            
