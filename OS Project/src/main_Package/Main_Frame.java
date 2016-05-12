@@ -2009,6 +2009,8 @@ public class Main_Frame extends JFrame {
                 case 3:
                     deadlock_itemActionPerformed(evt);
                     break;
+                default:
+                    throw new NumberFormatException();
             }
 
         } catch (NumberFormatException ex) {
@@ -2087,6 +2089,55 @@ public class Main_Frame extends JFrame {
                     deadlock_log_area.setText(null);
                     appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\n",
                             available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
+                    appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Available resources must be 3 positive integers separated by spaces !!!",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                System.err.println(ex.toString());
+            }
+        } else {
+            String choice = JOptionPane.showInputDialog(this, "Enter the available resources separated by spaces");
+            ArrayList<Integer> resources = new ArrayList<>();
+            try {
+                if (choice.trim().length() > 0) {
+                    String[] temp = choice.trim().split(" ");
+                    for (String i : temp) {
+                        resources.add(Integer.parseInt(i));
+                    }
+                    if (temp.length != 3) {
+                        throw new NumberFormatException();
+                    }
+                    
+                    ready_queue.forEach(i
+                            -> {
+                        System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
+                                i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+                    });
+                    System.out.println("\nChecking for Deadlock...");
+                    Resource available = new Resource(resources.get(0), resources.get(1), resources.get(2));
+                    
+                    appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\nChecking for Deadlock...\n",
+                            available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
+                    
+                    String result = new Deadlock(ready_queue, available).avoid();
+                    
+                    appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
+                } else {
+                    ready_queue.forEach(i
+                            -> {
+                        System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
+                                i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
+                    });
+                    System.out.println("\nChecking for Deadlock...");
+                    Resource available = new Resource();
+                    
+                    appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\nChecking for Deadlock...\n",
+                            available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
+                    
+                    String result = new Deadlock(ready_queue, available).avoid();
+                    
+                    
                     appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
                 }
             } catch (NumberFormatException ex) {
