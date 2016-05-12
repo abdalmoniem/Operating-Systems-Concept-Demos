@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.swing.ButtonGroup;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  * @author mn3m
@@ -90,20 +93,32 @@ public class Main_Frame extends JFrame {
     private void populate_scheduler_table(DefaultTableModel tm, LinkedList<Process> queue, int table_number) {
         switch (table_number) {
             case 0:
-                queue.forEach(p -> {
-                    Object[] processes_data = {p.PID, p.Arrival_Time, p.Burst_Time, p.Priority};
+                queue.forEach(p
+                        -> {
+                    Object[] processes_data
+                            = {
+                                p.PID, p.Arrival_Time, p.Burst_Time, p.Priority
+                            };
                     tm.addRow(processes_data);
                 });
                 break;
             case 1:
-                queue.forEach(p -> {
-                    Object[] processes_data = {p.PID, p.Sector};
+                queue.forEach(p
+                        -> {
+                    Object[] processes_data
+                            = {
+                                p.PID, p.Sector
+                            };
                     tm.addRow(processes_data);
                 });
                 break;
             case 2:
-                queue.forEach(p -> {
-                    Object[] processes_data = {p.PID, p.Need.get_A(), p.Need.get_B(), p.Need.get_C()};
+                queue.forEach(p
+                        -> {
+                    Object[] processes_data
+                            = {
+                                p.PID, p.Need.get_A(), p.Need.get_B(), p.Need.get_C()
+                            };
                     tm.addRow(processes_data);
                 });
                 break;
@@ -191,9 +206,13 @@ public class Main_Frame extends JFrame {
                 String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.SSTF);
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -211,9 +230,13 @@ public class Main_Frame extends JFrame {
                 String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.C_LOOK);
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -248,9 +271,13 @@ public class Main_Frame extends JFrame {
                 }
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args1 + " s" + args2};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args1 + " s" + args2
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args1 + " s" + args2};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args1 + " s" + args2
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -279,9 +306,13 @@ public class Main_Frame extends JFrame {
                 String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.SSTF);
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -299,9 +330,13 @@ public class Main_Frame extends JFrame {
                 String args = new Disk_Scheduler(ready_queue, current_position_head).Schedule(Disk_Scheduler.C_LOOK);
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -336,9 +371,13 @@ public class Main_Frame extends JFrame {
                 }
                 String[] cmd = new String[]{};
                 if (info.getName().toLowerCase().equals("windows")) {
-                    cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args1 + " s" + args2};
+                    cmd = new String[]{
+                        "cmd", "/c", "python scripts_and_helpers\\disk_graphing\\disk_plotter.py" + args1 + " s" + args2
+                    };
                 } else {
-                    cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args1 + " s" + args2};
+                    cmd = new String[]{
+                        "/bin/sh", "-c", "python scripts_and_helpers/disk_graphing/disk_plotter.py" + args1 + " s" + args2
+                    };
                 }
                 System.out.println(cmd[2]);
                 graphing_process = new ProcessBuilder(cmd).start();
@@ -628,6 +667,10 @@ public class Main_Frame extends JFrame {
                 "PID", "Arrival Time", "Burst Time", "Priority"
             }
         ));
+        editing_table.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        editing_table.setDropMode(javax.swing.DropMode.ON);
+        editing_table.getTableHeader().setResizingAllowed(false);
+        editing_table.getTableHeader().setReorderingAllowed(false);
         editing_table_frame_scroll_pane.setViewportView(editing_table);
 
         ok_button.setText("OK");
@@ -1106,7 +1149,7 @@ public class Main_Frame extends JFrame {
                 .addComponent(disk_log_area_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        deadlock_frame.setTitle("Disk Scheduling");
+        deadlock_frame.setTitle("Deadlock");
 
         deadlock_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1425,6 +1468,17 @@ public class Main_Frame extends JFrame {
         scheduling_frame.setVisible(false);
         editing_table_number = this.PROC_TABLE;
         clear_table(editing_table_model);
+
+        String[] colNames = {"PID", "Arrival Time", "Burst Time", "Priority"};
+
+        JTableHeader th = editing_table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+        for (int i = 0; i < colNames.length; i++) {
+            TableColumn tc = tcm.getColumn(i);
+            tc.setHeaderValue(colNames[i]);
+        }
+        th.repaint();
+
         for (int i = 0; i < proc_table_model.getRowCount(); i++) {
             Object[] data = new Object[4];
             for (int j = 0; j < proc_table_model.getColumnCount(); j++) {
@@ -1457,7 +1511,13 @@ public class Main_Frame extends JFrame {
 
     private void editing_table_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_editing_table_frameWindowClosing
         editing_table_frame.setVisible(false);
-        scheduling_frame.setVisible(true);
+        if (editing_table_number == this.PROC_TABLE) {
+            scheduling_frame.setVisible(true);
+        } else if (editing_table_number == this.DISK_TABLE) {
+            disk_scheduling_frame.setVisible(true);
+        } else if (editing_table_number == this.DEADLOCK_TABLE) {
+            deadlock_frame.setVisible(true);
+        }
     }//GEN-LAST:event_editing_table_frameWindowClosing
 
     private void delete_row_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delete_row_btnActionPerformed
@@ -1577,7 +1637,9 @@ public class Main_Frame extends JFrame {
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
-                new String[]{"Server", "Client", "Cancel"},
+                new String[]{
+                    "Server", "Client", "Cancel"
+                },
                 "Server");
         if (choice == JOptionPane.YES_OPTION) {
             server_itemActionPerformed(evt);
@@ -1686,13 +1748,18 @@ public class Main_Frame extends JFrame {
             ip_connected = !ip_connected;
             slow_input_cnct_discnctBtn.setEnabled(false);
             slow_input_cnct_discnctBtn.setText("Connected");
-            new Thread(() -> {
+            new Thread(()
+                    -> {
                 try {
                     String[] cmd = new String[]{};
                     if (info.getName().toLowerCase().equals("windows")) {
-                        cmd = new String[]{"cmd", "/c", "python scripts_and_helpers\\io_graphing\\slow\\plotter.py " + com_num};
+                        cmd = new String[]{
+                            "cmd", "/c", "python scripts_and_helpers\\io_graphing\\slow\\plotter.py " + com_num
+                        };
                     } else {
-                        cmd = new String[]{"/bin/sh", "-c", "python scripts_and_helpers/io_graphing/slow/plotter.py " + com_num};
+                        cmd = new String[]{
+                            "/bin/sh", "-c", "python scripts_and_helpers/io_graphing/slow/plotter.py " + com_num
+                        };
                     }
 
                     graphing_process = new ProcessBuilder(cmd).start();
@@ -1745,13 +1812,18 @@ public class Main_Frame extends JFrame {
             ip_connected = !ip_connected;
             fast_input_cnct_discnctBtn.setEnabled(false);
             fast_input_cnct_discnctBtn.setText("Connected");
-            new Thread(() -> {
+            new Thread(()
+                    -> {
                 try {
                     String[] cmd = new String[]{};
                     if (info.getName().toLowerCase().equals("windows")) {
-                        cmd = new String[]{"cmd", "/c", "graphing.bat " + com_num};
+                        cmd = new String[]{
+                            "cmd", "/c", "graphing.bat " + com_num
+                        };
                     } else {
-                        cmd = new String[]{"/bin/sh", "-c", "scripts_and_helpers/io_graphing/fast/linux/p_oscilloscope " + com_num};
+                        cmd = new String[]{
+                            "/bin/sh", "-c", "scripts_and_helpers/io_graphing/fast/linux/p_oscilloscope " + com_num
+                        };
                     }
                     graphing_process = new ProcessBuilder(cmd).start();
                     ip_connected = !ip_connected;
@@ -1770,8 +1842,19 @@ public class Main_Frame extends JFrame {
         disk_scheduling_frame.setVisible(false);
         editing_table_number = this.DISK_TABLE;
         clear_table(editing_table_model);
+
+        String[] colNames = {"PID", "Sector", null, null};
+
+        JTableHeader th = editing_table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+        for (int i = 0; i < colNames.length; i++) {
+            TableColumn tc = tcm.getColumn(i);
+            tc.setHeaderValue(colNames[i]);
+        }
+        th.repaint();
+
         for (int i = 0; i < disk_table_model.getRowCount(); i++) {
-            Object[] data = new Object[4];
+            Object[] data = new Object[2];
             for (int j = 0; j < disk_table_model.getColumnCount(); j++) {
                 data[j] = disk_table_model.getValueAt(i, j);
             }
@@ -1942,6 +2025,17 @@ public class Main_Frame extends JFrame {
         deadlock_frame.setVisible(false);
         editing_table_number = this.DEADLOCK_TABLE;
         clear_table(editing_table_model);
+
+        String[] colNames = {"PID", "Need A", "Need B", "Need C"};
+
+        JTableHeader th = editing_table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+        for (int i = 0; i < colNames.length; i++) {
+            TableColumn tc = tcm.getColumn(i);
+            tc.setHeaderValue(colNames[i]);
+        }
+        th.repaint();
+
         for (int i = 0; i < deadlock_table_model.getRowCount(); i++) {
             Object[] data = new Object[4];
             for (int j = 0; j < deadlock_table_model.getColumnCount(); j++) {
@@ -1959,7 +2053,7 @@ public class Main_Frame extends JFrame {
             String choice = JOptionPane.showInputDialog(this, "Enter the available resources separated by spaces");
             ArrayList<Integer> resources = new ArrayList<>();
             try {
-                if (choice != null) {
+                if (choice.trim().length() > 0) {
                     String[] temp = choice.trim().split(" ");
                     for (String i : temp) {
                         resources.add(Integer.parseInt(i));
@@ -1967,22 +2061,32 @@ public class Main_Frame extends JFrame {
                     if (temp.length != 3) {
                         throw new NumberFormatException();
                     }
-                    ready_queue.forEach(i -> {
+                    ready_queue.forEach(i
+                            -> {
                         System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
                                 i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
                     });
 
                     System.out.println("\nChecking for Deadlock...");
-                    String result = new Deadlock(ready_queue, new Resource(resources.get(0), resources.get(1), resources.get(2))).detect();
+                    Resource available = new Resource(resources.get(0), resources.get(1), resources.get(2));
+                    String result = new Deadlock(ready_queue, available).detect();
+                    deadlock_log_area.setText(null);
+                    appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\n",
+                            available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
                     appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
                 } else {
-                    ready_queue.forEach(i -> {
+                    ready_queue.forEach(i
+                            -> {
                         System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
                                 i.PID, i.Need.get_A(), i.Need.get_B(), i.Need.get_C());
                     });
 
                     System.out.println("\nChecking for Deadlock...");
-                    String result = new Deadlock(ready_queue, new Resource(resources.get(0), resources.get(1), resources.get(2))).detect();
+                    Resource available = new Resource();
+                    String result = new Deadlock(ready_queue, available).detect();
+                    deadlock_log_area.setText(null);
+                    appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\n",
+                            available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
                     appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
                 }
             } catch (NumberFormatException ex) {
@@ -2017,7 +2121,8 @@ public class Main_Frame extends JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
+        java.awt.EventQueue.invokeLater(()
+                -> {
             Main_Frame main_frame = new Main_Frame();
 
             int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;

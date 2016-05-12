@@ -13,9 +13,9 @@ public class Resource {
     
     public Resource() {
         Random r = new Random();
-        this.A = Math.abs(r.nextInt(20));
-        this.B = Math.abs(r.nextInt(20));
-        this.C = Math.abs(r.nextInt(20));
+        this.A = Math.abs(r.nextInt(30));
+        this.B = Math.abs(r.nextInt(30));
+        this.C = Math.abs(r.nextInt(30));
     }
     
     public Resource(int A, int B, int C) {
