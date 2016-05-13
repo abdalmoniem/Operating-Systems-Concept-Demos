@@ -10,14 +10,22 @@
 <entry key="0_profiler.settings.cpu.exclude.wait.time">true</entry>
 <entry key="0_profiler.settings.override.working.dir"/>
 <entry key="2_profiler.settings.cpu.sampling.frequency">10</entry>
+<<<<<<< HEAD
 <entry key="0_profiler.settings.lockcontention.monitoring.enabled">false</entry>
+=======
+<entry key="0_profiler.settings.lockcontention.monitoring.enabled">true</entry>
+>>>>>>> origin/master
 <entry key="1_profiler.settings.thread.cpu.timer.on">true</entry>
 <entry key="1_profiler.settings.instrumentation.root.methods.size">0</entry>
 <entry key="2_profiler.settings.override">false</entry>
 <entry key="1_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="profiler.settings.lastselected">2</entry>
 <entry key="2_profiler.settings.instrument.spawned.threads">false</entry>
+<<<<<<< HEAD
 <entry key="0_profiler.settings.threads.monitoring.enabled">false</entry>
+=======
+<entry key="0_profiler.settings.threads.monitoring.enabled">true</entry>
+>>>>>>> origin/master
 <entry key="0_profiler.settings.istrument.getter.setter.methods">false</entry>
 <entry key="2_profiler.settings.instrumentation.filter.selectedprofiler.filter.type">profiler.simple.filter</entry>
 <entry key="2_profiler.settings.n.profiled.threads.limit">32</entry>
@@ -84,13 +92,21 @@
 <entry key="0_profiler.settings.instrumentation.root.methods.size">0</entry>
 <entry key="2_profiler.settings.threads.sampling.enabled">true</entry>
 <entry key="1_profiler.settings.override.working.dir"/>
+<<<<<<< HEAD
 <entry key="1_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.type">0</entry>
+=======
+<entry key="1_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.type">2</entry>
+>>>>>>> origin/master
 <entry key="2_profiler.settings.lockcontention.monitoring.enabled">false</entry>
 <entry key="0_profiler.settings.n.profiled.threads.limit">32</entry>
 <entry key="0_profiler.settings.cpu.quick.filterprofiler.simple.filter.value"/>
 <entry key="0_profiler.settings.cpu.profiling.type">0</entry>
 <entry key="0_profiler.settings.instrument.spawned.threads">false</entry>
+<<<<<<< HEAD
 <entry key="1_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.name">Profile all classes</entry>
+=======
+<entry key="1_profiler.settings.instrumentation.filter.selectedprofiler.simple.filter.name">Profile only project classes</entry>
+>>>>>>> origin/master
 <entry key="2_profiler.settings.instrumentation.marker.methods.size">0</entry>
 <entry key="0_profiler.settings.obj.alloc.stack.sampling.depth">0</entry>
 <entry key="2_profiler.settings.cpu.quick.filterprofiler.filter.type">profiler.simple.filter</entry>
