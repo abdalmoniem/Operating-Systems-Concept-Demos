@@ -5,17 +5,20 @@
  */
 package main_Package;
 
-/**
- *
- * @author Ahmed
- */
+
 public class Memory_Location 
 {
     public int Usage;
     public long Allocation_Time;
     public int PID;
     public int Data;
-    
+    /**
+     * 
+     * @param Usage allocate the usage no of each page
+     * @param Allocation_Time put the allocation time
+     * @param PID allocate pid
+     * @param Data record data in each page
+     */
     public Memory_Location(int Usage,int Allocation_Time,int PID,int Data)
     {
         this.Usage=Usage;
