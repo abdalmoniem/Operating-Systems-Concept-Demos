@@ -29,10 +29,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 import javax.swing.ButtonGroup;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import sun.awt.Mutex;
 
 /**
  * @author mn3m
@@ -41,17 +43,47 @@ public class Main_Frame extends JFrame {
 
     LinkedList<Process> ready_queue;
     LinkedList<Process> ready_queue_backup;
+    LinkedList<Process> processes_memory_list;
+    LinkedList<Thread> producers_list;
+    LinkedList<Integer> buffer;
+    LinkedList<Thread> consumers_list;
+    LinkedList<Thread> writers_list;
+    LinkedList<Thread> readers_list;
+    ArrayList<Memory_Location> memory;
+    LinkedList<Memory_Location> Back_Store;
+
     DefaultTableModel proc_table_model;
     DefaultTableModel disk_table_model;
     DefaultTableModel editing_table_model;
     DefaultTableModel deadlock_table_model;
+    DefaultTableModel memory_table_model;
+    DefaultTableModel processes_memory_table_model;
+    DefaultTableModel page_table_model;
+    DefaultTableModel pw_table_model;
+    DefaultTableModel buffer_table_model;
+    DefaultTableModel cr_table_model;
+
     int editing_table_number = -1;
     Map<Integer, Integer> ready_queue_map = new HashMap<>();
     boolean is_map_empty = true;
+    int process_count = 0;
+    boolean is_bb = true;
+    int read_count = 0;
+    boolean full = false;
+    boolean empty = true;
+
+    int max_size = 10;
+
+    int negative_ones = 0;
+
+    int shared_variable = 0;
+    Mutex bb_mutex = new Mutex();
+    Semaphore sm = new Semaphore(2);
 
     final int PROC_TABLE = 0;
     final int DISK_TABLE = 1;
     final int DEADLOCK_TABLE = 2;
+    final int PROC_MEM_TABLE = 3;
 
     boolean client_connected = false;
     boolean server_started = false;
@@ -69,6 +101,120 @@ public class Main_Frame extends JFrame {
     boolean ip_connected = false;
 
     java.lang.Process graphing_process;
+
+    int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
+    int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+    long starting_time;
+
+    Runnable produce = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    synchronized (bb_mutex) {
+                        while (full) {
+                            bb_mutex.wait();
+                        }
+                        while (full);
+                        int x = Math.abs(new Random().nextInt(100));
+                        buffer.addLast(x);
+                        if (buffer.size() >= max_size) {
+                            full = true;
+                        }
+                        System.out.println("I Thread # " + Thread.currentThread().getId() + " Produced " + x);
+
+                        clear_table(buffer_table_model);
+                        populate_buffer_table_coloumn(buffer_table_model, buffer);
+
+                        System.out.println("Current list:");
+                        buffer.forEach(s -> System.out.print(s + "\t"));
+                        System.out.println();
+                        empty = false;
+                        bb_mutex.notify();
+                        Thread.sleep(new Random().nextInt(500));
+                    }
+                }
+            } catch (InterruptedException ex) {
+                System.err.println(ex.toString());
+            }
+        }
+    };
+
+    Runnable consume = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    synchronized (bb_mutex) {
+                        while (empty) {
+                            bb_mutex.wait();
+                        }
+                        while (empty);
+                        int x = buffer.getFirst();
+                        buffer.removeFirst();
+                        int size = 0;
+                        if (buffer.isEmpty()) {
+                            empty = true;
+                        }
+                        System.out.println("I Thread # " + Thread.currentThread().getId() + " Conusmed " + x);
+
+                        clear_table(buffer_table_model);
+                        populate_buffer_table_coloumn(buffer_table_model, buffer);
+
+                        System.out.println("Current list:");
+                        buffer.forEach(s -> System.out.print(s + "\t"));
+                        System.out.println();
+                        full = false;
+                        bb_mutex.notify();
+                        Thread.sleep(new Random().nextInt(500));
+                    }
+                }
+            } catch (InterruptedException ex) {
+                System.err.println(ex.toString());
+            }
+        }
+    };
+
+    Runnable write = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    shared_variable += 5;
+                    System.out.println("Updating from Thread #" + Thread.currentThread().getId());
+                    System.out.println("shared variable = " + shared_variable);
+                    current_label.setText("Current: " + shared_variable);
+                    rw_label.setText("Writting from " + Thread.currentThread().getName());
+                    Thread.sleep(new Random().nextInt(5000));
+                } catch (InterruptedException ex) {
+                    System.err.println(ex.toString());
+                }
+            }
+        }
+    };
+
+    Runnable read = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    try {
+                        sm.acquire();
+                    } catch (InterruptedException ex) {
+                        System.err.println(ex.toString());
+                    }
+                    sm.release();
+                    System.out.println("Reading from Thread #" + Thread.currentThread().getId());
+                    System.out.println("shared variable = " + shared_variable);
+                    rw_label.setText("Reading from " + Thread.currentThread().getName());
+                    Thread.sleep(new Random().nextInt(4000));
+                } catch (InterruptedException ex) {
+                    System.err.println(ex.toString());
+                }
+            }
+        }
+    };
 
     javax.swing.UIManager.LookAndFeelInfo info = javax.swing.UIManager.getInstalledLookAndFeels()[3];
 
@@ -90,36 +236,62 @@ public class Main_Frame extends JFrame {
         }
     }
 
-    private void populate_scheduler_table(DefaultTableModel tm, LinkedList<Process> queue, int table_number) {
+    private void populate_table_coloumn(DefaultTableModel tm, LinkedList<Thread> queue) {
+        for (Thread t : queue) {
+            Object[] data = new Object[]{t.getName()};
+            tm.addRow(data);
+        }
+    }
+
+    private void populate_buffer_table_coloumn(DefaultTableModel tm, LinkedList<Integer> queue) {
+        for (Integer i : queue) {
+            Object[] data = new Object[]{i.toString()};
+            tm.addRow(data);
+        }
+    }
+
+    private void populate_memory_table(DefaultTableModel tm, ArrayList<Memory_Location> queue) {
+        queue.forEach(p -> {
+            Object[] data = {p.PID, p.Data, p.Usage, p.Allocation_Time};
+            tm.addRow(data);
+        });
+    }
+
+    private void populate_page_table(DefaultTableModel tm, LinkedList<Map.Entry> queue) {
+        queue.forEach(p -> {
+            Object[] data = new Object[]{};
+            if((int) p.getValue() == -1)
+                data = new Object[]{p.getKey(), "N/A"};
+            else
+                data = new Object[]{p.getKey(), p.getValue()};
+            tm.addRow(data);
+        });
+    }
+
+    private void populate_table(DefaultTableModel tm, LinkedList<Process> queue, int table_number) {
         switch (table_number) {
             case 0:
-                queue.forEach(p
-                        -> {
-                    Object[] processes_data
-                            = {
-                                p.PID, p.Arrival_Time, p.Burst_Time, p.Priority
-                            };
-                    tm.addRow(processes_data);
+                queue.forEach(p -> {
+                    Object[] data = {p.PID, p.Arrival_Time, p.Burst_Time, p.Priority};
+                    tm.addRow(data);
                 });
                 break;
             case 1:
-                queue.forEach(p
-                        -> {
-                    Object[] processes_data
-                            = {
-                                p.PID, p.Sector
-                            };
-                    tm.addRow(processes_data);
+                queue.forEach(p -> {
+                    Object[] data = {p.PID, p.Sector};
+                    tm.addRow(data);
                 });
                 break;
             case 2:
-                queue.forEach(p
-                        -> {
-                    Object[] processes_data
-                            = {
-                                p.PID, p.Need.get_A(), p.Need.get_B(), p.Need.get_C()
-                            };
-                    tm.addRow(processes_data);
+                queue.forEach(p -> {
+                    Object[] data = {p.PID, p.Need.get_A(), p.Need.get_B(), p.Need.get_C()};
+                    tm.addRow(data);
+                });
+                break;
+            case 3:
+                queue.forEach(p -> {
+                    Object[] data = {p.PID, p.get_page_count()};
+                    tm.addRow(data);
                 });
                 break;
             default:
@@ -435,10 +607,28 @@ public class Main_Frame extends JFrame {
         initComponents();
         ready_queue = new LinkedList<>();
         portsList = new LinkedList<>();
+        memory = new ArrayList<>();
+        processes_memory_list = new LinkedList<>();
+        Back_Store = new LinkedList<>();
+        producers_list = new LinkedList<>();
+        buffer = new LinkedList<>();
+        consumers_list = new LinkedList<>();
+        writers_list = new LinkedList<>();
+        readers_list = new LinkedList<>();
+
         proc_table_model = (DefaultTableModel) processes_table.getModel();
         disk_table_model = (DefaultTableModel) disk_table.getModel();
         editing_table_model = (DefaultTableModel) editing_table.getModel();
         deadlock_table_model = (DefaultTableModel) deadlock_table.getModel();
+        memory_table_model = (DefaultTableModel) memory_table.getModel();
+        processes_memory_table_model = (DefaultTableModel) processes_memory_table.getModel();
+        page_table_model = (DefaultTableModel) page_table.getModel();
+        pw_table_model = (DefaultTableModel) pw_table.getModel();
+        buffer_table_model = (DefaultTableModel) buffer_table.getModel();
+        cr_table_model = (DefaultTableModel) cr_table.getModel();
+
+        current_label.setVisible(false);
+        rw_label.setVisible(false);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -520,8 +710,40 @@ public class Main_Frame extends JFrame {
         deadlock_log_area = new javax.swing.JTextPane();
         deadlock_sched_rand_btn = new javax.swing.JButton();
         deadlock_button_group = new javax.swing.ButtonGroup();
+        memory_frame = new javax.swing.JFrame();
+        memory_table_scroll_pane = new javax.swing.JScrollPane();
+        memory_table = new javax.swing.JTable();
+        memory_lru_radio = new javax.swing.JRadioButton();
+        memory_fifo_radio = new javax.swing.JRadioButton();
+        processes_frame = new javax.swing.JFrame();
+        processes_table_scroll_pane = new javax.swing.JScrollPane();
+        processes_memory_table = new javax.swing.JTable();
+        page_table_scroll_pane = new javax.swing.JScrollPane();
+        page_table = new javax.swing.JTable();
+        add_process_btn = new javax.swing.JButton();
+        save_data_btn = new javax.swing.JButton();
+        show_page_table_btn = new javax.swing.JButton();
+        processes_label = new javax.swing.JLabel();
+        page_table_label = new javax.swing.JLabel();
+        memory_button_group = new javax.swing.ButtonGroup();
+        sync_frame = new javax.swing.JFrame();
+        bounded_radio = new javax.swing.JRadioButton();
+        rw_radio = new javax.swing.JRadioButton();
+        current_label = new javax.swing.JLabel();
+        pw_table_scroll_pane = new javax.swing.JScrollPane();
+        pw_table = new javax.swing.JTable();
+        pw_add_btn = new javax.swing.JButton();
+        cr_add_btn = new javax.swing.JButton();
+        pw_rem_btn = new javax.swing.JButton();
+        cr_rem_btn = new javax.swing.JButton();
+        buffer_table_scroll_pane = new javax.swing.JScrollPane();
+        buffer_table = new javax.swing.JTable();
+        cr_table_scroll_pane = new javax.swing.JScrollPane();
+        cr_table = new javax.swing.JTable();
+        rw_label = new javax.swing.JLabel();
+        sync_button_group = new javax.swing.ButtonGroup();
         mem_btn = new javax.swing.JButton();
-        net_btn = new javax.swing.JButton();
+        memory_ = new javax.swing.JButton();
         proc_btn = new javax.swing.JButton();
         io_btn = new javax.swing.JButton();
         file_sys_btn = new javax.swing.JButton();
@@ -533,6 +755,7 @@ public class Main_Frame extends JFrame {
         sync_item = new javax.swing.JMenuItem();
         deadlock_item = new javax.swing.JMenuItem();
         mem_menu = new javax.swing.JMenu();
+        paging_item = new javax.swing.JMenuItem();
         file_sys_menu = new javax.swing.JMenu();
         disk_sched_item = new javax.swing.JMenuItem();
         io_menu = new javax.swing.JMenu();
@@ -1245,15 +1468,366 @@ public class Main_Frame extends JFrame {
                 .addComponent(disk_log_area_scroll_pane1, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        memory_frame.setTitle("Memory");
+        memory_frame.setResizable(false);
+
+        memory_table.setAutoCreateRowSorter(true);
+        memory_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "PID", "Data", "Usage", "Allocation Time (ms)"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        memory_table.setDropMode(javax.swing.DropMode.ON);
+        memory_table.setRowSelectionAllowed(false);
+        memory_table.getTableHeader().setReorderingAllowed(false);
+        memory_table_scroll_pane.setViewportView(memory_table);
+
+        memory_button_group.add(memory_lru_radio);
+        memory_lru_radio.setText("LRU");
+
+        memory_button_group.add(memory_fifo_radio);
+        memory_fifo_radio.setSelected(true);
+        memory_fifo_radio.setText("FIFO");
+
+        javax.swing.GroupLayout memory_frameLayout = new javax.swing.GroupLayout(memory_frame.getContentPane());
+        memory_frame.getContentPane().setLayout(memory_frameLayout);
+        memory_frameLayout.setHorizontalGroup(
+            memory_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(memory_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+            .addGroup(memory_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(memory_lru_radio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(memory_fifo_radio)
+                .addContainerGap())
+        );
+        memory_frameLayout.setVerticalGroup(
+            memory_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(memory_frameLayout.createSequentialGroup()
+                .addComponent(memory_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(memory_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(memory_lru_radio)
+                    .addComponent(memory_fifo_radio))
+                .addContainerGap())
+        );
+
+        processes_frame.setTitle("Processes");
+        processes_frame.setResizable(false);
+
+        processes_memory_table.setAutoCreateRowSorter(true);
+        processes_memory_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "PID", "Page Count"
+            }
+        ));
+        processes_memory_table.getTableHeader().setReorderingAllowed(false);
+        processes_table_scroll_pane.setViewportView(processes_memory_table);
+
+        page_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Page Number", "Frame Number"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        page_table.getTableHeader().setReorderingAllowed(false);
+        page_table_scroll_pane.setViewportView(page_table);
+
+        add_process_btn.setText("Add Process");
+        add_process_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                add_process_btnActionPerformed(evt);
+            }
+        });
+
+        save_data_btn.setText("Edit Data");
+        save_data_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                save_data_btnActionPerformed(evt);
+            }
+        });
+
+        show_page_table_btn.setText("Show Page Table");
+        show_page_table_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                show_page_table_btnActionPerformed(evt);
+            }
+        });
+
+        processes_label.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        processes_label.setText("Processes:");
+
+        page_table_label.setFont(new java.awt.Font("Consolas", 1, 12)); // NOI18N
+        page_table_label.setText("Page Table:");
+
+        javax.swing.GroupLayout processes_frameLayout = new javax.swing.GroupLayout(processes_frame.getContentPane());
+        processes_frame.getContentPane().setLayout(processes_frameLayout);
+        processes_frameLayout.setHorizontalGroup(
+            processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(processes_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(processes_frameLayout.createSequentialGroup()
+                        .addComponent(add_process_btn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE)
+                        .addComponent(save_data_btn))
+                    .addComponent(processes_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(processes_frameLayout.createSequentialGroup()
+                        .addComponent(processes_label)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
+                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(page_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(show_page_table_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(page_table_label))
+                .addContainerGap())
+        );
+        processes_frameLayout.setVerticalGroup(
+            processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(processes_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(processes_label)
+                    .addComponent(page_table_label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(processes_frameLayout.createSequentialGroup()
+                        .addComponent(page_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(show_page_table_btn))
+                    .addGroup(processes_frameLayout.createSequentialGroup()
+                        .addComponent(processes_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(save_data_btn)
+                            .addComponent(add_process_btn))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        sync_frame.setTitle("Synchronization");
+
+        sync_button_group.add(bounded_radio);
+        bounded_radio.setSelected(true);
+        bounded_radio.setText("Bounded Buffer");
+        bounded_radio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bounded_radioActionPerformed(evt);
+            }
+        });
+
+        sync_button_group.add(rw_radio);
+        rw_radio.setText("Reader / Writer");
+        rw_radio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rw_radioActionPerformed(evt);
+            }
+        });
+
+        current_label.setFont(new java.awt.Font("Consolas", 1, 24)); // NOI18N
+        current_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        pw_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Producers"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        pw_table.getTableHeader().setReorderingAllowed(false);
+        pw_table_scroll_pane.setViewportView(pw_table);
+
+        pw_add_btn.setText("Add Producer");
+        pw_add_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pw_add_btnActionPerformed(evt);
+            }
+        });
+
+        cr_add_btn.setText("Add Consumer");
+        cr_add_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cr_add_btnActionPerformed(evt);
+            }
+        });
+
+        pw_rem_btn.setText("Remove Producer");
+        pw_rem_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pw_rem_btnActionPerformed(evt);
+            }
+        });
+
+        cr_rem_btn.setText("Remove Consumer");
+        cr_rem_btn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cr_rem_btnActionPerformed(evt);
+            }
+        });
+
+        buffer_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Buffer"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        buffer_table_scroll_pane.setViewportView(buffer_table);
+
+        cr_table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Consumers"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        cr_table_scroll_pane.setViewportView(cr_table);
+
+        rw_label.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        rw_label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout sync_frameLayout = new javax.swing.GroupLayout(sync_frame.getContentPane());
+        sync_frame.getContentPane().setLayout(sync_frameLayout);
+        sync_frameLayout.setHorizontalGroup(
+            sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sync_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(sync_frameLayout.createSequentialGroup()
+                        .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bounded_radio)
+                            .addComponent(rw_radio)
+                            .addComponent(pw_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(sync_frameLayout.createSequentialGroup()
+                                .addComponent(buffer_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cr_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(current_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(rw_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(sync_frameLayout.createSequentialGroup()
+                        .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(pw_add_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cr_add_btn, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                        .addGap(154, 154, 154)
+                        .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(pw_rem_btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cr_rem_btn, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        sync_frameLayout.setVerticalGroup(
+            sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sync_frameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(bounded_radio)
+                    .addComponent(current_label, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(rw_label, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rw_radio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(7, 7, 7)
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buffer_table_scroll_pane, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                    .addComponent(pw_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(cr_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pw_add_btn)
+                    .addComponent(pw_rem_btn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(sync_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cr_add_btn)
+                    .addComponent(cr_rem_btn))
+                .addContainerGap())
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         mem_btn.setText("Memory");
-
-        net_btn.setText("Network");
-        net_btn.addActionListener(new java.awt.event.ActionListener() {
+        mem_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                net_btnActionPerformed(evt);
+                mem_btnActionPerformed(evt);
+            }
+        });
+
+        memory_.setText("Network");
+        memory_.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                memory_ActionPerformed(evt);
             }
         });
 
@@ -1319,6 +1893,15 @@ public class Main_Frame extends JFrame {
         main_menu_bar.add(proc_menu_item);
 
         mem_menu.setText("Memory");
+
+        paging_item.setText("Paging");
+        paging_item.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paging_itemActionPerformed(evt);
+            }
+        });
+        mem_menu.add(paging_item);
+
         main_menu_bar.add(mem_menu);
 
         file_sys_menu.setText("File System");
@@ -1415,7 +1998,7 @@ public class Main_Frame extends JFrame {
                     .addComponent(io_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(net_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(memory_, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(mem_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1432,7 +2015,7 @@ public class Main_Frame extends JFrame {
                     .addComponent(file_sys_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(net_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(memory_, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(io_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1447,15 +2030,15 @@ public class Main_Frame extends JFrame {
             LinkedList<temp_process> temp = new LinkedList<>();
             if (buttonText.toLowerCase().contains("fifo")) {
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.FIFO);
-                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
+                populate_table(proc_table_model, ready_queue, this.PROC_TABLE);
             } else if (buttonText.toLowerCase().contains("sjf")) {
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.SJF);
-                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
+                populate_table(proc_table_model, ready_queue, this.PROC_TABLE);
             } else if (buttonText.toLowerCase().contains("rr")) {
                 temp.clear();
                 ready_queue.forEach(i -> temp.add(new temp_process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority)));
                 ready_queue = new Scheduler(ready_queue, sched_log_area).sort(Scheduler.RR, 40);
-                populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
+                populate_table(proc_table_model, ready_queue, this.PROC_TABLE);
                 ready_queue.clear();
                 temp.forEach(i -> ready_queue.add(new Process(i.PID, i.Burst_Time, i.Arrival_Time, i.Priority)));
             }
@@ -1535,7 +2118,7 @@ public class Main_Frame extends JFrame {
                     new Random().nextInt(6)));
         }
 
-        populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
+        populate_table(proc_table_model, ready_queue, this.PROC_TABLE);
         scheduling_frame.setSize(500, 550);
         scheduling_frame.setVisible(true);
     }//GEN-LAST:event_sched_itemActionPerformed
@@ -1625,12 +2208,12 @@ public class Main_Frame extends JFrame {
             ready_queue.add(new Process(i));
         }
 
-        populate_scheduler_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
+        populate_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
         deadlock_frame.setSize(500, 550);
         deadlock_frame.setVisible(true);
     }//GEN-LAST:event_deadlock_itemActionPerformed
 
-    private void net_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_net_btnActionPerformed
+    private void memory_ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_memory_ActionPerformed
         int choice = JOptionPane.showOptionDialog(this,
                 "Run Client or Server application ?",
                 "Choose a Program",
@@ -1646,7 +2229,7 @@ public class Main_Frame extends JFrame {
         } else if (choice == JOptionPane.NO_OPTION) {
             client_itemActionPerformed(evt);
         }
-    }//GEN-LAST:event_net_btnActionPerformed
+    }//GEN-LAST:event_memory_ActionPerformed
 
     private void about_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_about_itemActionPerformed
         int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -1919,7 +2502,7 @@ public class Main_Frame extends JFrame {
             ready_queue.add(new Process(i, Math.abs(new Random().nextInt() % 200)));
         }
 
-        populate_scheduler_table(disk_table_model, ready_queue, this.DISK_TABLE);
+        populate_table(disk_table_model, ready_queue, this.DISK_TABLE);
         disk_scheduling_frame.setSize(500, 550);
         disk_scheduling_frame.setVisible(true);
     }//GEN-LAST:event_disk_sched_itemActionPerformed
@@ -1936,7 +2519,7 @@ public class Main_Frame extends JFrame {
                     new Random().nextInt(6)));
         }
 
-        populate_scheduler_table(proc_table_model, ready_queue, this.PROC_TABLE);
+        populate_table(proc_table_model, ready_queue, this.PROC_TABLE);
     }//GEN-LAST:event_sched_rand_btnActionPerformed
 
     private void disk_sched_rand_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disk_sched_rand_btnActionPerformed
@@ -1948,7 +2531,7 @@ public class Main_Frame extends JFrame {
             ready_queue.add(new Process(i, Math.abs(new Random().nextInt() % 200)));
         }
 
-        populate_scheduler_table(disk_table_model, ready_queue, this.DISK_TABLE);
+        populate_table(disk_table_model, ready_queue, this.DISK_TABLE);
     }//GEN-LAST:event_disk_sched_rand_btnActionPerformed
 
     private void file_sys_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_file_sys_btnActionPerformed
@@ -2020,7 +2603,8 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_proc_btnActionPerformed
 
     private void sync_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sync_itemActionPerformed
-
+        sync_frame.setSize(475, 370);
+        sync_frame.setVisible(true);
     }//GEN-LAST:event_sync_itemActionPerformed
 
     private void deadlock_edit_tableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deadlock_edit_tableActionPerformed
@@ -2108,7 +2692,7 @@ public class Main_Frame extends JFrame {
                     if (temp.length != 3) {
                         throw new NumberFormatException();
                     }
-                    
+
                     ready_queue.forEach(i
                             -> {
                         System.out.printf("PID: %d\tNeed A: %d\tNeed B: %d\tNeed C: %d\n",
@@ -2116,12 +2700,14 @@ public class Main_Frame extends JFrame {
                     });
                     System.out.println("\nChecking for Deadlock...");
                     Resource available = new Resource(resources.get(0), resources.get(1), resources.get(2));
-                    
+
+                    deadlock_log_area.setText(null);
+
                     appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\nChecking for Deadlock...\n",
                             available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
-                    
+
                     String result = new Deadlock(ready_queue, available).avoid();
-                    
+
                     appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
                 } else {
                     ready_queue.forEach(i
@@ -2131,13 +2717,13 @@ public class Main_Frame extends JFrame {
                     });
                     System.out.println("\nChecking for Deadlock...");
                     Resource available = new Resource();
-                    
+
+                    deadlock_log_area.setText(null);
                     appendToPane(deadlock_log_area, String.format("[Available: %d - %d - %d]\nChecking for Deadlock...\n",
                             available.get_A(), available.get_B(), available.get_C()), Color.RED, true, false);
-                    
+
                     String result = new Deadlock(ready_queue, available).avoid();
-                    
-                    
+
                     appendToPane(deadlock_log_area, result + "\n", Color.BLACK, true, false);
                 }
             } catch (NumberFormatException ex) {
@@ -2157,8 +2743,282 @@ public class Main_Frame extends JFrame {
             ready_queue.add(new Process(i));
         }
 
-        populate_scheduler_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
+        populate_table(deadlock_table_model, ready_queue, this.DEADLOCK_TABLE);
     }//GEN-LAST:event_deadlock_sched_rand_btnActionPerformed
+
+    private void mem_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mem_btnActionPerformed
+        paging_itemActionPerformed(evt);
+    }//GEN-LAST:event_mem_btnActionPerformed
+
+    private void add_process_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_add_process_btnActionPerformed
+        String s = JOptionPane.showInputDialog(this, "How Many Pages will the process require ?",
+                "Page Numbers", JOptionPane.QUESTION_MESSAGE);
+        boolean change = false;
+
+        LinkedList<Memory_Location> memory_before_allocation = new LinkedList<>();
+
+        memory.forEach(m -> memory_before_allocation.add(m));
+
+        try {
+            if (s != null) {
+                if (s.trim().length() > 0) {
+                    int page_count = Integer.parseInt(s);
+                    Process p = new Process(++process_count);
+                    String button_text = get_selected_button_text(memory_button_group);
+                    if (button_text.toLowerCase().contains("fifo")) {
+                        p.allocate_memory(page_count, memory, Process.FIFO, Back_Store, starting_time);
+                    } else {
+                        p.allocate_memory(page_count, memory, Process.LRU, Back_Store, starting_time);
+                    }
+
+                    processes_memory_list.add(p);
+                    LinkedList<Integer> preemptied = new LinkedList<>();
+                    for (int i = 0; i < memory.size(); i++) {
+                        if ((memory.get(i).PID != memory_before_allocation.get(i).PID) && memory_before_allocation.get(i).PID != -1) {
+                            System.out.println("before: " + memory_before_allocation.get(i).PID + " after: " + memory.get(i).PID);
+                            preemptied.add(memory_before_allocation.get(i).PID);
+                            change = true;
+                        }
+                    }
+
+                    if (change) {
+                        for (int i = 0; i < processes_memory_list.size(); i++) {
+                            int current_pid_page_count = 0;
+                            for (int j = 0; j < preemptied.size(); j++) {
+                                if ((processes_memory_list.get(i).PID == preemptied.get(j))) {
+                                    current_pid_page_count++;
+                                }
+                            }
+                            int pc = processes_memory_list.get(i).get_page_count();
+                            processes_memory_list.get(i).set_page_count(pc - current_pid_page_count);
+                        }
+                    }
+
+                    processes_memory_list.forEach(i -> i.data_addition(0, 0, memory));
+                    clear_table(processes_memory_table_model);
+                    clear_table(memory_table_model);
+                    populate_memory_table(memory_table_model, memory);
+                    populate_table(processes_memory_table_model, processes_memory_list, this.PROC_MEM_TABLE);
+                } else {
+                    int page_count = Math.abs(new Random().nextInt(10));
+                    Process p = new Process(++process_count);
+                    String button_text = get_selected_button_text(memory_button_group);
+                    if (button_text.toLowerCase().contains("fifo")) {
+                        p.allocate_memory(page_count, memory, Process.FIFO, Back_Store, starting_time);
+                    } else {
+                        p.allocate_memory(page_count, memory, Process.LRU, Back_Store, starting_time);
+                    }
+                    processes_memory_list.add(p);
+                    clear_table(processes_memory_table_model);
+                    clear_table(memory_table_model);
+                    populate_memory_table(memory_table_model, memory);
+                    populate_table(processes_memory_table_model, processes_memory_list, this.PROC_MEM_TABLE);
+                }
+            }
+        } catch (NumberFormatException ex) {
+            System.err.println(ex.toString());
+        }
+    }//GEN-LAST:event_add_process_btnActionPerformed
+
+    private void show_page_table_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show_page_table_btnActionPerformed
+        int selected_row = processes_memory_table.getSelectedRow();
+        int process_id = (int) processes_memory_table.getValueAt(selected_row, 0);
+        LinkedList<Map.Entry> page_table_list = new LinkedList<>();
+        for (Process i : processes_memory_list) {
+            if (i.PID == process_id) {
+                page_table_list = i.get_page_table();
+                break;
+            }
+        }
+        clear_table(page_table_model);
+        populate_page_table(page_table_model, page_table_list);
+
+    }//GEN-LAST:event_show_page_table_btnActionPerformed
+
+    private void save_data_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_data_btnActionPerformed
+        try {
+            int selected_row = processes_memory_table.getSelectedRow();
+            int process_id = (int) processes_memory_table.getValueAt(selected_row, 0);
+            Process process_to_be_edited = null;
+            int index_of_process_to_be_edited = 0;
+            for (int i = 0; i < processes_memory_list.size(); i++) {
+                if (processes_memory_list.get(i).PID == process_id) {
+                    process_to_be_edited = processes_memory_list.get(i);
+                    break;
+                }
+            }
+            process_to_be_edited.data_addition(memory);
+            clear_table(memory_table_model);
+            populate_memory_table(memory_table_model, memory);
+        } catch (IndexOutOfBoundsException ex) {
+            JOptionPane.showMessageDialog(this, "Select a row first", "Row Selection Error", JOptionPane.QUESTION_MESSAGE);
+        }
+    }//GEN-LAST:event_save_data_btnActionPerformed
+
+    private void bounded_radioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bounded_radioActionPerformed
+        writers_list.forEach(p -> p.stop());
+        readers_list.forEach(c -> c.stop());
+
+        writers_list.clear();
+        readers_list.clear();
+        buffer.clear();
+
+        clear_table(buffer_table_model);
+        clear_table(pw_table_model);
+        clear_table(cr_table_model);
+
+        is_bb = true;
+        current_label.setVisible(false);
+        pw_add_btn.setText("Add Producer");
+        pw_rem_btn.setText("Remove Producer");
+        cr_add_btn.setText("Add Consumer");
+        cr_rem_btn.setText("Remove Consumer");
+
+        JTableHeader th = pw_table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+        TableColumn tc = tcm.getColumn(0);
+        tc.setHeaderValue("Producers");
+        th.repaint();
+
+        th = buffer_table.getTableHeader();
+        tcm = th.getColumnModel();
+        tc = tcm.getColumn(0);
+        tc.setHeaderValue("Buffer");
+        th.repaint();
+
+        th = cr_table.getTableHeader();
+        tcm = th.getColumnModel();
+        tc = tcm.getColumn(0);
+        tc.setHeaderValue("Consumers");
+        th.repaint();
+    }//GEN-LAST:event_bounded_radioActionPerformed
+
+    private void rw_radioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rw_radioActionPerformed
+        producers_list.forEach(p -> p.stop());
+        consumers_list.forEach(c -> c.stop());
+
+        producers_list.clear();
+        consumers_list.clear();
+        buffer.clear();
+
+        clear_table(buffer_table_model);
+        clear_table(pw_table_model);
+        clear_table(cr_table_model);
+
+        is_bb = false;
+        current_label.setVisible(true);
+        rw_label.setVisible(true);
+        pw_add_btn.setText("Add Writer");
+        pw_rem_btn.setText("Remove Writer");
+        cr_add_btn.setText("Add Reader");
+        cr_rem_btn.setText("Remove Reader");
+
+        JTableHeader th = pw_table.getTableHeader();
+        TableColumnModel tcm = th.getColumnModel();
+        TableColumn tc = tcm.getColumn(0);
+        tc.setHeaderValue("Writers");
+        th.repaint();
+
+        th = buffer_table.getTableHeader();
+        tcm = th.getColumnModel();
+        tc = tcm.getColumn(0);
+        tc.setHeaderValue(null);
+        th.repaint();
+
+        th = cr_table.getTableHeader();
+        tcm = th.getColumnModel();
+        tc = tcm.getColumn(0);
+        tc.setHeaderValue("Readers");
+        th.repaint();
+    }//GEN-LAST:event_rw_radioActionPerformed
+
+    private void pw_add_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pw_add_btnActionPerformed
+        if (is_bb) {
+            Thread t = new Thread(produce);
+            t.start();
+            producers_list.add(t);
+
+            clear_table(pw_table_model);
+            populate_table_coloumn(pw_table_model, producers_list);
+        } else {
+            Thread t = new Thread(write);
+            t.start();
+            writers_list.add(t);
+
+            clear_table(pw_table_model);
+            populate_table_coloumn(pw_table_model, writers_list);
+        }
+    }//GEN-LAST:event_pw_add_btnActionPerformed
+
+    private void cr_add_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cr_add_btnActionPerformed
+        if (is_bb) {
+            Thread t = new Thread(consume);
+            t.start();
+            consumers_list.add(t);
+
+            clear_table(cr_table_model);
+            populate_table_coloumn(cr_table_model, consumers_list);
+        } else {
+            Thread t = new Thread(read);
+            t.start();
+            readers_list.add(t);
+
+            clear_table(cr_table_model);
+            populate_table_coloumn(cr_table_model, readers_list);
+        }
+    }//GEN-LAST:event_cr_add_btnActionPerformed
+
+    private void pw_rem_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pw_rem_btnActionPerformed
+        if (is_bb) {
+            producers_list.getFirst().stop();
+            producers_list.removeFirst();
+
+            clear_table(pw_table_model);
+            populate_table_coloumn(pw_table_model, producers_list);
+        } else {
+            writers_list.getFirst().stop();
+            writers_list.removeFirst();
+
+            clear_table(pw_table_model);
+            populate_table_coloumn(pw_table_model, writers_list);
+        }
+
+    }//GEN-LAST:event_pw_rem_btnActionPerformed
+
+    private void cr_rem_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cr_rem_btnActionPerformed
+        if (is_bb) {
+            consumers_list.getFirst().stop();
+            consumers_list.removeFirst();
+
+            clear_table(cr_table_model);
+            populate_table_coloumn(cr_table_model, consumers_list);
+        } else {
+            readers_list.getFirst().stop();
+            readers_list.removeFirst();
+
+            clear_table(cr_table_model);
+            populate_table_coloumn(cr_table_model, readers_list);
+        }
+    }//GEN-LAST:event_cr_rem_btnActionPerformed
+
+    private void paging_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paging_itemActionPerformed
+        memory.clear();
+        for (int i = 0; i < 20; i++) {
+            memory.add(new Memory_Location(0, 0, -1, 0));
+        }
+        populate_memory_table(memory_table_model, memory);
+        memory_table.getColumnModel().getColumn(0).setMinWidth(30);
+        memory_table.getColumnModel().getColumn(0).setMaxWidth(40);
+
+        memory_frame.setLocation(screen_width - 650, screen_height - 600);
+        memory_frame.setSize(380, 408);
+        memory_frame.setVisible(true);
+
+        processes_frame.setSize(500, 360);
+        processes_frame.setVisible(true);
+
+        starting_time = System.currentTimeMillis();
+    }//GEN-LAST:event_paging_itemActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -2175,11 +3035,9 @@ public class Main_Frame extends JFrame {
         java.awt.EventQueue.invokeLater(()
                 -> {
             Main_Frame main_frame = new Main_Frame();
-
-            int screen_width = Toolkit.getDefaultToolkit().getScreenSize().width;
-            int screen_height = Toolkit.getDefaultToolkit().getScreenSize().height;
-
-            main_frame.setLocation(screen_width / 4, screen_height / 5);
+            int width = Toolkit.getDefaultToolkit().getScreenSize().width;
+            int height = Toolkit.getDefaultToolkit().getScreenSize().height;
+            main_frame.setLocation(width / 4, height / 5);
             main_frame.setVisible(true);
         });
     }
@@ -2187,9 +3045,13 @@ public class Main_Frame extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFrame about_frame;
     private javax.swing.JMenuItem about_item;
+    private javax.swing.JButton add_process_btn;
     private javax.swing.JRadioButton avoidance_radio;
+    private javax.swing.JRadioButton bounded_radio;
     private javax.swing.JLabel brightness_label;
     private javax.swing.JSlider brightness_slider;
+    private javax.swing.JTable buffer_table;
+    private javax.swing.JScrollPane buffer_table_scroll_pane;
     private javax.swing.JMenu chat_menu;
     private javax.swing.JTextPane client_chat_pane;
     private javax.swing.JScrollPane client_chat_panel;
@@ -2199,6 +3061,11 @@ public class Main_Frame extends JFrame {
     private javax.swing.JButton client_snd_btn;
     private javax.swing.JRadioButton clook_radio;
     private javax.swing.JRadioButton cmp_radio;
+    private javax.swing.JButton cr_add_btn;
+    private javax.swing.JButton cr_rem_btn;
+    private javax.swing.JTable cr_table;
+    private javax.swing.JScrollPane cr_table_scroll_pane;
+    private javax.swing.JLabel current_label;
     private javax.swing.ButtonGroup deadlock_button_group;
     private javax.swing.JButton deadlock_chk_btn;
     private javax.swing.JButton deadlock_edit_table;
@@ -2245,13 +3112,19 @@ public class Main_Frame extends JFrame {
     private javax.swing.JLabel max_label;
     private javax.swing.JButton mem_btn;
     private javax.swing.JMenu mem_menu;
+    private javax.swing.JButton memory_;
+    private javax.swing.ButtonGroup memory_button_group;
+    private javax.swing.JRadioButton memory_fifo_radio;
+    private javax.swing.JFrame memory_frame;
+    private javax.swing.JRadioButton memory_lru_radio;
+    private javax.swing.JTable memory_table;
+    private javax.swing.JScrollPane memory_table_scroll_pane;
     private javax.swing.JLabel min_label;
     private javax.swing.JLabel name1;
     private javax.swing.JLabel name2;
     private javax.swing.JLabel name3;
     private javax.swing.JLabel name4;
     private javax.swing.JLabel name5;
-    private javax.swing.JButton net_btn;
     private javax.swing.JMenu net_menu;
     private javax.swing.JButton new_row_btn;
     private javax.swing.JRadioButton npsjf_radio;
@@ -2261,11 +3134,26 @@ public class Main_Frame extends JFrame {
     private javax.swing.JMenuItem output_item;
     private javax.swing.JComboBox<String> output_portsListComoBox;
     private javax.swing.JButton output_search_btn;
+    private javax.swing.JTable page_table;
+    private javax.swing.JLabel page_table_label;
+    private javax.swing.JScrollPane page_table_scroll_pane;
+    private javax.swing.JMenuItem paging_item;
     private javax.swing.JRadioButton prevention_radio;
     private javax.swing.JButton proc_btn;
     private javax.swing.JMenu proc_menu_item;
+    private javax.swing.JFrame processes_frame;
+    private javax.swing.JLabel processes_label;
+    private javax.swing.JTable processes_memory_table;
     private javax.swing.JTable processes_table;
+    private javax.swing.JScrollPane processes_table_scroll_pane;
+    private javax.swing.JButton pw_add_btn;
+    private javax.swing.JButton pw_rem_btn;
+    private javax.swing.JTable pw_table;
+    private javax.swing.JScrollPane pw_table_scroll_pane;
     private javax.swing.JRadioButton rr_radio;
+    private javax.swing.JLabel rw_label;
+    private javax.swing.JRadioButton rw_radio;
+    private javax.swing.JButton save_data_btn;
     private javax.swing.JButton sched_btn;
     private javax.swing.JMenuItem sched_item;
     private javax.swing.JTextPane sched_log_area;
@@ -2279,6 +3167,7 @@ public class Main_Frame extends JFrame {
     private javax.swing.JMenuItem server_item;
     private javax.swing.JTextField server_msg_field;
     private javax.swing.JButton server_snd_btn;
+    private javax.swing.JButton show_page_table_btn;
     private javax.swing.JButton slow_input_cnct_discnctBtn;
     private javax.swing.JFrame slow_input_frame;
     private javax.swing.JMenuItem slow_input_item;
@@ -2286,6 +3175,8 @@ public class Main_Frame extends JFrame {
     private javax.swing.JButton slow_input_search_btn;
     private javax.swing.JRadioButton sstf_radio;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.ButtonGroup sync_button_group;
+    private javax.swing.JFrame sync_frame;
     private javax.swing.JMenuItem sync_item;
     // End of variables declaration//GEN-END:variables
 

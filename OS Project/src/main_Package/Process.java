@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
  *
@@ -23,6 +25,12 @@ public class Process {
     public int Sector;
     public Resource Need;
 
+    public static int LRU = 0;
+    public static int FIFO = 1;
+
+    private static int current_time = 0;
+    private int page_count;
+
     HashMap<Integer, Integer> Page_Table = new HashMap<>();
 
     public Process() {
@@ -33,6 +41,7 @@ public class Process {
         this.Priority = Math.abs(r.nextInt() % 30);
         this.Sector = Math.abs(r.nextInt() % 200);
         this.Need = new Resource();
+        this.page_count = 0;
     }
 
     public Process(int PID) {
@@ -43,6 +52,7 @@ public class Process {
         this.Priority = Math.abs(r.nextInt() % 30);
         this.Sector = Math.abs(r.nextInt() % 200);
         this.Need = new Resource();
+        this.page_count = 0;
     }
 
     public Process(int PID, int Sector) {
@@ -53,6 +63,7 @@ public class Process {
         this.Priority = Math.abs(r.nextInt() % 30);
         this.Sector = Sector;
         this.Need = new Resource();
+        this.page_count = 0;
     }
 
     public Process(int PID, Resource Need) {
@@ -63,6 +74,7 @@ public class Process {
         this.Priority = Math.abs(r.nextInt() % 30);
         this.Sector = Math.abs(r.nextInt() % 150);
         this.Need = Need;
+        this.page_count = 0;
     }
 
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority) {
@@ -70,6 +82,7 @@ public class Process {
         this.Burst_Time = Burst_Time;
         this.Arrival_Time = Arrival_Time;
         this.Priority = Priority;
+        this.page_count = 0;
     }
 
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, Resource Need) {
@@ -80,6 +93,7 @@ public class Process {
         this.Priority = Priority;
         this.Sector = Math.abs(rn.nextInt() % 200);
         this.Need = Need;
+        this.page_count = 0;
     }
 
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, int Sector, Resource Need) {
@@ -89,9 +103,10 @@ public class Process {
         this.Priority = Priority;
         this.Sector = Sector;
         this.Need = Need;
+        this.page_count = 0;
     }
 
-    public void LRU(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
+    private void LRU(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
         for (int x = 0; x < frame_numbers_to_remove; x++) {
             int min_Index = 0;
             int min_usage = Integer.MAX_VALUE;
@@ -109,10 +124,10 @@ public class Process {
         }
     }
 
-    public void FIFO(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
+    private void FIFO(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
         for (int x = 0; x < frame_numbers_to_remove; x++) {
             int min_Index = 0;
-            int age = Integer.MAX_VALUE;
+            long age = Long.MAX_VALUE;
             for (int i = 0; i < Memory.size(); i++) {
                 Memory_Location current = Memory.get(i);
                 if ((current.Allocation_Time < age) && (current.PID != this.PID)) {
@@ -127,7 +142,7 @@ public class Process {
 
     }
 
-    public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory, int mode, LinkedList<Memory_Location> Back_Store) {
+    public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory, int mode, LinkedList<Memory_Location> Back_Store, long call_time) {
         if (page_numbers < Memory.size()) {
             for (int i = 0; i < page_numbers; i++) {
                 Page_Table.put(i, -1);
@@ -145,19 +160,13 @@ public class Process {
             while (remaining_pages > 0) {
 
                 if (counter >= Memory.size()) {
-                    System.out.println("Memory is full, Running LRU");
-                    System.out.println("Old Memory is:");
-                    Memory.forEach(o
-                            -> {
-                        System.out.println(o.PID + "\t" + o.Data + "\t" + o.Usage + "\t" + o.Allocation_Time);
-                    });
+                    System.out.println("Memory is full, Running Replacement Algoritm...");
 
                     if (mode == 0) {
                         LRU(remaining_pages, Memory, Back_Store);
                     } else if (mode == 1) {
                         FIFO(remaining_pages, Memory, Back_Store);
                     }
-                    System.out.println("New Memory is:");
                 }
 
                 for (int i = 0; i < Memory.size(); i++) {
@@ -165,60 +174,89 @@ public class Process {
                     if (current.PID == -1) {
                         remaining_pages--;
                         current.PID = this.PID;
-                        current.Allocation_Time = this.PID;
-                        current.Usage = Math.abs(new Random().nextInt(10));
+                        current.Allocation_Time = System.currentTimeMillis() - call_time;
+                        current.Usage = 0;
                         if (page_counter < page_numbers) {
-                            Page_Table.replace(page_counter, i);
+                            Page_Table.put(page_counter, i);
+                            page_count++;
                             page_counter++;
                             counter++;
                         }
                         break;
                     }
-
                 }
-
             }
-      
         } else {
             int pages_to_backstore = page_numbers - Memory.size();
             for (int i = 0; i < pages_to_backstore; i++) {
                 Back_Store.addLast(new Memory_Location(0, 0, this.PID, 0));
             }
-            this.allocate_memory(Memory.size(), Memory, 1, Back_Store);
+            this.allocate_memory(Memory.size(), Memory, 1, Back_Store, System.currentTimeMillis());
         }
-          System.out.println("The Page Table:");
-        Iterator it = Page_Table.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            System.out.println(pair.getKey() + "\t" + pair.getValue());
+//        System.out.println("The Page Table:");
+//        Page_Table.entrySet().stream().forEach(pair -> System.out.println(pair.getKey() + "\t" + pair.getValue()));
+    }
+
+    private void chk_pageTable(ArrayList<Memory_Location> Memory) {
+        for (int i = 0; i < this.Page_Table.size(); i++) {
+            int position_to_check = this.Page_Table.get(i);
+            if (Memory.get(position_to_check).PID != this.PID) {
+                this.Page_Table.replace(i, -1);
+                this.page_count--;
+            }
         }
     }
 
-    public void chk_pageTable(ArrayList<Memory_Location> Memory) {
+    private void chk_table(ArrayList<Memory_Location> Memory) {
         for (int i = 0; i < this.Page_Table.size(); i++) {
             int position_to_check = this.Page_Table.get(i);
-            if (Memory.get(position_to_check).PID == this.PID) {
-            } else {
+            if (Memory.get(position_to_check).PID != this.PID) {
                 this.Page_Table.replace(i, -1);
             }
         }
     }
 
-    public void data_addition(int added, ArrayList<Memory_Location> Memory) {
-        Scanner input = new Scanner(System.in);
-        System.out.println("Choose the number of integer you want to add to");
-        int page_number = input.nextInt();
-        chk_pageTable(Memory);
-        try {
-            if (Page_Table.get(page_number) == -1) {
-                System.out.println("Page Fault");
-            } else {
-                Memory.get(page_number).Data += added;
-                System.out.println("The New Edited Data= " + Memory.get(page_number).Data);
+    public void data_addition(ArrayList<Memory_Location> Memory) {
+        String input = JOptionPane.showInputDialog(null, "Enter page, data", "Choose Page", JOptionPane.QUESTION_MESSAGE);
+        if (input != null) {
+            String[] page_and_data = input.split(",");
+            int page_number = Integer.parseInt(page_and_data[0].trim());
+            int data = Integer.parseInt(page_and_data[1].trim());
+            chk_pageTable(Memory);
+            try {
+                if (Page_Table.get(page_number) == -1) {
+                    System.out.println("Page Fault");
+                    JOptionPane.showMessageDialog(null, "Page Fault ????", "Page Fault Error", JOptionPane.QUESTION_MESSAGE);
+                } else {
+                    Memory.get(page_number).Data = data;
+                    Memory.get(page_number).Usage++;
+                    System.out.println("The New Edited Data= " + Memory.get(page_number).Data);
+                }
+            } catch (NullPointerException e) {
+                System.out.println("Illegal Access");
             }
-        } catch (NullPointerException e) {
-            System.out.println("Illegal Access");
         }
+    }
 
+    public void data_addition(int data, int page_number, ArrayList<Memory_Location> Memory) {
+        chk_table(Memory);
+        if (Page_Table.get(page_number) == -1) {
+        } else {
+            Memory.get(page_number).Data = data;
+        }
+    }
+
+    public void set_page_count(int count) {
+        this.page_count = count;
+    }
+
+    public int get_page_count() {
+        return this.page_count;
+    }
+
+    public LinkedList<Map.Entry> get_page_table() {
+        LinkedList<Map.Entry> result = new LinkedList<>();
+        Page_Table.entrySet().forEach(pair -> result.add(pair));
+        return result;
     }
 }

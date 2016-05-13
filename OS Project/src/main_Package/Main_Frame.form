@@ -1044,6 +1044,451 @@
     </Container>
     <Component class="javax.swing.ButtonGroup" name="deadlock_button_group">
     </Component>
+    <Container class="javax.swing.JFrame" name="memory_frame">
+      <Properties>
+        <Property name="title" type="java.lang.String" value="Memory"/>
+        <Property name="resizable" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Component id="memory_table_scroll_pane" alignment="0" pref="471" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="memory_lru_radio" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="memory_fifo_radio" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="memory_table_scroll_pane" pref="388" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="memory_lru_radio" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="memory_fifo_radio" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JScrollPane" name="memory_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="memory_table">
+              <Properties>
+                <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="4" rowCount="0">
+                    <Column editable="false" title="PID" type="java.lang.Object"/>
+                    <Column editable="false" title="Data" type="java.lang.Object"/>
+                    <Column editable="false" title="Usage" type="java.lang.Object"/>
+                    <Column editable="false" title="Allocation Time (ms)" type="java.lang.Object"/>
+                  </Table>
+                </Property>
+                <Property name="dropMode" type="javax.swing.DropMode" editor="org.netbeans.modules.form.editors.EnumEditor">
+                  <Value id="ON"/>
+                </Property>
+                <Property name="rowSelectionAllowed" type="boolean" value="false"/>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JRadioButton" name="memory_lru_radio">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="memory_button_group"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="LRU"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="memory_fifo_radio">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="memory_button_group"/>
+            </Property>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="FIFO"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JFrame" name="processes_frame">
+      <Properties>
+        <Property name="title" type="java.lang.String" value="Processes"/>
+        <Property name="resizable" type="boolean" value="false"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Component id="add_process_btn" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="126" max="32767" attributes="0"/>
+                          <Component id="save_data_btn" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="processes_table_scroll_pane" pref="0" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="processes_label" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="page_table_scroll_pane" min="-2" pref="168" max="-2" attributes="0"/>
+                      <Component id="show_page_table_btn" min="-2" pref="168" max="-2" attributes="0"/>
+                      <Component id="page_table_label" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="processes_label" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="page_table_label" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="page_table_scroll_pane" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="show_page_table_btn" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="processes_table_scroll_pane" min="-2" pref="256" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="save_data_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="add_process_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Container class="javax.swing.JScrollPane" name="processes_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="processes_memory_table">
+              <Properties>
+                <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="2" rowCount="0">
+                    <Column editable="true" title="PID" type="java.lang.Object"/>
+                    <Column editable="true" title="Page Count" type="java.lang.Object"/>
+                  </Table>
+                </Property>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JScrollPane" name="page_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="page_table">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="2" rowCount="0">
+                    <Column editable="false" title="Page Number" type="java.lang.Object"/>
+                    <Column editable="false" title="Frame Number" type="java.lang.Object"/>
+                  </Table>
+                </Property>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JButton" name="add_process_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Add Process"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="add_process_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="save_data_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Edit Data"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="save_data_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="show_page_table_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Show Page Table"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="show_page_table_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="processes_label">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Consolas" size="12" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Processes:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="page_table_label">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Consolas" size="12" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Page Table:"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="memory_button_group">
+    </Component>
+    <Container class="javax.swing.JFrame" name="sync_frame">
+      <Properties>
+        <Property name="title" type="java.lang.String" value="Synchronization"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="bounded_radio" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="rw_radio" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="pw_table_scroll_pane" alignment="0" min="-2" pref="149" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="buffer_table_scroll_pane" min="-2" pref="142" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="cr_table_scroll_pane" min="-2" pref="145" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="current_label" alignment="0" max="32767" attributes="0"/>
+                              <Component id="rw_label" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="pw_add_btn" max="32767" attributes="0"/>
+                              <Component id="cr_add_btn" pref="149" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="154" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="pw_rem_btn" max="32767" attributes="0"/>
+                              <Component id="cr_rem_btn" pref="145" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="bounded_radio" min="-2" max="-2" attributes="0"/>
+                      <Component id="current_label" min="-2" pref="23" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="rw_label" max="32767" attributes="0"/>
+                      <Component id="rw_radio" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="buffer_table_scroll_pane" pref="201" max="32767" attributes="0"/>
+                      <Component id="pw_table_scroll_pane" pref="0" max="32767" attributes="0"/>
+                      <Component id="cr_table_scroll_pane" alignment="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="pw_add_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="pw_rem_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="cr_add_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cr_rem_btn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JRadioButton" name="bounded_radio">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="sync_button_group"/>
+            </Property>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Bounded Buffer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bounded_radioActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="rw_radio">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="sync_button_group"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Reader / Writer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rw_radioActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="current_label">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Consolas" size="24" style="1"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="0"/>
+          </Properties>
+        </Component>
+        <Container class="javax.swing.JScrollPane" name="pw_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="pw_table">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="1" rowCount="0">
+                    <Column editable="false" title="Producers" type="java.lang.String"/>
+                  </Table>
+                </Property>
+                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                  <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JButton" name="pw_add_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Add Producer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pw_add_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="cr_add_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Add Consumer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cr_add_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="pw_rem_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remove Producer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pw_rem_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="cr_rem_btn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Remove Consumer"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cr_rem_btnActionPerformed"/>
+          </Events>
+        </Component>
+        <Container class="javax.swing.JScrollPane" name="buffer_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="buffer_table">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="1" rowCount="0">
+                    <Column editable="false" title="Buffer" type="java.lang.String"/>
+                  </Table>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JScrollPane" name="cr_table_scroll_pane">
+          <AuxValues>
+            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+          </AuxValues>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JTable" name="cr_table">
+              <Properties>
+                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                  <Table columnCount="1" rowCount="0">
+                    <Column editable="false" title="Consumers" type="java.lang.String"/>
+                  </Table>
+                </Property>
+              </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Component class="javax.swing.JLabel" name="rw_label">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Consolas" size="18" style="1"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="0"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.ButtonGroup" name="sync_button_group">
+    </Component>
     <Menu class="javax.swing.JMenuBar" name="main_menu_bar">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="file_menu">
@@ -1096,6 +1541,16 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Memory"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="paging_item">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Paging"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paging_itemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="file_sys_menu">
           <Properties>
@@ -1234,7 +1689,7 @@
               </Group>
               <EmptySpace type="unrelated" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="net_btn" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="memory_" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="mem_btn" min="-2" pref="150" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -1256,7 +1711,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="net_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
+                  <Component id="memory_" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
                   <Component id="io_btn" alignment="3" min="-2" pref="150" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
@@ -1269,13 +1724,16 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Memory"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mem_btnActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="net_btn">
+    <Component class="javax.swing.JButton" name="memory_">
       <Properties>
         <Property name="text" type="java.lang.String" value="Network"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="net_btnActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="memory_ActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="proc_btn">

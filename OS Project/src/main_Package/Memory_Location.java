@@ -12,7 +12,7 @@ package main_Package;
 public class Memory_Location 
 {
     public int Usage;
-    public int Allocation_Time;
+    public long Allocation_Time;
     public int PID;
     public int Data;
     

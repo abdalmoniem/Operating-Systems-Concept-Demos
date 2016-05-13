@@ -48,6 +48,7 @@ public class Deadlock {
         System.out.println();
         System.out.println("Checking for safe states...");
         long start = System.currentTimeMillis();
+
         for (int index = 0; !ready_queue.isEmpty(); index = ready_queue.size() > 0 ? (index + 1) % (ready_queue.size()) : index) {
             long end = System.currentTimeMillis();
             if (end - start > 2000) {
@@ -61,24 +62,35 @@ public class Deadlock {
                 }
             }
         }
-        result += "Safe execution order:\n";
+
         System.out.println("Safe execution order:");
+        result += "Safe execution order:\n";
         for (Process i : execution_order_queue) {
             System.out.println("PID: " + i.PID);
-            result += "PID: " + i.PID + "\n";
+            result += "[P" + i.PID + "] -> ";
         }
+        if(!execution_order_queue.isEmpty())
+            result = result.substring(0, result.length() - 3) + "\n";
+        else
+            result += "None...\n";
+        result += "\n";
         System.out.println();
+
         if (ready_queue.isEmpty()) {
             System.out.println("The system is in a safe state");
+            result += "The system is in a safe state\n";
         } else {
             System.out.println("Ready queue:");
+            result += "Processes remaining in Ready queue:\n";
             for (Process i : ready_queue) {
                 System.out.println("PID: " + i.PID);
-                result += "PID: " + i.PID + "\n";
+                result += "[P" + i.PID + "] -> ";
             }
-            result += "\nThe system is in an unsafe state\n";
+            result = result.substring(0, result.length() - 3) + "\n";
+            result += "\n";
             System.out.println();
             System.out.println("The system is in an unsafe state");
+            result += "\nThe system is in an unsafe state\n";
         }
         return result;
     }

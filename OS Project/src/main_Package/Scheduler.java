@@ -18,7 +18,7 @@ public class Scheduler {
     public static final int SJF = 1;
     public static final int SRJF = 2;
     public static final int RR = 3;
-
+    
     private int time_quantum;
     private final LinkedList<Process> ready_queue;
     private final JTextPane log_area;
