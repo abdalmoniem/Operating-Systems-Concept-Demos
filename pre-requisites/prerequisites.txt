@@ -8,7 +8,6 @@ make sure that your machine has Python 2.7 (Python27) installed and running on i
 
 Linux:
 ======
-
 Open Terminal and type:
 -su [Enter]
 -pip install pyserial [Enter]
@@ -18,7 +17,6 @@ Open Terminal and type:
 
 Windows:
 ========
-
 -Add python path and python scripts path to environment variables
 -Open CMD as administrator and type:
 -pip install pyserial [Enter]
@@ -44,3 +42,26 @@ $python [Enter]
 >>import pylab [Enter]
 
 if nothing pops up or no error occurs then the modules are installed correctly
+
+Simulation:  (Windows only)
+===========================
+if you want to simulate the io hardware that we made, you should have the following programs installed and running correctly:
+
+1- Proteus 8 or above
+2- Virtual Serial Port Emulator (VSPE)
+
+How-To:
+=======
+1- create a virtual COM port in VSPE
+2- open the protues project and start the simulation
+3- open iCode and choose input / output
+4- in the proteus project there is a mode switch which selects from one of the following modes:
+	a- Output Mode (Brightness Mode LED on)
+	b- Slow Input Mode (Graphing Mode LED on)
+	c- Fast Input Mode (Both Brightness Mode LED and Graphing Mode LED are on)
+
+	-> when in output mode, you connect from iCode in output mode and change the brightness slider
+		which will be reflected on the simulation's oscilloscope's reading
+
+	-> when in either mode of input, you connect from iCode in the corresponding input mode and change the potentiometers value
+		which will be reflected on a graphing oscilloscope opened by iCode
