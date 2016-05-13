@@ -47,6 +47,8 @@ public class Process {
     /**
      *
      * a constructor contains a randomized available ; except the process pid
+     *
+     * @param PID initiate the process's pid
      */
     public Process(int PID) {
         Random r = new Random();
@@ -130,7 +132,7 @@ public class Process {
 
     /**
      *
-     * @param allocate the pid
+     * @param PID initiate the process's pid
      * @param Burst_Time allocate the burst time
      * @param Arrival_Time allocate the arrival time
      * @param Priority allocate the priority
@@ -261,36 +263,44 @@ public class Process {
             this.allocate_memory(Memory.size(), Memory, 1, Back_Store, System.currentTimeMillis());
         }
     }
-    
+
     /**
      * Checks if there is room for a new process to be added to the memory
+     *
      * @param Memory the memory that is checked for room
      */
     private void check_page_table(ArrayList<Memory_Location> Memory) {
         for (int i = 0; i < this.Page_Table.size(); i++) {
             int position_to_check = this.Page_Table.get(i);
-            if (Memory.get(position_to_check).PID != this.PID) {
-                this.Page_Table.replace(i, -1);
-                this.page_count--;
+            if (position_to_check != -1) {
+                if (Memory.get(position_to_check).PID != this.PID) {
+                    this.Page_Table.replace(i, -1);
+                    this.page_count--;
+                }
             }
         }
     }
-    
+
     /**
-     * Checks if there is room for a new process to be added to the memory, used for updating the page table
+     * Checks if there is room for a new process to be added to the memory, used
+     * for updating the page table
+     *
      * @param Memory the memory that is checked for room
      */
     private void internal_check(ArrayList<Memory_Location> Memory) {
         for (int i = 0; i < this.Page_Table.size(); i++) {
             int position_to_check = this.Page_Table.get(i);
-            if (Memory.get(position_to_check).PID != this.PID) {
-                this.Page_Table.replace(i, -1);
+            if (position_to_check != -1) {
+                if (Memory.get(position_to_check).PID != this.PID) {
+                    this.Page_Table.replace(i, -1);
+                }
             }
         }
     }
-    
+
     /**
      * adds a data item to the specified page number in the memory
+     *
      * @param Memory the memory to update
      */
     public void data_addition(ArrayList<Memory_Location> Memory) {
@@ -305,48 +315,66 @@ public class Process {
                     System.out.println("Page Fault");
                     JOptionPane.showMessageDialog(null, "Page Fault ????", "Page Fault Error", JOptionPane.QUESTION_MESSAGE);
                 } else {
-                    Memory.get(page_number).Data = data;
-                    Memory.get(page_number).Usage++;
-                    System.out.println("The New Edited Data= " + Memory.get(page_number).Data);
+                    Memory.get(Page_Table.get(page_number)).Data = data;
+                    Memory.get(Page_Table.get(page_number)).Usage++;
                 }
             } catch (NullPointerException e) {
                 System.out.println("Illegal Access");
             }
         }
     }
-    
+
     /**
      * adds a data item to the specified page number in the memory
-     * @param data  the data to be added to the memory
-     * @param page_number  the page number where the data will be added
-     * @param Memory  the memory to update
+     *
+     * @param page_number the page number where the data will be added
+     * @param Memory the memory to update
+     */
+    public void data_addition(int page_number, ArrayList<Memory_Location> Memory) {
+        internal_check(Memory);
+        if (Page_Table.get(page_number) != null) {
+            if (Page_Table.get(page_number) != -1) {
+                Memory.get(Page_Table.get(page_number)).Data = new Random().nextInt(20);
+                Memory.get(Page_Table.get(page_number)).Usage = Math.abs(new Random().nextInt(100));
+            }
+        }
+    }
+
+    /**
+     * adds a data item to the specified page number in the memory
+     *
+     * @param data the data to be added to the memory
+     * @param page_number the page number where the data will be added
+     * @param Memory the memory to update
      */
     public void data_addition(int data, int page_number, ArrayList<Memory_Location> Memory) {
         internal_check(Memory);
-        if (Page_Table.get(page_number) == -1) {
-        } else {
-            Memory.get(page_number).Data = data;
+        if (Page_Table.get(page_number) != -1 && Page_Table.get(page_number) != null) {
+            Memory.get(Page_Table.get(page_number)).Data = data;
         }
     }
-    
+
     /**
      * sets the page count
+     *
      * @param count the number of pages to set for this process
      */
     public void set_page_count(int count) {
         this.page_count = count;
     }
-    
+
     /**
-     * 
+     *
      * @return the page count
      */
     public int get_page_count() {
         return this.page_count;
     }
+
     /**
-     * 
-     * @return a Map.Entry LinkedList, all keys represent the page number and all values represent the frame number
+     *
+     * @return a Map.Entry LinkedList, all keys represent the page number and
+     * all values represent the frame number
      * @see Map
      */
     public LinkedList<Map.Entry> get_page_table() {
