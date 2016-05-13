@@ -26,17 +26,21 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import javax.swing.ButtonGroup;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -258,8 +262,8 @@ public class Main_Frame extends JFrame {
 
     private void populate_memory_table(DefaultTableModel tm, ArrayList<Memory_Location> queue) {
         int x = 0;
-        for(Memory_Location m : queue) {
-            Object[] data = {x++, m.PID, m.Data, m.Usage, m.Allocation_Time};
+        for (Memory_Location m : queue) {
+            Object[] data = {x++, m.PID, m.Data, m.Usage, NumberFormat.getNumberInstance(Locale.US).format(m.Allocation_Time)};
             tm.addRow(data);
         }
     }
@@ -672,6 +676,50 @@ public class Main_Frame extends JFrame {
                 }
             }
         });
+        
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(SwingConstants.LEFT);
+        for (int i = 0; i < memory_table.getColumnCount(); i++) {
+            memory_table.setDefaultRenderer(memory_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < processes_table.getColumnCount(); i++) {
+            processes_table.setDefaultRenderer(processes_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < processes_memory_table.getColumnCount(); i++) {
+            processes_memory_table.setDefaultRenderer(processes_memory_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < disk_table.getColumnCount(); i++) {
+            disk_table.setDefaultRenderer(disk_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < editing_table.getColumnCount(); i++) {
+            editing_table.setDefaultRenderer(editing_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < deadlock_table.getColumnCount(); i++) {
+            deadlock_table.setDefaultRenderer(deadlock_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < page_table.getColumnCount(); i++) {
+            page_table.setDefaultRenderer(page_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < pw_table.getColumnCount(); i++) {
+            pw_table.setDefaultRenderer(pw_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < buffer_table.getColumnCount(); i++) {
+            buffer_table.setDefaultRenderer(buffer_table.getColumnClass(i), renderer);
+        }
+        for (int i = 0; i < cr_table.getColumnCount(); i++) {
+            cr_table.setDefaultRenderer(cr_table.getColumnClass(i), renderer);
+        }
+        // repaint to show table cell changes
+        processes_table.updateUI();
+        disk_table.updateUI();
+        editing_table.updateUI();
+        deadlock_table.updateUI();
+        memory_table.updateUI();
+        processes_memory_table.updateUI();
+        page_table.updateUI();
+        pw_table.updateUI();
+        buffer_table.updateUI();
+        cr_table.updateUI();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -765,7 +813,6 @@ public class Main_Frame extends JFrame {
         page_table = new javax.swing.JTable();
         add_process_btn = new javax.swing.JButton();
         save_data_btn = new javax.swing.JButton();
-        show_page_table_btn = new javax.swing.JButton();
         processes_label = new javax.swing.JLabel();
         page_table_label = new javax.swing.JLabel();
         proc_data_rand_btn = new javax.swing.JButton();
@@ -936,7 +983,15 @@ public class Main_Frame extends JFrame {
             new String [] {
                 "PID", "Arrival Time", "Burst Time", "Priority"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         editing_table.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         editing_table.setDropMode(javax.swing.DropMode.ON);
         editing_table.getTableHeader().setReorderingAllowed(false);
@@ -1334,9 +1389,16 @@ public class Main_Frame extends JFrame {
                 "PID", "Sector"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -1530,9 +1592,16 @@ public class Main_Frame extends JFrame {
                 "Frame Number", "PID", "Data", "Usage", "Allocation Time (ms)"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -1585,9 +1654,16 @@ public class Main_Frame extends JFrame {
                 "PID", "Page Count"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -1604,9 +1680,16 @@ public class Main_Frame extends JFrame {
                 "Page Number", "Frame Number"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -1626,13 +1709,6 @@ public class Main_Frame extends JFrame {
         save_data_btn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 save_data_btnActionPerformed(evt);
-            }
-        });
-
-        show_page_table_btn.setText("Show Page Table");
-        show_page_table_btn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                show_page_table_btnActionPerformed(evt);
             }
         });
 
@@ -1670,7 +1746,6 @@ public class Main_Frame extends JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(page_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(show_page_table_btn, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(page_table_label))
                 .addContainerGap())
         );
@@ -1682,19 +1757,17 @@ public class Main_Frame extends JFrame {
                     .addComponent(processes_label)
                     .addComponent(page_table_label))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(processes_frameLayout.createSequentialGroup()
-                        .addComponent(page_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(show_page_table_btn))
+                .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(processes_frameLayout.createSequentialGroup()
                         .addComponent(processes_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(processes_frameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(save_data_btn)
                             .addComponent(add_process_btn)
-                            .addComponent(proc_data_rand_btn))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(proc_data_rand_btn))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(page_table_scroll_pane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         sync_frame.setTitle("Synchronization");
@@ -1887,6 +1960,7 @@ public class Main_Frame extends JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("iCode");
         setResizable(false);
 
         mem_btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/main_Package/Pics/memory.png"))); // NOI18N
@@ -2920,21 +2994,6 @@ public class Main_Frame extends JFrame {
         }
     }//GEN-LAST:event_add_process_btnActionPerformed
 
-    private void show_page_table_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_show_page_table_btnActionPerformed
-        int selected_row = processes_memory_table.getSelectedRow();
-        int process_id = (int) processes_memory_table.getValueAt(selected_row, 0);
-        LinkedList<Map.Entry> page_table_list = new LinkedList<>();
-        for (Process i : processes_memory_list) {
-            if (i.PID == process_id) {
-                page_table_list = i.get_page_table();
-                break;
-            }
-        }
-        clear_table(page_table_model);
-        populate_page_table(page_table_model, page_table_list);
-
-    }//GEN-LAST:event_show_page_table_btnActionPerformed
-
     private void save_data_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_save_data_btnActionPerformed
         try {
             int selected_row = processes_memory_table.getSelectedRow();
@@ -3105,19 +3164,20 @@ public class Main_Frame extends JFrame {
 
     private void paging_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paging_itemActionPerformed
         memory.clear();
+        clear_table(memory_table_model);
         for (int i = 0; i < 20; i++) {
             memory.add(new Memory_Location(0, 0, -1, 0));
         }
         populate_memory_table(memory_table_model, memory);
         memory_table.getColumnModel().getColumn(0).setMinWidth(80);
         memory_table.getColumnModel().getColumn(0).setMaxWidth(90);
-        
+
         memory_table.getColumnModel().getColumn(1).setMinWidth(30);
         memory_table.getColumnModel().getColumn(1).setMaxWidth(40);
-        
+
         memory_table.getColumnModel().getColumn(2).setMinWidth(40);
         memory_table.getColumnModel().getColumn(2).setMaxWidth(50);
-        
+
         memory_table.getColumnModel().getColumn(3).setMinWidth(40);
         memory_table.getColumnModel().getColumn(3).setMaxWidth(50);
 
@@ -3127,7 +3187,7 @@ public class Main_Frame extends JFrame {
 
         processes_frame.setSize(530, 360);
         processes_frame.setVisible(true);
-
+        
         starting_time = System.currentTimeMillis();
     }//GEN-LAST:event_paging_itemActionPerformed
 
@@ -3290,7 +3350,6 @@ public class Main_Frame extends JFrame {
     private javax.swing.JMenuItem server_item;
     private javax.swing.JTextField server_msg_field;
     private javax.swing.JButton server_snd_btn;
-    private javax.swing.JButton show_page_table_btn;
     private javax.swing.JButton slow_input_cnct_discnctBtn;
     private javax.swing.JFrame slow_input_frame;
     private javax.swing.JMenuItem slow_input_item;
