@@ -41,7 +41,6 @@ public class Server {
        * @param chat_pane     The Server's chat pane
        * @param snd_btn       The Server's send button
        */
-
       public Server(int port_number, JTextField msg_field, JTextPane chat_pane, JButton snd_btn) {
             try {
                   this.msg_field = msg_field;

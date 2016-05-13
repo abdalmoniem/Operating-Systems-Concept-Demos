@@ -112,7 +112,7 @@ public class Disk_Scheduler {
         System.out.println("\b \b\b \b\b \b");
 
         for (int i = 0; i < res.size(); i++) {
-            args += " " + res.get(i);//pput the result of the scheduling in arg[]
+            args += " " + res.get(i);//put the result of the scheduling in arg[]
         }
         return args;
     }

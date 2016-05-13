@@ -54,12 +54,7 @@ public class Deadlock {
         LinkedList<Process> execution_order_queue = new LinkedList<>();
         System.out.println();
         System.out.println("Checking for safe states...");
-<<<<<<< HEAD
-        long start = System.currentTimeMillis();
-
-=======
         long start = System.currentTimeMillis();//print the start time
->>>>>>> origin/master
         for (int index = 0; !ready_queue.isEmpty(); index = ready_queue.size() > 0 ? (index + 1) % (ready_queue.size()) : index) {
             long end = System.currentTimeMillis();//print the endtime
             if (end - start > 2000) {
@@ -73,20 +68,11 @@ public class Deadlock {
                 }
             }
         }
-<<<<<<< HEAD
-
-        System.out.println("Safe execution order:");
-        result += "Safe execution order:\n";
-        for (Process i : execution_order_queue) {
-            System.out.println("PID: " + i.PID);
-            result += "[P" + i.PID + "] -> ";
-=======
         result += "Safe execution order:\n"; 
         System.out.println("Safe execution order:");//print the result  which includes the safe excution order
         for (Process i : execution_order_queue) {
             System.out.println("PID: " + i.PID);
             result += "PID: " + i.PID + "\n"; //add the process pid to the result
->>>>>>> origin/master
         }
         if(!execution_order_queue.isEmpty())
             result = result.substring(0, result.length() - 3) + "\n";
@@ -94,31 +80,15 @@ public class Deadlock {
             result += "None...\n";
         result += "\n";
         System.out.println();
-<<<<<<< HEAD
-
-        if (ready_queue.isEmpty()) {
-            System.out.println("The system is in a safe state");
-            result += "The system is in a safe state\n";
-        } else {
-            System.out.println("Ready queue:");
-            result += "Processes remaining in Ready queue:\n";
-            for (Process i : ready_queue) {
-=======
         if (ready_queue.isEmpty()) {  // after we try to allocate all the processes with it's need (the loop has been finished), if the ready queue is empty so the system is in safe state.
             System.out.println("The system is in a safe state");
         } else { //if there is still resources available in the readt queue
             System.out.println("Ready queue:");
             for (Process i : ready_queue) { /// so, the system is in unsafe state , prints the remaining processes
->>>>>>> origin/master
                 System.out.println("PID: " + i.PID);
                 result += "[P" + i.PID + "] -> ";
             }
-<<<<<<< HEAD
-            result = result.substring(0, result.length() - 3) + "\n";
-            result += "\n";
-=======
             result += "\nThe system is in an unsafe state\n";// print that the result is in unsafe state
->>>>>>> origin/master
             System.out.println();
             System.out.println("The system is in an unsafe state");
             result += "\nThe system is in an unsafe state\n";

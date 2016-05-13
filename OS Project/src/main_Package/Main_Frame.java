@@ -3032,8 +3032,7 @@ public class Main_Frame extends JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(()
-                -> {
+        java.awt.EventQueue.invokeLater(() -> {
             Main_Frame main_frame = new Main_Frame();
             int width = Toolkit.getDefaultToolkit().getScreenSize().width;
             int height = Toolkit.getDefaultToolkit().getScreenSize().height;

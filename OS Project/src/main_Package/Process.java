@@ -10,10 +10,9 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
-
 public class Process {
 
-    public int PID; 
+    public int PID;
     public int Burst_Time;
     public int Arrival_Time;
     public int Waiting_Time;
@@ -29,9 +28,11 @@ public class Process {
     private int page_count;
 
     HashMap<Integer, Integer> Page_Table = new HashMap<>();
-/**
- * constructor which generates a randomized pid, burst time, arrival, priority, and needs 
- */
+
+    /**
+     * constructor which generates a randomized pid, burst time, arrival,
+     * priority, and needs
+     */
     public Process() {
         Random r = new Random();
         this.PID = Math.abs(r.nextInt() % 30);
@@ -42,10 +43,11 @@ public class Process {
         this.Need = new Resource();
         this.page_count = 0;
     }
-/**
- * 
- * a constructor contains a randomized available ; except the process pid
- */
+
+    /**
+     *
+     * a constructor contains a randomized available ; except the process pid
+     */
     public Process(int PID) {
         Random r = new Random();
         this.PID = PID;
@@ -56,12 +58,14 @@ public class Process {
         this.Need = new Resource();
         this.page_count = 0;
     }
+
     /**
      * this constructor allocate the pid $ the sector
+     *
      * @param PID initiate the process's pid
      * @param Sector initiate the sector's value
      */
-   public Process(int PID, int Sector) {
+    public Process(int PID, int Sector) {
         Random r = new Random();
         this.PID = PID;
         this.Burst_Time = Math.abs(r.nextInt() % 100) + 10;
@@ -71,12 +75,14 @@ public class Process {
         this.Need = new Resource();
         this.page_count = 0;
     }
-/**
- * this constructor allocate the pid and the need of the process
- * @param PID initiate  the process's pid
- * @param Need initiate the process's need
- * randomized the priority, sector and burst time.
- */
+
+    /**
+     * this constructor allocate the pid and the need of the process
+     *
+     * @param PID initiate the process's pid
+     * @param Need initiate the process's need randomized the priority, sector
+     * and burst time.
+     */
     public Process(int PID, Resource Need) {
         Random r = new Random();
         this.PID = PID;
@@ -87,13 +93,14 @@ public class Process {
         this.Need = Need;
         this.page_count = 0;
     }
-/**
- * 
- * @param PID initiate the process pid
- * @param Burst_Time initiate the burst time
- * @param Arrival_Time initiate the arrival time
- * @param Priority allocate the process's priority 
- */
+
+    /**
+     *
+     * @param PID initiate the process pid
+     * @param Burst_Time initiate the burst time
+     * @param Arrival_Time initiate the arrival time
+     * @param Priority allocate the process's priority
+     */
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;
@@ -101,15 +108,15 @@ public class Process {
         this.Priority = Priority;
         this.page_count = 0;
     }
-/**
- * 
- * @param PID allocate the pid
- * @param Burst_Time allocate the burst time
- * @param Arrival_Time allocate the arrival time
- * @param Priority allocate the priority of the process
- * @param Need allocate the process's needs
- * Randomized the sector's value
- */
+
+    /**
+     *
+     * @param PID allocate the pid
+     * @param Burst_Time allocate the burst time
+     * @param Arrival_Time allocate the arrival time
+     * @param Priority allocate the priority of the process
+     * @param Need allocate the process's needs Randomized the sector's value
+     */
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, Resource Need) {
         Random rn = new Random();
         this.PID = PID;
@@ -120,15 +127,16 @@ public class Process {
         this.Need = Need;
         this.page_count = 0;
     }
-/**
- * 
- * @param  allocate the pid
- * @param Burst_Time allocate the burst time 
- * @param Arrival_Time allocate the arrival time
- * @param Priority allocate the priority
- * @param Sector allocate the sector's value
- * @param Need  allocate the process's needs
- */
+
+    /**
+     *
+     * @param allocate the pid
+     * @param Burst_Time allocate the burst time
+     * @param Arrival_Time allocate the arrival time
+     * @param Priority allocate the priority
+     * @param Sector allocate the sector's value
+     * @param Need allocate the process's needs
+     */
     public Process(int PID, int Burst_Time, int Arrival_Time, int Priority, int Sector, Resource Need) {
         this.PID = PID;
         this.Burst_Time = Burst_Time;
@@ -138,18 +146,18 @@ public class Process {
         this.Need = Need;
         this.page_count = 0;
     }
-<<<<<<< HEAD
 
-    private void LRU(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
-=======
-/**
- * this function show how we remove pages from memory according toLRU principle
- * @param frame_numbers_to_remove determine the frame numbers which will be removes
- * @param Memory determine the memory allocation
- * @param Back_Store a list to save the removed pages from the memory(hard disk)
- */
+    /**
+     * this function show how we remove pages from memory according toLRU
+     * principle
+     *
+     * @param frame_numbers_to_remove determine the frame numbers which will be
+     * removes
+     * @param Memory determine the memory allocation
+     * @param Back_Store a list to save the removed pages from the memory(hard
+     * disk)
+     */
     public void LRU(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
->>>>>>> origin/master
         for (int x = 0; x < frame_numbers_to_remove; x++) {
             int min_Index = 0;
             int min_usage = Integer.MAX_VALUE; // the page's usage number
@@ -166,24 +174,18 @@ public class Process {
 
         }
     }
-<<<<<<< HEAD
 
-    private void FIFO(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
-        for (int x = 0; x < frame_numbers_to_remove; x++) {
-            int min_Index = 0;
-            long age = Long.MAX_VALUE;
-=======
-/**
- * this function is removing pages according to FIFO principal
- * @param frame_numbers_to_remove allocate no of frames to be removed
- * @param Memory list of memory
- * @param Back_Store list to save the removed frames
- */
+    /**
+     * this function is removing pages according to FIFO principal
+     *
+     * @param frame_numbers_to_remove allocate no of frames to be removed
+     * @param Memory list of memory
+     * @param Back_Store list to save the removed frames
+     */
     public void FIFO(int frame_numbers_to_remove, ArrayList<Memory_Location> Memory, LinkedList<Memory_Location> Back_Store) {
         for (int x = 0; x < frame_numbers_to_remove; x++) { //loop arround all memroy allocation to get the oldest page in the linked list
-            int min_Index = 0; 
-            int age = Integer.MAX_VALUE; // the age of the frames
->>>>>>> origin/master
+            int min_Index = 0;
+            long age = Long.MAX_VALUE; // the age of the frames
             for (int i = 0; i < Memory.size(); i++) {
                 Memory_Location current = Memory.get(i); //get memory allocation i
                 if ((current.Allocation_Time < age) && (current.PID != this.PID)) {
@@ -197,19 +199,17 @@ public class Process {
         }
 
     }
-<<<<<<< HEAD
 
+    /**
+     * this function show how we allocate pages in the memory
+     *
+     * @param page_numbers allocate the page numbers
+     * @param Memory list of memory allocation
+     * @param mode specify how we make swap between pages
+     * @param Back_Store a list contains the removed pages from the memory(hard
+     * disk)
+     */
     public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory, int mode, LinkedList<Memory_Location> Back_Store, long call_time) {
-=======
-/**
- * this function show how we allocate pages in the memory
- * @param page_numbers allocate the page numbers
- * @param Memory list of memory allocation
- * @param mode specify how we make swap between pages
- * @param Back_Store a list contains the removed pages from the memory(hard disk)
- */
-    public void allocate_memory(int page_numbers, ArrayList<Memory_Location> Memory, int mode, LinkedList<Memory_Location> Back_Store) {
->>>>>>> origin/master
         if (page_numbers < Memory.size()) {
             for (int i = 0; i < page_numbers; i++) {
                 Page_Table.put(i, -1);
@@ -260,11 +260,13 @@ public class Process {
             }
             this.allocate_memory(Memory.size(), Memory, 1, Back_Store, System.currentTimeMillis());
         }
-//        System.out.println("The Page Table:");
-//        Page_Table.entrySet().stream().forEach(pair -> System.out.println(pair.getKey() + "\t" + pair.getValue()));
     }
-
-    private void chk_pageTable(ArrayList<Memory_Location> Memory) {
+    
+    /**
+     * Checks if there is room for a new process to be added to the memory
+     * @param Memory the memory that is checked for room
+     */
+    private void check_page_table(ArrayList<Memory_Location> Memory) {
         for (int i = 0; i < this.Page_Table.size(); i++) {
             int position_to_check = this.Page_Table.get(i);
             if (Memory.get(position_to_check).PID != this.PID) {
@@ -273,8 +275,12 @@ public class Process {
             }
         }
     }
-
-    private void chk_table(ArrayList<Memory_Location> Memory) {
+    
+    /**
+     * Checks if there is room for a new process to be added to the memory, used for updating the page table
+     * @param Memory the memory that is checked for room
+     */
+    private void internal_check(ArrayList<Memory_Location> Memory) {
         for (int i = 0; i < this.Page_Table.size(); i++) {
             int position_to_check = this.Page_Table.get(i);
             if (Memory.get(position_to_check).PID != this.PID) {
@@ -282,14 +288,18 @@ public class Process {
             }
         }
     }
-
+    
+    /**
+     * adds a data item to the specified page number in the memory
+     * @param Memory the memory to update
+     */
     public void data_addition(ArrayList<Memory_Location> Memory) {
         String input = JOptionPane.showInputDialog(null, "Enter page, data", "Choose Page", JOptionPane.QUESTION_MESSAGE);
         if (input != null) {
             String[] page_and_data = input.split(",");
             int page_number = Integer.parseInt(page_and_data[0].trim());
             int data = Integer.parseInt(page_and_data[1].trim());
-            chk_pageTable(Memory);
+            check_page_table(Memory);
             try {
                 if (Page_Table.get(page_number) == -1) {
                     System.out.println("Page Fault");
@@ -304,23 +314,41 @@ public class Process {
             }
         }
     }
-
+    
+    /**
+     * adds a data item to the specified page number in the memory
+     * @param data  the data to be added to the memory
+     * @param page_number  the page number where the data will be added
+     * @param Memory  the memory to update
+     */
     public void data_addition(int data, int page_number, ArrayList<Memory_Location> Memory) {
-        chk_table(Memory);
+        internal_check(Memory);
         if (Page_Table.get(page_number) == -1) {
         } else {
             Memory.get(page_number).Data = data;
         }
     }
-
+    
+    /**
+     * sets the page count
+     * @param count the number of pages to set for this process
+     */
     public void set_page_count(int count) {
         this.page_count = count;
     }
-
+    
+    /**
+     * 
+     * @return the page count
+     */
     public int get_page_count() {
         return this.page_count;
     }
-
+    /**
+     * 
+     * @return a Map.Entry LinkedList, all keys represent the page number and all values represent the frame number
+     * @see Map
+     */
     public LinkedList<Map.Entry> get_page_table() {
         LinkedList<Map.Entry> result = new LinkedList<>();
         Page_Table.entrySet().forEach(pair -> result.add(pair));

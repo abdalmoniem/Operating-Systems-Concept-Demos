@@ -25,7 +25,11 @@ public final class Client {
             this.chat_pane = chat_pane;
             this.send("online::id::" + this.id);
       }
-
+      
+      /**
+       * Get client id
+       * @return an integers representing the client id
+       */
       public int get_id() {
             return this.id;
       }
@@ -33,7 +37,10 @@ public final class Client {
       public Socket get_socket() {
             return this.client;
       }
-
+      
+      /**
+       * starts a background thread that listens forever for incoming messages from a server
+       */
       public void read() {
             Runnable read_runnable = () -> {
                   try {
@@ -44,11 +51,11 @@ public final class Client {
                               String[] line_id = null;
                               try {
                                     line_id = line.split("::id::");
-                                    if (line.contains(last_sent_msg) && Integer.parseInt(line_id[1]) == this.get_id()) {
+                                    if (line.contains(last_sent_msg) && Integer.parseInt(line_id[1]) == this.get_id()) {    //check if the incomming message is an echo
                                           appendToPane(chat_pane, line_id[0] + "\n", Color.BLUE, true, false);
-                                    } else if (line.toLowerCase().contains("connected") || line.toLowerCase().contains("disconnected")) {
+                                    } else if (line.toLowerCase().contains("connected") || line.toLowerCase().contains("disconnected")) {   //check if another client has connected
                                           appendToPane(chat_pane, line_id[0] + "\n", Color.RED, true, false);
-                                    } else {
+                                    } else {    //checks if the incomming message is from another client or the server
                                           appendToPane(chat_pane, "[" + client.getInetAddress().toString() + "]: " + line_id[0] + "\n", Color.BLACK, false, false);
                                     }
                               } catch (Exception ex) {
@@ -61,9 +68,12 @@ public final class Client {
             };
             new Thread(read_runnable).start();
       }
-
+      /**
+       * Sends a message to the server
+       * @param msg the message to be sent to the server
+       */
       public void send(String msg) {
-            if (!msg.toLowerCase().equals("::client::quit::" + this.get_id())) {
+            if (!msg.toLowerCase().equals("::client::quit::" + this.get_id())) {    //if sent the server disconnects this client from the list of clients, else it sends the message along with the client id
                   String line = msg + "::id::" + this.get_id();
                   DataOutputStream dos;
                   try {
