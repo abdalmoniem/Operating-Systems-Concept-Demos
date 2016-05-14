@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Semaphore;
 import javax.swing.ButtonGroup;
 import javax.swing.ListSelectionModel;
@@ -87,7 +88,7 @@ public class Main_Frame extends JFrame {
     int negative_ones = 0;
 
     int shared_variable = 0;
-    Mutex bb_mutex = new Mutex();
+    final Mutex bb_mutex = new Mutex();
     Semaphore sm = new Semaphore(2);
 
     final int PROC_TABLE = 0;
@@ -126,7 +127,7 @@ public class Main_Frame extends JFrame {
                         while (full) {
                             bb_mutex.wait();
                         }
-                        while (full);
+//                        while (full);
                         int x = Math.abs(new Random().nextInt(100));
                         buffer.addLast(x);
                         if (buffer.size() >= max_size) {
@@ -146,7 +147,7 @@ public class Main_Frame extends JFrame {
                     }
                 }
             } catch (InterruptedException ex) {
-                System.err.println(ex.toString());
+                System.out.println(Thread.currentThread().getName() + " was interrupted");
             }
         }
     };
@@ -160,7 +161,7 @@ public class Main_Frame extends JFrame {
                         while (empty) {
                             bb_mutex.wait();
                         }
-                        while (empty);
+//                        while (empty);
                         int x = buffer.getFirst();
                         buffer.removeFirst();
                         int size = 0;
@@ -181,7 +182,7 @@ public class Main_Frame extends JFrame {
                     }
                 }
             } catch (InterruptedException ex) {
-                System.err.println(ex.toString());
+                System.out.println(Thread.currentThread().getName() + " was interrupted");
             }
         }
     };
@@ -198,7 +199,8 @@ public class Main_Frame extends JFrame {
                     rw_label.setText("Writting from " + Thread.currentThread().getName());
                     Thread.sleep(new Random().nextInt(5000));
                 } catch (InterruptedException ex) {
-                    System.err.println(ex.toString());
+                    System.out.println(Thread.currentThread().getName() + " was interrupted");
+                    break;
                 }
             }
         }
@@ -220,7 +222,8 @@ public class Main_Frame extends JFrame {
                     rw_label.setText("Reading from " + Thread.currentThread().getName());
                     Thread.sleep(new Random().nextInt(4000));
                 } catch (InterruptedException ex) {
-                    System.err.println(ex.toString());
+                    System.out.println(Thread.currentThread().getName() + " was interrupted");
+                    break;
                 }
             }
         }
@@ -676,7 +679,7 @@ public class Main_Frame extends JFrame {
                 }
             }
         });
-        
+
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(SwingConstants.LEFT);
         for (int i = 0; i < memory_table.getColumnCount(); i++) {
@@ -1582,6 +1585,11 @@ public class Main_Frame extends JFrame {
 
         memory_frame.setTitle("Memory");
         memory_frame.setResizable(false);
+        memory_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                memory_frameWindowClosing(evt);
+            }
+        });
 
         memory_table.setAutoCreateRowSorter(true);
         memory_table.setModel(new javax.swing.table.DefaultTableModel(
@@ -1644,6 +1652,11 @@ public class Main_Frame extends JFrame {
 
         processes_frame.setTitle("Processes");
         processes_frame.setResizable(false);
+        processes_frame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                processes_frameWindowClosing(evt);
+            }
+        });
 
         processes_memory_table.setAutoCreateRowSorter(true);
         processes_memory_table.setModel(new javax.swing.table.DefaultTableModel(
@@ -3017,8 +3030,8 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_save_data_btnActionPerformed
 
     private void bounded_radioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bounded_radioActionPerformed
-        writers_list.forEach(p -> p.stop());
-        readers_list.forEach(c -> c.stop());
+        writers_list.forEach(p -> p.interrupt());
+        readers_list.forEach(c -> c.interrupt());
 
         writers_list.clear();
         readers_list.clear();
@@ -3030,6 +3043,7 @@ public class Main_Frame extends JFrame {
 
         is_bb = true;
         current_label.setVisible(false);
+        rw_label.setVisible(false);
         pw_add_btn.setText("Add Producer");
         pw_rem_btn.setText("Remove Producer");
         cr_add_btn.setText("Add Consumer");
@@ -3055,8 +3069,8 @@ public class Main_Frame extends JFrame {
     }//GEN-LAST:event_bounded_radioActionPerformed
 
     private void rw_radioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rw_radioActionPerformed
-        producers_list.forEach(p -> p.stop());
-        consumers_list.forEach(c -> c.stop());
+        producers_list.forEach(p -> p.interrupt());
+        consumers_list.forEach(c -> c.interrupt());
 
         producers_list.clear();
         consumers_list.clear();
@@ -3131,39 +3145,57 @@ public class Main_Frame extends JFrame {
 
     private void pw_rem_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pw_rem_btnActionPerformed
         if (is_bb) {
-            producers_list.getFirst().stop();
-            producers_list.removeFirst();
+            try {
+                producers_list.getFirst().interrupt();
+                producers_list.removeFirst();
 
-            clear_table(pw_table_model);
-            populate_table_coloumn(pw_table_model, producers_list);
+                clear_table(pw_table_model);
+                populate_table_coloumn(pw_table_model, producers_list);
+            } catch (NoSuchElementException ex) {
+                System.err.println("Producers list is empty");
+            }
         } else {
-            writers_list.getFirst().stop();
-            writers_list.removeFirst();
+            try {
+                writers_list.getFirst().interrupt();
+                writers_list.removeFirst();
 
-            clear_table(pw_table_model);
-            populate_table_coloumn(pw_table_model, writers_list);
+                clear_table(pw_table_model);
+                populate_table_coloumn(pw_table_model, writers_list);
+            } catch (NoSuchElementException ex) {
+                System.err.println("Writers list is empty");
+            }
         }
 
     }//GEN-LAST:event_pw_rem_btnActionPerformed
 
     private void cr_rem_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cr_rem_btnActionPerformed
         if (is_bb) {
-            consumers_list.getFirst().stop();
-            consumers_list.removeFirst();
+            try {
+                consumers_list.getFirst().interrupt();
+                consumers_list.removeFirst();
 
-            clear_table(cr_table_model);
-            populate_table_coloumn(cr_table_model, consumers_list);
+                clear_table(cr_table_model);
+                populate_table_coloumn(cr_table_model, consumers_list);
+            } catch (NoSuchElementException ex) {
+                System.err.println("Consumers list is empty");
+            }
         } else {
-            readers_list.getFirst().stop();
-            readers_list.removeFirst();
+            try {
+                readers_list.getFirst().interrupt();
+                readers_list.removeFirst();
 
-            clear_table(cr_table_model);
-            populate_table_coloumn(cr_table_model, readers_list);
+                clear_table(cr_table_model);
+                populate_table_coloumn(cr_table_model, readers_list);
+            } catch (NoSuchElementException ex) {
+                System.err.println("Readers list is empty");
+            }
         }
     }//GEN-LAST:event_cr_rem_btnActionPerformed
 
     private void paging_itemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paging_itemActionPerformed
         memory.clear();
+        processes_memory_list.clear();
+        clear_table(processes_memory_table_model);
         clear_table(memory_table_model);
         for (int i = 0; i < 20; i++) {
             memory.add(new Memory_Location(0, 0, -1, 0));
@@ -3187,7 +3219,7 @@ public class Main_Frame extends JFrame {
 
         processes_frame.setSize(530, 360);
         processes_frame.setVisible(true);
-        
+
         starting_time = System.currentTimeMillis();
     }//GEN-LAST:event_paging_itemActionPerformed
 
@@ -3202,6 +3234,22 @@ public class Main_Frame extends JFrame {
         clear_table(memory_table_model);
         populate_memory_table(memory_table_model, memory);
     }//GEN-LAST:event_proc_data_rand_btnActionPerformed
+
+    private void processes_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_processes_frameWindowClosing
+        memory.clear();
+        processes_memory_list.clear();
+        clear_table(processes_memory_table_model);
+        clear_table(memory_table_model);
+        memory_frame.setVisible(false);
+    }//GEN-LAST:event_processes_frameWindowClosing
+
+    private void memory_frameWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_memory_frameWindowClosing
+        memory.clear();
+        processes_memory_list.clear();
+        clear_table(processes_memory_table_model);
+        clear_table(memory_table_model);
+        processes_frame.setVisible(false);
+    }//GEN-LAST:event_memory_frameWindowClosing
 
     public static void main(String args[]) {
         try {
