@@ -32,6 +32,7 @@ for i in range(z+1, len(sys.argv)):
 fig = plt.figure() 
 fig.canvas.set_window_title("Graphical Representation")
 plt.gca().invert_yaxis()
+plt.gca().xaxis.tick_top()
 plt.plot(x1, y1, label="SSTF", marker='o', markeredgewidth=2, markersize=11, linewidth=3)
 
 if len(x2) > 0:

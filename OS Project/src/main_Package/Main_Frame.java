@@ -2927,6 +2927,9 @@ public class Main_Frame extends JFrame {
             if (s != null) {
                 if (s.trim().length() > 0) {
                     int page_count = Integer.parseInt(s);
+                    if (page_count > memory.size()) {
+                        throw new IllegalAccessError();
+                    }
                     Process p = new Process(++process_count);
                     String button_text = get_selected_button_text(memory_button_group);
                     if (button_text.toLowerCase().contains("fifo")) {
@@ -3004,6 +3007,10 @@ public class Main_Frame extends JFrame {
             proc_data_rand_btn.setEnabled(true);
         } catch (NumberFormatException ex) {
             System.err.println(ex.toString());
+        } catch (IllegalAccessError ex) {
+            System.err.println(ex.toString());
+            JOptionPane.showMessageDialog(this, "Illegal Access\nYou are trying to access an invalid memory space",
+                    "Illegal Access Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_add_process_btnActionPerformed
 

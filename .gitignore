@@ -17,6 +17,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Other Insignificant files
+*.xml
+*.class
+*.class*
+
 # =========================
 # Operating System Files
 # =========================
